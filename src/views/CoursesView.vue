@@ -17,11 +17,13 @@ const coursesInProgress = computed(() =>
     <ul list-none>
       <li>
         <h3>In Progress</h3>
-        <CourseCard
-          :course="course"
-          v-for="course in coursesInProgress"
-          :key="course.id"
-        />
+        <ul list-none grid grid-cols-2 gap-6 p-4>
+          <CourseCard
+            :course="course"
+            v-for="course in coursesInProgress"
+            :key="course.id"
+          />
+        </ul>
       </li>
       <li><h2>Done</h2></li>
     </ul>
