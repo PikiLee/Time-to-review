@@ -9,6 +9,7 @@ import presetAttributify from "@unocss/preset-attributify";
 import presetMini from "@unocss/preset-mini";
 import presetTypography from "@unocss/preset-typography";
 import presetUno from "@unocss/preset-uno";
+import UnocssIcons from "@unocss/preset-icons";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,6 +21,12 @@ export default defineConfig({
         presetMini(),
         presetTypography(),
         presetUno(),
+        UnocssIcons({
+          prefix: "i-",
+          extraProperties: {
+            display: "inline-block",
+          },
+        }),
       ],
     }),
   ],
