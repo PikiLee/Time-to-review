@@ -16,6 +16,8 @@ function handleCreate() {
       :placeholder="placeholder"
       @focus="placeholder = defaultPlaceholder"
     />
-    <el-button round @click="handleCreate">Create</el-button>
+    <el-button round bg-lime-500 @click="handleCreate" type="primary"
+      >Create</el-button
+    >
   </div>
 </template>
