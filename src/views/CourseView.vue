@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 <template>
   <div>
-    <h1>计算机网络原理</h1>
+    <h2>计算机网络原理</h2>
     <ul list-none>
       <li
         grid

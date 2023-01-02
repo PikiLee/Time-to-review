@@ -1,10 +1,10 @@
 <script setup lang="ts"></script>
 <template>
   <div>
-    <h1>Course List</h1>
+    <h2>Course List</h2>
     <ul list-none>
       <li>
-        <h2>Progressing</h2>
+        <h3>Progressing</h3>
         <ul list-none grid grid-cols-2 gap-6 p-4>
           <li
             grid

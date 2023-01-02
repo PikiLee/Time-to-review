@@ -27,7 +27,7 @@ const toggleDark = useToggle(isDark);
           w-10
         />
       </div>
-      <h1 text-sm>Time To Review</h1>
+      <h1 text-5>Time To Review</h1>
     </a>
     <div col-span-4 flex flex-row gap-4 items-center justify-end>
       <a

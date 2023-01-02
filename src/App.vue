@@ -15,7 +15,7 @@ import AppHeader from "./components/AppHeader.vue";
     dark:bg-warmgray-800
   >
     <AppHeader />
-    <div w-3xl max-w-screen ma-auto pa-8>
+    <div w-3xl max-w-screen mx-auto px-8>
       <RouterView />
     </div>
   </div>

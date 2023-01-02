@@ -2,7 +2,6 @@
 
 <template>
   <main>
-    Time to Review
     <div v-for="i in 5" :key="i">
       <h2>计算机网络</h2>
       <section grid grid-cols-2 gap-6 p-4>
