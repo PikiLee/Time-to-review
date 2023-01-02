@@ -20,6 +20,7 @@ function handleCreate() {
       v-model.trim="input"
       :placeholder="placeholder"
       @focus="placeholder = defaultPlaceholder"
+      @keyup.enter="handleCreate"
     />
     <el-button round bg-lime-500 @click="handleCreate" type="primary"
       >Create</el-button
