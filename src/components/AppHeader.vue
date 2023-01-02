@@ -6,9 +6,19 @@ const toggleDark = useToggle(isDark);
 </script>
 
 <template>
-  <div grid grid-cols-6 py-2>
-    <div></div>
-    <div flex justify-start items-center flex-row gap-3 col-span-4>
+  <div grid grid-cols-12 py-2 gap-8>
+    <div col-span-2></div>
+    <a
+      flex
+      justify-start
+      items-center
+      flex-row
+      gap-3
+      col-span-4
+      link-decoration-none
+      href="/"
+      alt="home"
+    >
       <div>
         <img
           src="../assets/icon.png"
@@ -18,9 +28,29 @@ const toggleDark = useToggle(isDark);
         />
       </div>
       <h1 text-sm>Time To Review</h1>
+    </a>
+    <div col-span-4 flex flex-row gap-4 items-center justify-end>
+      <a
+        font-600
+        text-lg
+        link-decoration-none
+        hover:text-lime-500
+        href="/"
+        alt="Home"
+        >HOME</a
+      >
+      <a
+        font-600
+        text-lg
+        link-decoration-none
+        hover:text-lime-500
+        href="/courses"
+        alt="Courses"
+        >COURSES</a
+      >
     </div>
-    <div flex flex-row items-center justify-start self-center>
-      <div @click="toggleDark()" cursor-pointer>
+    <div col-span-2 flex flex-row items-center justify-start self-center>
+      <div @click="toggleDark()" cursor-pointer mb="0.125rem">
         <span
           text-xl
           text-warmgray-100
