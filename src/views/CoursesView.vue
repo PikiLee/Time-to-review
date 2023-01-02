@@ -1,30 +1,27 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { computed } from "vue";
+import { useCourses } from "@/database/course";
+import { CourseStatus } from "@/types/course.type";
+import CourseCard from "@/components/CourseCard.vue";
+
+const courses = useCourses();
+const coursesInProgress = computed(() =>
+  courses.value.filter(
+    (course) => course.status === CourseStatus["In Progress"]
+  )
+);
+</script>
 <template>
   <div>
     <h2>Course List</h2>
     <ul list-none>
       <li>
-        <h3>Progressing</h3>
-        <ul list-none grid grid-cols-2 gap-6 p-4>
-          <li
-            grid
-            grid-rows-2
-            grid-cols-4
-            gap-2
-            items-center
-            v-for="n in 5"
-            :key="n"
-          >
-            <div
-              row-span-2
-              i-ic-round-done
-              text-size-3xl
-              justify-self-center
-            ></div>
-            <h3 col-span-3 m-0>第一章</h3>
-            <div col-span-3>1st review</div>
-          </li>
-        </ul>
+        <h3>In Progress</h3>
+        <CourseCard
+          :course="course"
+          v-for="course in coursesInProgress"
+          :key="course.id"
+        />
       </li>
       <li><h2>Done</h2></li>
     </ul>
