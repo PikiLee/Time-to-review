@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { create } from "@/database/course";
 
 const input = ref("");
 const defaultPlaceholder = "New Course Name";
 const placeholder = ref(defaultPlaceholder);
 
 function handleCreate() {
-  if (!input.value) placeholder.value = "Invalid!";
+  try {
+    create(input.value);
+  } catch (error) {
+    placeholder.value = String(error);
+  }
 }
 </script>
 <template>

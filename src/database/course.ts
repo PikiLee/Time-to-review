@@ -7,7 +7,7 @@ export const useCourses = createGlobalState(() =>
 );
 
 export function create(name: string) {
-  if (!name) return;
+  if (!name) throw "Must not empty!";
   const courses = useCourses();
   const newCourse: Course = {
     id: Date.now(),
