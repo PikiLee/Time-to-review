@@ -7,10 +7,10 @@ import { RouterView } from "vue-router";
     bg-warmgray-100
     min-w-full
     min-h-screen
-    text-sm
+    text-xs
     prose
     dark:prose-invert
-    prose-truegray
+    prose-warmgray
     dark:bg-warmgray-800
   >
     <div w-3xl max-w-screen ma-auto pa-8 >
