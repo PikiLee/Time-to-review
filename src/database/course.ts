@@ -36,3 +36,8 @@ export function toggleStatus(id: number) {
           : CourseStatus["In Progress"];
   });
 }
+
+export function del(id: number) {
+  const courses = useCourses();
+  courses.value = courses.value.filter((course) => course.id !== id);
+}

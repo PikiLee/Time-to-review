@@ -3,14 +3,19 @@ import { type Course, CourseStatus } from "@/types/course.type";
 import dayjs from "dayjs/esm";
 import relativeTime from "dayjs/esm/plugin/relativeTime";
 import { computed } from "vue";
-import { toggleArchive, toggleStatus } from "@/database/course";
-import { useDark } from "@vueuse/core";
+import { toggleArchive, toggleStatus, del } from "@/database/course";
 
 dayjs.extend(relativeTime);
 
 const props = defineProps<{
   course: Course;
 }>();
+
+const isInProgress = computed(
+  () => props.course.status === CourseStatus["In Progress"]
+);
+
+const isArchived = computed(() => props.course.archived);
 
 const createdTime = computed(() => {
   const now = dayjs();
@@ -28,7 +33,7 @@ const createdTime = computed(() => {
     <li grid grid-rows-2 grid-cols-5 gap-2 items-center>
       <el-tooltip
         class="box-item"
-        :content="course.archived ? 'Unarchive' : 'Archive'"
+        :content="isArchived ? 'Unarchive' : 'Archive'"
         placement="top"
       >
         <div
@@ -39,7 +44,7 @@ const createdTime = computed(() => {
           hover:text-lime-500
         >
           <div
-            v-if="!course.archived"
+            v-if="!isArchived"
             i-mdi-archive
             @click="toggleArchive(course.id)"
           ></div>
@@ -51,12 +56,9 @@ const createdTime = computed(() => {
         </div>
       </el-tooltip>
       <el-tooltip
+        v-if="!isArchived"
         class="box-item"
-        :content="
-          course.status === CourseStatus['In Progress']
-            ? 'Mark as done'
-            : 'Mark as in progress'
-        "
+        :content="isInProgress ? 'Mark as done' : 'Mark as in progress'"
         placement="top"
       >
         <div
@@ -67,12 +69,23 @@ const createdTime = computed(() => {
           hover:text-lime-500
         >
           <div
-            v-if="course.status === CourseStatus['In Progress']"
+            v-if="isInProgress"
             i-ic-round-done
             @click="toggleStatus(course.id)"
           ></div>
           <div v-else i-mdi-undo @click="toggleStatus(course.id)"></div>
         </div>
+      </el-tooltip>
+      <el-tooltip v-else class="box-item" content="Delete" placement="top">
+        <div
+          row-span-2
+          text-size-3xl
+          justify-self-center
+          cursor-pointer
+          hover:text-lime-500
+          i-ic-round-delete-forever
+          @click="del(course.id)"
+        ></div>
       </el-tooltip>
       <h3
         col-span-3
