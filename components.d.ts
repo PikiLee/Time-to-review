@@ -8,7 +8,8 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AppHeader: typeof import('./src/components/AppHeader.vue')['default']
-    CourseCard: typeof import('./src/components/CourseCard.vue')['default']
+    Card: typeof import('./src/components/Course/Card.vue')['default']
+    CourseCard: typeof import('./src/components/Course/CourseCard.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import('element-plus/es')['ElLink']
@@ -18,6 +19,7 @@ declare module '@vue/runtime-core' {
     IconEcosystem: typeof import('./src/components/icons/IconEcosystem.vue')['default']
     IconSupport: typeof import('./src/components/icons/IconSupport.vue')['default']
     IconTooling: typeof import('./src/components/icons/IconTooling.vue')['default']
+    ItemCard: typeof import('./src/components/Course/ItemCard.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SideBar: typeof import('./src/components/SideBar.vue')['default']

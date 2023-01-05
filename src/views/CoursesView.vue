@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useCourses } from "@/database/course";
 import { CourseStatus } from "@/types/course.type";
-import CourseCard from "@/components/CourseCard.vue";
+import CourseCard from "@/components/Course/CourseCard.vue";
 
 const courses = useCourses();
 const coursesInProgress = computed(() =>
