@@ -25,7 +25,7 @@ const createdTime = computed(() => {
   <div>
     <li grid grid-rows-2 grid-cols-4 gap-2 items-center>
       <div row-span-2 i-ic-round-done text-size-3xl justify-self-center></div>
-      <h3 col-span-3 m-0>{{ course.name }}</h3>
+      <h3 col-span-3 m-0 data-test="course-name">{{ course.name }}</h3>
       <time col-span-3 :datetime="dayjs(course.createdAt).toISOString()">{{
         createdTime
       }}</time>

@@ -21,8 +21,14 @@ function handleCreate() {
       :placeholder="placeholder"
       @focus="placeholder = defaultPlaceholder"
       @keyup.enter="handleCreate"
+      data-test="add-course-input"
     />
-    <el-button round bg-lime-500 @click="handleCreate" type="primary"
+    <el-button
+      round
+      bg-lime-500
+      @click="handleCreate"
+      type="primary"
+      data-test="add-course"
       >Create</el-button
     >
   </div>

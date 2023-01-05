@@ -17,7 +17,14 @@ const coursesInProgress = computed(() =>
     <ul list-none>
       <li>
         <h3>In Progress</h3>
-        <ul list-none grid grid-cols-2 gap-6 p-4>
+        <ul
+          list-none
+          grid
+          grid-cols-2
+          gap-6
+          p-4
+          data-test="in-progress-courses"
+        >
           <CourseCard
             :course="course"
             v-for="course in coursesInProgress"
@@ -25,7 +32,9 @@ const coursesInProgress = computed(() =>
           />
         </ul>
       </li>
-      <li><h2>Done</h2></li>
+      <li>
+        <h2>Done</h2>
+      </li>
     </ul>
   </div>
 </template>
