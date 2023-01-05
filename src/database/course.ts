@@ -25,3 +25,14 @@ export function toggleArchive(id: number) {
     if (course.id === id) course.archived = !course.archived;
   });
 }
+
+export function toggleStatus(id: number) {
+  const courses = useCourses();
+  courses.value.forEach((course) => {
+    if (course.id === id)
+      course.status =
+        course.status === CourseStatus["In Progress"]
+          ? CourseStatus.Done
+          : CourseStatus["In Progress"];
+  });
+}

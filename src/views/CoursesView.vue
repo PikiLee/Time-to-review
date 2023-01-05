@@ -12,6 +12,12 @@ const coursesInProgress = computed(() =>
   )
 );
 
+const coursesDone = computed(() =>
+  courses.value.filter(
+    (course) => course.status === CourseStatus.Done && course.archived === false
+  )
+);
+
 const coursesArchived = computed(() =>
   courses.value.filter((course) => course.archived)
 );
@@ -39,6 +45,13 @@ const coursesArchived = computed(() =>
       </li>
       <li>
         <h2>Done</h2>
+        <ul list-none grid grid-cols-2 gap-6 p-4>
+          <CourseCard
+            :course="course"
+            v-for="course in coursesDone"
+            :key="course.id"
+          />
+        </ul>
       </li>
       <li>
         <h2>Archived</h2>
