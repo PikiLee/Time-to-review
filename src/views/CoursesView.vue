@@ -43,7 +43,7 @@ const coursesArchived = computed(() =>
           />
         </ul>
       </li>
-      <li>
+      <li v-show="coursesDone.length">
         <h2>Done</h2>
         <ul list-none grid grid-cols-2 gap-6 p-4>
           <CourseCard
@@ -53,7 +53,7 @@ const coursesArchived = computed(() =>
           />
         </ul>
       </li>
-      <li>
+      <li v-show="coursesArchived.length">
         <h2>Archived</h2>
         <ul list-none grid grid-cols-2 gap-6 p-4>
           <CourseCard
