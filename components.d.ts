@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
     Card: typeof import('./src/components/Course/Card.vue')['default']
     CourseCard: typeof import('./src/components/Course/CourseCard.vue')['default']
     CourseCreator: typeof import('./src/components/Course/CourseCreator.vue')['default']
+    ElAffix: typeof import('element-plus/es')['ElAffix']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import('element-plus/es')['ElLink']
