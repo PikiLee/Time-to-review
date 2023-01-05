@@ -10,11 +10,18 @@ export function create(name: string) {
   if (!name) throw "Must not empty!";
   const courses = useCourses();
   const newCourse: Course = {
-    id: Date.now(),
+    id: Math.random(),
     name,
     status: CourseStatus["In Progress"],
     archived: false,
     createdAt: Date.now(),
   };
   courses.value.push(newCourse);
+}
+
+export function toggleArchive(id: number) {
+  const courses = useCourses();
+  courses.value.forEach((course) => {
+    if (course.id === id) course.archived = !course.archived;
+  });
 }

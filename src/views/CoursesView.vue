@@ -7,8 +7,13 @@ import CourseCard from "@/components/Course/CourseCard.vue";
 const courses = useCourses();
 const coursesInProgress = computed(() =>
   courses.value.filter(
-    (course) => course.status === CourseStatus["In Progress"]
+    (course) =>
+      course.status === CourseStatus["In Progress"] && course.archived === false
   )
+);
+
+const coursesArchived = computed(() =>
+  courses.value.filter((course) => course.archived)
 );
 </script>
 <template>
@@ -34,6 +39,16 @@ const coursesInProgress = computed(() =>
       </li>
       <li>
         <h2>Done</h2>
+      </li>
+      <li>
+        <h2>Archived</h2>
+        <ul list-none grid grid-cols-2 gap-6 p-4>
+          <CourseCard
+            :course="course"
+            v-for="course in coursesArchived"
+            :key="course.id"
+          />
+        </ul>
       </li>
     </ul>
   </div>
