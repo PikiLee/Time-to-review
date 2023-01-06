@@ -35,6 +35,21 @@ function getFormatedDates(lastTime: number, stage: ProgressStage) {
     <h2>{{ course.name }}</h2>
     <ul list-none v-if="course.progresses.length !== 0">
       <li
+        grid
+        grid-cols-5
+        items-center
+        border-b
+        border-b-warmgray-300
+        pb-2
+        mb-2
+      >
+        <span>Actions</span>
+        <span>Progress Name</span>
+        <span>Stage</span>
+        <span>Last Review Date</span>
+        <span>Next Review Date</span>
+      </li>
+      <li
         v-for="progress in course.progresses"
         :key="progress.id"
         grid
