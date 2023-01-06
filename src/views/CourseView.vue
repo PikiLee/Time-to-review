@@ -14,8 +14,10 @@ const course = useArrayFind(
 <template>
   <div v-if="course">
     <h2>{{ course.name }}</h2>
-    <ul list-none>
+    <ul list-none v-if="course.progresses.length !== 0">
       <li
+        v-for="progress in course.progresses"
+        :key="progress.id"
         grid
         grid-cols-5
         items-center
@@ -23,11 +25,9 @@ const course = useArrayFind(
         border-b-warmgray-300
         pb-2
         mb-2
-        v-for="n in 10"
-        :key="n"
       >
-        <div>icon</div>
-        <h3 m-0>第一章</h3>
+        <div></div>
+        <h3 m-0>{{ progress.name }}</h3>
         <span>1st Review</span>
         <time>2022-2-2</time>
         <time>2022-2-2</time>

@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { create } from "@/database/course";
+import { create as createCourse } from "@/database/course";
+import { create as createProgress } from "@/database/progress";
+import { useRoute } from "vue-router";
 
+const route = useRoute();
 const input = ref("");
-const defaultPlaceholder = "New Course Name";
+const defaultPlaceholder =
+  route.name === "course" ? "New Progress Name" : "New Course Name";
 const placeholder = ref(defaultPlaceholder);
 
 function handleCreate() {
   try {
-    create(input.value);
+    if (route.name === "course") {
+      createProgress(Number(route.params.id), input.value);
+    } else {
+      createCourse(input.value);
+    }
   } catch (error) {
     placeholder.value = String(error);
+  } finally {
+    input.value = "";
   }
 }
 </script>
