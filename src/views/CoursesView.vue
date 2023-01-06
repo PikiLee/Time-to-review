@@ -1,26 +1,22 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import { useCourses } from "@/database/course";
 import { CourseStatus } from "@/types/course.type";
 import CourseCard from "@/components/Course/CourseCard.vue";
+import { useArrayFilter } from "@vueuse/shared";
 
 const courses = useCourses();
-const coursesInProgress = computed(() =>
-  courses.value.filter(
-    (course) =>
-      course.status === CourseStatus["In Progress"] && course.archived === false
-  )
+const coursesInProgress = useArrayFilter(
+  courses,
+  (course) =>
+    course.status === CourseStatus["In Progress"] && course.archived === false
 );
 
-const coursesDone = computed(() =>
-  courses.value.filter(
-    (course) => course.status === CourseStatus.Done && course.archived === false
-  )
+const coursesDone = useArrayFilter(
+  courses,
+  (course) => course.status === CourseStatus.Done && course.archived === false
 );
 
-const coursesArchived = computed(() =>
-  courses.value.filter((course) => course.archived)
-);
+const coursesArchived = useArrayFilter(courses, (course) => course.archived);
 </script>
 <template>
   <div>

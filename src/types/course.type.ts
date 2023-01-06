@@ -7,6 +7,6 @@ export interface Course {
   id: number;
   name: string;
   status: CourseStatus;
-  archived: Boolean;
+  archived: boolean;
   createdAt: number;
 }
