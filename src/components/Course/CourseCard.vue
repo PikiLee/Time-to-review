@@ -36,12 +36,13 @@ const createdTime = computed(() => {
         :content="isArchived ? 'Unarchive' : 'Archive'"
         placement="top"
       >
-        <div
+        <button
           row-span-2
           text-size-3xl
           justify-self-center
           cursor-pointer
           hover:text-lime-500
+          :aria-label="isArchived ? 'Unarchive' : 'Archive'"
         >
           <div
             v-if="!isArchived"
@@ -53,7 +54,7 @@ const createdTime = computed(() => {
             i-mdi-archive-cancel
             @click="toggleArchive(course.id)"
           ></div>
-        </div>
+        </button>
       </el-tooltip>
       <el-tooltip
         v-if="!isArchived"
@@ -61,12 +62,13 @@ const createdTime = computed(() => {
         :content="isInProgress ? 'Mark as done' : 'Mark as in progress'"
         placement="top"
       >
-        <div
+        <button
           row-span-2
           text-size-3xl
           justify-self-center
           cursor-pointer
           hover:text-lime-500
+          :aria-label="isInProgress ? 'Mark as done' : 'Mark as in progress'"
         >
           <div
             v-if="isInProgress"
@@ -74,10 +76,10 @@ const createdTime = computed(() => {
             @click="toggleStatus(course.id)"
           ></div>
           <div v-else i-mdi-undo @click="toggleStatus(course.id)"></div>
-        </div>
+        </button>
       </el-tooltip>
       <el-tooltip v-else class="box-item" content="Delete" placement="top">
-        <div
+        <button
           row-span-2
           text-size-3xl
           justify-self-center
@@ -85,7 +87,8 @@ const createdTime = computed(() => {
           hover:text-lime-500
           i-ic-round-delete-forever
           @click="del(course.id)"
-        ></div>
+          aria-label="delete"
+        ></button>
       </el-tooltip>
       <h3
         col-span-3
