@@ -5,6 +5,7 @@ import { useArrayFind } from "@vueuse/shared";
 import { useRoute } from "vue-router";
 import { useSetting } from "@/database/setting";
 import dayjs from "dayjs/esm";
+import { computed } from "vue";
 
 const courses = useCourses();
 const route = useRoute();
@@ -13,6 +14,18 @@ const course = useArrayFind(
   courses,
   (course) => course.id === Number(route.params.id)
 );
+
+const tableData = computed(() => {
+  return course.value?.progresses.map((progress) => {
+    const formatedDates = getFormatedDates(progress.lastDate, progress.stage);
+    return {
+      ...progress,
+      stage: ProgressStage[progress.stage],
+      lastDate: formatedDates.lastDate,
+      nextDate: formatedDates.nextDate,
+    };
+  });
+});
 
 function getFormatedDates(lastTime: number, stage: ProgressStage) {
   const setting = useSetting();
@@ -33,6 +46,17 @@ function getFormatedDates(lastTime: number, stage: ProgressStage) {
 <template>
   <div v-if="course">
     <h2>{{ course.name }}</h2>
+    <el-table bg-inherit :data="tableData" style="width: 100%">
+      <el-table-column prop="name" label="Name" />
+      <el-table-column prop="stage" label="Stage" />
+      <el-table-column prop="lastDate" label="Last Review Date" />
+      <el-table-column prop="nextDate" label="Next Review Date" />
+      <el-table-column label="Operations">
+        <template #default>
+          <el-button size="small" type="danger">Delete</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
     <ul list-none v-if="course.progresses.length !== 0">
       <li
         grid
@@ -60,7 +84,9 @@ function getFormatedDates(lastTime: number, stage: ProgressStage) {
         pb-2
         mb-2
       >
-        <div></div>
+        <div>
+          <button i-ic-round-delete-forever text-2xl hover:text-red></button>
+        </div>
         <h3 m-0>{{ progress.name }}</h3>
         <span>{{ ProgressStage[progress.stage] }}</span>
         <time>{{
