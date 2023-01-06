@@ -15,18 +15,6 @@ const course = useArrayFind(
   (course) => course.id === Number(route.params.id)
 );
 
-const tableData = computed(() => {
-  return course.value?.progresses.map((progress) => {
-    const formatedDates = getFormatedDates(progress.lastDate, progress.stage);
-    return {
-      ...progress,
-      stage: ProgressStage[progress.stage],
-      lastDate: formatedDates.lastDate,
-      nextDate: formatedDates.nextDate,
-    };
-  });
-});
-
 function getFormatedDates(lastTime: number, stage: ProgressStage) {
   const setting = useSetting();
   const lastDate = dayjs(lastTime);
@@ -42,15 +30,40 @@ function getFormatedDates(lastTime: number, stage: ProgressStage) {
     nextDate,
   };
 }
+
+function getNextDate(lastTime: number, stage: ProgressStage) {
+  const setting = useSetting();
+  const lastDate = dayjs(lastTime);
+  const nextDate =
+    stage === ProgressStage["Reviewed Fourth Times"]
+      ? "Done"
+      : lastDate
+          .add(setting.value.progressStageInterval[stage], "day")
+          .format("YYYY-MM-DD");
+
+  return nextDate;
+}
 </script>
 <template>
   <div v-if="course">
     <h2>{{ course.name }}</h2>
-    <el-table bg-inherit :data="tableData" style="width: 100%">
+    <el-table :data="course.progresses" style="width: 100%">
       <el-table-column prop="name" label="Name" />
-      <el-table-column prop="stage" label="Stage" />
-      <el-table-column prop="lastDate" label="Last Review Date" />
-      <el-table-column prop="nextDate" label="Next Review Date" />
+      <el-table-column prop="stage" label="Stage">
+        <template #default="scope">
+          {{ ProgressStage[scope.row.stage] }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="lastDate" label="Last Review Date">
+        <template #default="scope">
+          {{ dayjs(scope.row.lastDate).format("YYYY-MM-DD") }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="nextDate" label="Next Review Date">
+        <template #default="scope">
+          {{ getNextDate(scope.row.lastDate, scope.row.stage) }}
+        </template>
+      </el-table-column>
       <el-table-column label="Operations">
         <template #default>
           <el-button size="small" type="danger">Delete</el-button>
