@@ -2,10 +2,10 @@ import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
 
+import "uno.css";
+import "@unocss/reset/antfu.css";
 import "./assets/element.scss";
 import "./assets/main.css";
-import "@unocss/reset/antfu.css";
-import "uno.css";
 
 const app = createApp(App);
 
