@@ -90,15 +90,20 @@ const createdTime = computed(() => {
           aria-label="delete"
         ></button>
       </el-tooltip>
-      <h3
-        col-span-3
-        m-0
-        data-test="course-name"
-        cursor-pointer
-        hover:text-lime-500
+      <RouterLink
+        link-decoration-none
+        :to="{ name: 'course', params: { id: course.id } }"
       >
-        {{ course.name }}
-      </h3>
+        <h3
+          col-span-3
+          m-0
+          data-test="course-name"
+          cursor-pointer
+          hover:text-lime-500
+        >
+          {{ course.name }}
+        </h3>
+      </RouterLink>
       <time col-span-3 :datetime="dayjs(course.createdAt).toISOString()">{{
         createdTime
       }}</time>
