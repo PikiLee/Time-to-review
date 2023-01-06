@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useCourses } from "@/database/course";
-import { ProgressStage } from "@/types/progress.type";
+import { ProgressStageObject, type ProgressStage } from "@/types/progress.type";
 import { useArrayFind } from "@vueuse/shared";
 import { useRoute } from "vue-router";
 import { useSetting } from "@/database/setting";
@@ -19,7 +19,7 @@ function getFormatedDates(lastTime: number, stage: ProgressStage) {
   const setting = useSetting();
   const lastDate = dayjs(lastTime);
   const nextDate =
-    stage === ProgressStage["Reviewed Fourth Times"]
+    stage === ProgressStageObject["Reviewed Fourth Times"]
       ? "Done"
       : lastDate
           .add(setting.value.progressStageInterval[stage], "day")
@@ -35,7 +35,7 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
   const setting = useSetting();
   const lastDate = dayjs(lastTime);
   const nextDate =
-    stage === ProgressStage["Reviewed Fourth Times"]
+    stage === ProgressStageObject["Reviewed Fourth Times"]
       ? "Done"
       : lastDate
           .add(setting.value.progressStageInterval[stage], "day")
@@ -51,7 +51,19 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
       <el-table-column prop="name" label="Name" />
       <el-table-column prop="stage" label="Stage">
         <template #default="scope">
-          {{ ProgressStage[scope.row.stage] }}
+          <el-select
+            v-model="scope.row.stage"
+            class="m-2"
+            placeholder="Select"
+            size="large"
+          >
+            <el-option
+              v-for="(value, key) in ProgressStageObject"
+              :key="key"
+              :label="key"
+              :value="value"
+            />
+          </el-select>
         </template>
       </el-table-column>
       <el-table-column prop="lastDate" label="Last Review Date">
@@ -66,12 +78,12 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
       </el-table-column>
       <el-table-column label="Operations">
         <template #default="scope">
-          <el-button
+          <!-- <el-button
             size="small"
             type="danger"
             @click="del(course?.id, scope.row.id)"
             >Delete</el-button
-          >
+          > -->
         </template>
       </el-table-column>
     </el-table>
@@ -106,7 +118,7 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
           <button i-ic-round-delete-forever text-2xl hover:text-red></button>
         </div>
         <h3 m-0>{{ progress.name }}</h3>
-        <span>{{ ProgressStage[progress.stage] }}</span>
+        <span>{{ ProgressStageObject[progress.stage] }}</span>
         <time>{{
           getFormatedDates(progress.lastDate, progress.stage).lastDate
         }}</time>

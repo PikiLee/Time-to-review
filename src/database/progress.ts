@@ -1,4 +1,4 @@
-import { ProgressStage } from "./../types/progress.type";
+import { ProgressStageObject } from "./../types/progress.type";
 import { useCourses } from "./course";
 export function create(courseId: number, name: string) {
   const courses = useCourses();
@@ -7,7 +7,7 @@ export function create(courseId: number, name: string) {
       const progress = {
         id: Math.random(),
         name,
-        stage: ProgressStage["Just Learned"],
+        stage: ProgressStageObject["Just Learned"],
         lastDate: Date.now(),
       };
       course.progresses.push(progress);
