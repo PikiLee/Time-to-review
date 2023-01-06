@@ -15,6 +15,7 @@ export function create(name: string) {
     status: CourseStatus["In Progress"],
     archived: false,
     createdAt: Date.now(),
+    progresses: [],
   };
   courses.value.push(newCourse);
 }

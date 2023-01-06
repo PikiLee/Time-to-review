@@ -1,3 +1,5 @@
+import type { Progress } from "./progress.type";
+
 export enum CourseStatus {
   "In Progress",
   "Done",
@@ -9,4 +11,5 @@ export interface Course {
   status: CourseStatus;
   archived: boolean;
   createdAt: number;
+  progresses: Progress[];
 }
