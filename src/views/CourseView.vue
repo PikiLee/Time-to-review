@@ -5,7 +5,7 @@ import { useArrayFind } from "@vueuse/shared";
 import { useRoute } from "vue-router";
 import { useSetting } from "@/database/setting";
 import dayjs from "dayjs/esm";
-import { computed } from "vue";
+import { del } from "@/database/progress";
 
 const courses = useCourses();
 const route = useRoute();
@@ -65,8 +65,13 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
         </template>
       </el-table-column>
       <el-table-column label="Operations">
-        <template #default>
-          <el-button size="small" type="danger">Delete</el-button>
+        <template #default="scope">
+          <el-button
+            size="small"
+            type="danger"
+            @click="del(course?.id, scope.row.id)"
+            >Delete</el-button
+          >
         </template>
       </el-table-column>
     </el-table>

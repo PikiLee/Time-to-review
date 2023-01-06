@@ -14,3 +14,17 @@ export function create(courseId: number, name: string) {
     }
   });
 }
+
+export function del(courseId: number, progressId: number) {
+  const courses = useCourses();
+  courses.value = courses.value.map((course) => {
+    if (course.id === courseId) {
+      course.progresses = course.progresses.filter(
+        (progress) => progress.id !== progressId
+      );
+      return course;
+    } else {
+      return course;
+    }
+  });
+}
