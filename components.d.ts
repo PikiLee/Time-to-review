@@ -13,6 +13,7 @@ declare module '@vue/runtime-core' {
     CourseCreator: typeof import('./src/components/Course/CourseCreator.vue')['default']
     ElAffix: typeof import("element-plus/es")["ElAffix"]
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElEmpty: typeof import('element-plus/es')['ElEmpty']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElLink: typeof import("element-plus/es")["ElLink"]
     ElSwitch: typeof import("element-plus/es")["ElSwitch"]

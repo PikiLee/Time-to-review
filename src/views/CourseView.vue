@@ -1,7 +1,19 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useCourses } from "@/database/course";
+import { useArrayFind } from "@vueuse/shared";
+import { useRoute } from "vue-router";
+
+const courses = useCourses();
+const route = useRoute();
+
+const course = useArrayFind(
+  courses,
+  (course) => course.id === Number(route.params.id)
+);
+</script>
 <template>
-  <div>
-    <h2>计算机网络原理</h2>
+  <div v-if="course">
+    <h2>{{ course.name }}</h2>
     <ul list-none>
       <li
         grid
@@ -22,6 +34,7 @@
       </li>
     </ul>
   </div>
+  <el-empty description="Course Not Found." v-else />
 </template>
 
 <style scoped></style>
