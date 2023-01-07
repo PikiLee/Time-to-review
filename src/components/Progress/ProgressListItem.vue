@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { ProgressStageObject, type Progress } from "@/types/progress.type";
-import { useSetting } from "@/database/setting";
-import dayjs from "dayjs/esm";
 import { del } from "@/database/progress";
 import { useVModel } from "@vueuse/core";
-import { computed } from "vue";
 import { useDue } from "@/utils/useDue";
 import { useCourse } from "@/utils/useCourse";
+import { useNextDate } from "@/utils/useNextDate";
 
 const props = defineProps<{
   progress: Progress;
@@ -16,20 +14,7 @@ const emit = defineEmits(["update:progress"]);
 const data = useVModel(props, "progress", emit);
 
 const course = useCourse();
-
-const nextDate = computed(() => {
-  const setting = useSetting();
-  const lastDate = dayjs(props.progress.lastDate);
-  const nextDate =
-    props.progress.stage === ProgressStageObject["Reviewed Fourth Times"]
-      ? "Done"
-      : lastDate
-          .add(setting.value.progressStageInterval[props.progress.stage], "day")
-          .format("YYYY-MM-DD");
-
-  return nextDate;
-});
-
+const nextDate = useNextDate(props.progress.lastDate, props.progress.stage);
 const isDue = useDue(nextDate);
 </script>
 
