@@ -1,9 +1,14 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useDueCourses } from "@/utils/useDueCourse";
+
+const dueCourses = useDueCourses();
+</script>
 
 <template>
   <main>
-    <div v-for="i in 5" :key="i">
-      <h2>计算机网络</h2>
+    <h2>Courses that need to review</h2>
+    <div v-for="course in dueCourses" :key="course.id">
+      <h2>{{ course.name }}</h2>
       <section grid grid-cols-2 gap-6 p-4>
         <div
           grid
@@ -11,8 +16,8 @@
           grid-cols-4
           gap-2
           items-center
-          v-for="n in 5"
-          :key="n"
+          v-for="progress in course.progresses"
+          :key="progress.id"
         >
           <div
             row-span-2
@@ -20,8 +25,8 @@
             text-size-3xl
             justify-self-center
           ></div>
-          <h3 col-span-3 m-0>第一章</h3>
-          <div col-span-3>1st review</div>
+          <h3 col-span-3 m-0>{{ progress.name }}</h3>
+          <div col-span-3>{{ progress.stage }}</div>
         </div>
       </section>
     </div>
