@@ -30,19 +30,6 @@ function getFormatedDates(lastTime: string, stage: ProgressStage) {
     nextDate,
   };
 }
-
-function getNextDate(lastTime: number, stage: ProgressStage) {
-  const setting = useSetting();
-  const lastDate = dayjs(lastTime);
-  const nextDate =
-    stage === ProgressStageObject["Reviewed Fourth Times"]
-      ? "Done"
-      : lastDate
-          .add(setting.value.progressStageInterval[stage], "day")
-          .format("YYYY-MM-DD");
-
-  return nextDate;
-}
 </script>
 <template>
   <div v-if="course">
@@ -109,6 +96,7 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
             type="date"
             placeholder="Pick a day"
             :style="{ width: '100%' }"
+            :clearable="false"
           />
         </time>
         <time col-span-3>{{
