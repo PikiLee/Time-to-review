@@ -27,6 +27,7 @@ const dueProgresses = useArrayFilter(props.course.progresses, (progress) => {
       <ProgressCard
         v-for="progress in dueProgresses"
         :key="progress.id"
+        :courseId="course.id"
         :name="progress.name"
         :stage="progress.stage"
       />

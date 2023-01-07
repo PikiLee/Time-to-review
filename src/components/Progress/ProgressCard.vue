@@ -5,6 +5,7 @@ import {
 } from "@/types/progress.type";
 
 defineProps<{
+  courseId: number;
   name: string;
   stage: ProgressStage;
 }>();
@@ -12,7 +13,12 @@ defineProps<{
 
 <template>
   <div grid grid-rows-2 grid-cols-1 gap-2 items-center>
-    <h3 m-0>{{ name }}</h3>
+    <RouterLink
+      link-decoration-none
+      :to="{ name: 'course', params: { id: courseId }, hash: '#' + name }"
+    >
+      <h3 m-0 hover:text-lime-500>{{ name }}</h3>
+    </RouterLink>
     <div>
       {{ ProgressStageObjectReversed[stage] }}
     </div>
