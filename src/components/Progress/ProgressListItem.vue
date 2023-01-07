@@ -5,6 +5,7 @@ import dayjs from "dayjs/esm";
 import { del } from "@/database/progress";
 import { useVModel } from "@vueuse/core";
 import { computed } from "vue";
+import { useDue } from "@/utils/useDue";
 
 const props = defineProps<{
   courseId: number;
@@ -27,11 +28,7 @@ const nextDate = computed(() => {
   return nextDate;
 });
 
-const isDue = computed(() => {
-  const next = dayjs(nextDate.value).valueOf();
-  const today = dayjs().startOf("day").valueOf();
-  return next - today <= 0;
-});
+const isDue = useDue(nextDate);
 </script>
 
 <template>
