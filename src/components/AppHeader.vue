@@ -8,7 +8,7 @@ const toggleDark = useToggle(isDark);
 <template>
   <div grid grid-cols-12 py-4 gap-8>
     <div col-span-1 md:col-span-2></div>
-    <a
+    <RouterLink
       flex
       justify-start
       items-center
@@ -17,8 +17,7 @@ const toggleDark = useToggle(isDark);
       col-span-2
       md:col-span-4
       link-decoration-none
-      href="/"
-      alt="home"
+      :to="{ name: 'home' }"
     >
       <div>
         <img
@@ -29,25 +28,23 @@ const toggleDark = useToggle(isDark);
         />
       </div>
       <h1 text-5 display-none md:block>Time To Review</h1>
-    </a>
+    </RouterLink>
     <div col-span-6 md-col-span-4 flex flex-row gap-4 items-center justify-end>
-      <a
+      <RouterLink
         font-600
         text-lg
         link-decoration-none
         hover:text-lime-500
-        href="/"
-        alt="Home"
-        >HOME</a
+        :to="{ name: 'home' }"
+        >HOME</RouterLink
       >
-      <a
+      <RouterLink
         font-600
         text-lg
         link-decoration-none
         hover:text-lime-500
-        href="/courses"
-        alt="Courses"
-        >COURSES</a
+        :to="{ name: 'courses' }"
+        >COURSES</RouterLink
       >
     </div>
     <div
