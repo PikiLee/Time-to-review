@@ -8,7 +8,12 @@ const dueCourses = useDueCourses();
   <main>
     <h2>Courses that need to review</h2>
     <div v-for="course in dueCourses" :key="course.id">
-      <h2>{{ course.name }}</h2>
+      <RouterLink
+        link-decoration-none
+        :to="{ name: 'course', params: { id: course.id } }"
+      >
+        <h2 hover:text-lime-500>{{ course.name }}</h2>
+      </RouterLink>
       <section grid grid-cols-2 gap-6 p-4>
         <div
           grid
