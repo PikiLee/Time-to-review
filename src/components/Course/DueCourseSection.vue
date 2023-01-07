@@ -23,7 +23,7 @@ const dueProgresses = useArrayFilter(props.course.progresses, (progress) => {
     >
       <h2 hover:text-lime-500>{{ course.name }}</h2>
     </RouterLink>
-    <section grid grid-cols-2 gap-6 p-4>
+    <section grid grid-cols-3 gap-6 p-4>
       <ProgressCard
         v-for="progress in dueProgresses"
         :key="progress.id"
