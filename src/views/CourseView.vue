@@ -78,12 +78,16 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
       </el-table-column>
       <el-table-column label="Operations">
         <template #default="scope">
-          <!-- <el-button
+          <el-button
             size="small"
             type="danger"
-            @click="del(course?.id, scope.row.id)"
+            @click="
+              () => {
+                if (course) del(course.id, scope.row.id);
+              }
+            "
             >Delete</el-button
-          > -->
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -118,7 +122,6 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
           <button i-ic-round-delete-forever text-2xl hover:text-red></button>
         </div>
         <h3 m-0>{{ progress.name }}</h3>
-        <span>{{ ProgressStageObject[progress.stage] }}</span>
         <time>{{
           getFormatedDates(progress.lastDate, progress.stage).lastDate
         }}</time>
