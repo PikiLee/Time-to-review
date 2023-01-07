@@ -4,6 +4,8 @@ import { create as createCourse } from "@/database/course";
 import { create as createProgress } from "@/database/progress";
 import { useRoute } from "vue-router";
 
+const emit = defineEmits(["ok"]);
+
 const route = useRoute();
 const input = ref("");
 const defaultPlaceholder = computed(() => {
@@ -22,6 +24,7 @@ function handleCreate() {
     } else {
       createCourse(input.value);
     }
+    emit("ok");
   } catch (error) {
     placeholder.value = String(error);
   } finally {

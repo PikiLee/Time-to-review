@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+import { ref } from "vue";
 import { RouterView } from "vue-router";
 import AppHeader from "./components/AppHeader.vue";
+import CourseCreator from "./components/Course/CourseCreator.vue";
 import SideBar from "./components/SideBar.vue";
+
+const dialogVisible = ref(false);
+const breakpoints = useBreakpoints(breakpointsTailwind);
+const largerThanMd = breakpoints.greater("md");
 </script>
 
 <template>
@@ -23,4 +30,26 @@ import SideBar from "./components/SideBar.vue";
       <SideBar col-span-3 display-none md:block />
     </div>
   </div>
+
+  <el-button
+    type="primary"
+    circle
+    fixed
+    right-10
+    bottom-10
+    size="large"
+    @click="dialogVisible = true"
+  >
+    <template #icon>
+      <div i-mdi-add></div>
+    </template>
+  </el-button>
+
+  <el-dialog
+    v-model="dialogVisible"
+    title="Create"
+    :width="largerThanMd ? '40%' : '90%'"
+  >
+    <CourseCreator @ok="dialogVisible = false" />
+  </el-dialog>
 </template>
