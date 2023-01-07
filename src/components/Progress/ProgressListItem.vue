@@ -6,14 +6,16 @@ import { del } from "@/database/progress";
 import { useVModel } from "@vueuse/core";
 import { computed } from "vue";
 import { useDue } from "@/utils/useDue";
+import { useCourse } from "@/utils/useCourse";
 
 const props = defineProps<{
-  courseId: number;
   progress: Progress;
 }>();
 const emit = defineEmits(["update:progress"]);
 
 const data = useVModel(props, "progress", emit);
+
+const course = useCourse();
 
 const nextDate = computed(() => {
   const setting = useSetting();
@@ -48,7 +50,11 @@ const isDue = useDue(nextDate);
         i-ic-round-delete-forever
         text-2xl
         hover:text-red
-        @click="del(courseId, progress.id)"
+        @click="
+          () => {
+            if (course) del(course.id, progress.id);
+          }
+        "
       ></button>
     </div>
     <h3 m-0 col-span-2>
