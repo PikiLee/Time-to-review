@@ -16,7 +16,7 @@ import SideBar from "./components/SideBar.vue";
     dark:bg-warmgray-800
   >
     <AppHeader />
-    <div w-4xl max-w-screen mx-auto px-8 grid grid-cols-12>
+    <div w-4xl max-w-screen mx-auto px-8 grid grid-cols-12 gap-4>
       <div col-span-9>
         <RouterView />
       </div>

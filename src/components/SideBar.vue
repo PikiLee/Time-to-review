@@ -2,7 +2,7 @@
 import type CourseCreator from "./Course/CourseCreator.vue";
 </script>
 <template>
-  <div>
+  <div mt-18>
     <CourseCreator />
   </div>
 </template>

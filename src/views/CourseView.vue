@@ -22,8 +22,7 @@ const course = useArrayFind(
         items-center
         border-b
         border-b-warmgray-300
-        pb-2
-        mb-2
+        p-2
         gap-2
       >
         <span col-span-1>Actions</span>

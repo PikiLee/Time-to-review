@@ -40,12 +40,11 @@ const isDue = useDue(nextDate);
     items-center
     border-b
     border-b-warmgray-300
-    py-2
-    my-1
+    p-2
     gap-2
     :class="{ 'bg-yellow-300': isDue }"
   >
-    <div col-span-1>
+    <div col-span-1 grid place-items-center>
       <button
         i-ic-round-delete-forever
         text-2xl

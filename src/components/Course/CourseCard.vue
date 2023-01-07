@@ -93,14 +93,9 @@ const createdTime = computed(() => {
       <RouterLink
         link-decoration-none
         :to="{ name: 'course', params: { id: course.id } }"
+        col-span-3
       >
-        <h3
-          col-span-3
-          m-0
-          data-test="course-name"
-          cursor-pointer
-          hover:text-lime-500
-        >
+        <h3 m-0 data-test="course-name" cursor-pointer hover:text-lime-500>
           {{ course.name }}
         </h3>
       </RouterLink>
