@@ -15,7 +15,7 @@ const course = useArrayFind(
   (course) => course.id === Number(route.params.id)
 );
 
-function getFormatedDates(lastTime: number, stage: ProgressStage) {
+function getFormatedDates(lastTime: string, stage: ProgressStage) {
   const setting = useSetting();
   const lastDate = dayjs(lastTime);
   const nextDate =
@@ -68,7 +68,13 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
       </el-table-column>
       <el-table-column prop="lastDate" label="Last Review Date">
         <template #default="scope">
-          {{ dayjs(scope.row.lastDate).format("YYYY-MM-DD") }}
+          <!-- {{ dayjs(scope.row.lastDate).format("YYYY-MM-DD") }} -->
+          <el-date-picker
+            v-model="scope.row.lastDate"
+            type="date"
+            placeholder="Pick a day"
+            size="small"
+          />
         </template>
       </el-table-column>
       <el-table-column prop="nextDate" label="Next Review Date">

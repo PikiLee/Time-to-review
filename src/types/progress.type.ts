@@ -14,5 +14,5 @@ export interface Progress {
   id: number;
   name: string;
   stage: ProgressStage;
-  lastDate: number;
+  lastDate: string;
 }

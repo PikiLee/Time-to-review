@@ -8,7 +8,7 @@ export function create(courseId: number, name: string) {
         id: Math.random(),
         name,
         stage: ProgressStageObject["Just Learned"],
-        lastDate: Date.now(),
+        lastDate: Date().toString(),
       };
       course.progresses.push(progress);
     }
