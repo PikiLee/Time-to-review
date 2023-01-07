@@ -15,7 +15,7 @@ const course = useArrayFind(
 <template>
   <div v-if="course">
     <h2>{{ course.name }}</h2>
-    <ul list-none v-if="course.progresses.length !== 0">
+    <ul list-none v-if="course.progresses.length">
       <li
         grid
         grid-cols-12
@@ -38,6 +38,7 @@ const course = useArrayFind(
         :progress="progress"
       />
     </ul>
+    <el-empty v-else description="No progress created yet." />
   </div>
   <el-empty description="Course Not Found." v-else />
 </template>

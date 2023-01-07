@@ -7,11 +7,15 @@ const dueCourses = useDueCourses();
 
 <template>
   <main>
-    <h2>Courses that need to review</h2>
+    <h2>Courses that need review</h2>
     <DueCourseSection
       v-for="course in dueCourses"
       :key="course.id"
       :course="course"
+    />
+    <el-empty
+      description="No courses need review yet."
+      v-if="dueCourses.length === 0"
     />
   </main>
 </template>
