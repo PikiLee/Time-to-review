@@ -1,6 +1,5 @@
 import { reactify } from "@vueuse/core";
 import type { Course } from "./../types/course.type";
-import type { Progress } from "@/types/progress.type";
 import { useCourses } from "./../database/course";
 import { getNextDate } from "./useNextDate";
 import { getIsDue } from "./useDue";
