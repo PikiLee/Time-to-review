@@ -10,7 +10,7 @@ export function create(name: string) {
   if (!name) throw "Must not empty!";
   const courses = useCourses();
   const newCourse: Course = {
-    id: Math.random(),
+    id: Number(Math.random().toString().substring(2)),
     name,
     status: CourseStatus["In Progress"],
     archived: false,
