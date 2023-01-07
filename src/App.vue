@@ -17,10 +17,10 @@ import SideBar from "./components/SideBar.vue";
   >
     <AppHeader />
     <div w-4xl max-w-screen mx-auto px-8 grid grid-cols-12 gap-4>
-      <div col-span-9>
+      <div col-span-12 md:col-span-9>
         <RouterView />
       </div>
-      <SideBar col-span-3 />
+      <SideBar col-span-3 display-none md:block />
     </div>
   </div>
 </template>

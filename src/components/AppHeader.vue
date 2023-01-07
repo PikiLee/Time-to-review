@@ -6,15 +6,16 @@ const toggleDark = useToggle(isDark);
 </script>
 
 <template>
-  <div grid grid-cols-12 py-2 gap-8>
-    <div col-span-2></div>
+  <div grid grid-cols-12 py-4 gap-8>
+    <div col-span-1 md:col-span-2></div>
     <a
       flex
       justify-start
       items-center
       flex-row
       gap-3
-      col-span-4
+      col-span-2
+      md:col-span-4
       link-decoration-none
       href="/"
       alt="home"
@@ -27,9 +28,9 @@ const toggleDark = useToggle(isDark);
           w-10
         />
       </div>
-      <h1 text-5>Time To Review</h1>
+      <h1 text-5 display-none md:block>Time To Review</h1>
     </a>
-    <div col-span-4 flex flex-row gap-4 items-center justify-end>
+    <div col-span-6 md-col-span-4 flex flex-row gap-4 items-center justify-end>
       <a
         font-600
         text-lg
@@ -49,7 +50,15 @@ const toggleDark = useToggle(isDark);
         >COURSES</a
       >
     </div>
-    <div col-span-2 flex flex-row items-center justify-start self-center>
+    <div
+      col-span-3
+      md:col-span-2
+      flex
+      flex-row
+      items-center
+      justify-start
+      self-center
+    >
       <div @click="toggleDark()" cursor-pointer mb="0.125rem">
         <span
           text-xl

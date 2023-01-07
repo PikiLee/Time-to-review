@@ -60,7 +60,7 @@ const isDue = useDue(nextDate);
     <h3 m-0 col-span-2>
       <el-input v-model="data.name" />
     </h3>
-    <div col-span-3>
+    <div col-span-4>
       <div p-1>
         <el-select v-model="data.stage">
           <el-option
@@ -81,6 +81,6 @@ const isDue = useDue(nextDate);
         :clearable="false"
       />
     </time>
-    <time col-span-3>{{ nextDate }}</time>
+    <time col-span-2>{{ nextDate }}</time>
   </li>
 </template>
