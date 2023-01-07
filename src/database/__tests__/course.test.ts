@@ -12,6 +12,7 @@ beforeEach(() => {
       status: CourseStatus["In Progress"],
       archived: false,
       createdAt: Date.now(),
+      progresses: [],
     },
     {
       id: 2,
@@ -19,6 +20,7 @@ beforeEach(() => {
       status: CourseStatus["In Progress"],
       archived: false,
       createdAt: Date.now(),
+      progresses: [],
     },
   ];
 });
