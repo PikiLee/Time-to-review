@@ -48,7 +48,11 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
   <div v-if="course">
     <h2>{{ course.name }}</h2>
     <el-table :data="course.progresses" style="width: 100%">
-      <el-table-column prop="name" label="Name" />
+      <el-table-column prop="name" label="Name">
+        <template #default="scope">
+          <el-input v-model="scope.row.name" />
+        </template>
+      </el-table-column>
       <el-table-column prop="stage" label="Stage">
         <template #default="scope">
           <el-select
