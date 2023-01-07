@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ProgressStageObjectReversed } from "@/types/progress.type";
 import { useDueCourses } from "@/utils/useDueCourse";
 
 const dueCourses = useDueCourses();
@@ -31,7 +32,9 @@ const dueCourses = useDueCourses();
             justify-self-center
           ></div>
           <h3 col-span-3 m-0>{{ progress.name }}</h3>
-          <div col-span-3>{{ progress.stage }}</div>
+          <div col-span-3>
+            {{ ProgressStageObjectReversed[progress.stage] }}
+          </div>
         </div>
       </section>
     </div>

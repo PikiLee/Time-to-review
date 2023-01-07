@@ -6,6 +6,15 @@ export const ProgressStageObject = {
   "Reviewed Fourth Times": 4,
 } as const;
 
+export const ProgressStageObjectReversed = {} as Record<
+  ProgressStage,
+  ProgressStageStrings
+>;
+
+for (const [key, value] of Object.entries(ProgressStageObject)) {
+  ProgressStageObjectReversed[value] = key as ProgressStageStrings;
+}
+
 export type ProgressStage =
   typeof ProgressStageObject[keyof typeof ProgressStageObject];
 export type ProgressStageStrings = keyof typeof ProgressStageObject;
