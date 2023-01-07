@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ProgressStageObjectReversed } from "@/types/progress.type";
+import ProgressCard from "@/components/Progress/ProgressCard.vue";
 import { useDueCourses } from "@/utils/useDueCourse";
 
 const dueCourses = useDueCourses();
@@ -16,26 +16,11 @@ const dueCourses = useDueCourses();
         <h2 hover:text-lime-500>{{ course.name }}</h2>
       </RouterLink>
       <section grid grid-cols-2 gap-6 p-4>
-        <div
-          grid
-          grid-rows-2
-          grid-cols-4
-          gap-2
-          items-center
+        <ProgressCard
           v-for="progress in course.progresses"
           :key="progress.id"
-        >
-          <div
-            row-span-2
-            i-ic-round-done
-            text-size-3xl
-            justify-self-center
-          ></div>
-          <h3 col-span-3 m-0>{{ progress.name }}</h3>
-          <div col-span-3>
-            {{ ProgressStageObjectReversed[progress.stage] }}
-          </div>
-        </div>
+          :progress="progress"
+        />
       </section>
     </div>
   </main>
