@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { useCourses } from "@/database/course";
-import { ProgressStageObject, type ProgressStage } from "@/types/progress.type";
 import { useArrayFind } from "@vueuse/shared";
 import { useRoute } from "vue-router";
-import { useSetting } from "@/database/setting";
-import dayjs from "dayjs/esm";
-import { del } from "@/database/progress";
+import ProgressListItem from "@/components/Progress/ProgressListItem.vue";
 
 const courses = useCourses();
 const route = useRoute();
@@ -14,22 +11,6 @@ const course = useArrayFind(
   courses,
   (course) => course.id === Number(route.params.id)
 );
-
-function getFormatedDates(lastTime: string, stage: ProgressStage) {
-  const setting = useSetting();
-  const lastDate = dayjs(lastTime);
-  const nextDate =
-    stage === ProgressStageObject["Reviewed Fourth Times"]
-      ? "Done"
-      : lastDate
-          .add(setting.value.progressStageInterval[stage], "day")
-          .format("YYYY-MM-DD");
-
-  return {
-    lastDate: lastDate.format("YYYY-MM-DD"),
-    nextDate,
-  };
-}
 </script>
 <template>
   <div v-if="course">
@@ -51,58 +32,12 @@ function getFormatedDates(lastTime: string, stage: ProgressStage) {
         <span col-span-3>Last Review Date</span>
         <span col-span-3>Next Review Date</span>
       </li>
-      <li
+      <ProgressListItem
         v-for="progress in course.progresses"
         :key="progress.id"
-        grid
-        grid-cols-12
-        items-center
-        border-b
-        border-b-warmgray-300
-        pb-2
-        mb-2
-        gap-2
-      >
-        <div col-span-1>
-          <button
-            i-ic-round-delete-forever
-            text-2xl
-            hover:text-red
-            @click="
-              () => {
-                if (course) del(course.id, progress.id);
-              }
-            "
-          ></button>
-        </div>
-        <h3 m-0 col-span-2>
-          <el-input v-model="progress.name" />
-        </h3>
-        <div col-span-3>
-          <div p-1>
-            <el-select v-model="progress.stage">
-              <el-option
-                v-for="(value, key) in ProgressStageObject"
-                :key="key"
-                :label="key"
-                :value="value"
-              />
-            </el-select>
-          </div>
-        </div>
-        <time col-span-3>
-          <el-date-picker
-            v-model="progress.lastDate"
-            type="date"
-            placeholder="Pick a day"
-            :style="{ width: '100%' }"
-            :clearable="false"
-          />
-        </time>
-        <time col-span-3>{{
-          getFormatedDates(progress.lastDate, progress.stage).nextDate
-        }}</time>
-      </li>
+        :courseId="course.id"
+        :progress="progress"
+      />
     </ul>
   </div>
   <el-empty description="Course Not Found." v-else />
