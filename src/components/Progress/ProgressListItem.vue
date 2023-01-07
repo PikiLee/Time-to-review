@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ProgressStageObject, type Progress } from "@/types/progress.type";
+import {
+  ProgressStageObject,
+  type Progress,
+  type ProgressStage,
+} from "@/types/progress.type";
 import { del } from "@/database/progress";
 import { useVModel } from "@vueuse/core";
 import { useDue } from "@/utils/useDue";
 import { useCourse } from "@/utils/useCourse";
 import { useNextDate } from "@/utils/useNextDate";
+import { watch, ref } from "vue";
 
 const props = defineProps<{
   progress: Progress;
@@ -12,9 +17,19 @@ const props = defineProps<{
 const emit = defineEmits(["update:progress"]);
 
 const data = useVModel(props, "progress", emit);
+const lastDate = ref("");
+const stage = ref<ProgressStage>(0);
+watch(
+  () => props.progress,
+  (newProgress) => {
+    lastDate.value = newProgress.lastDate;
+    stage.value = newProgress.stage;
+  },
+  { immediate: true }
+);
 
 const course = useCourse();
-const nextDate = useNextDate(props.progress.lastDate, props.progress.stage);
+const nextDate = useNextDate(lastDate, stage);
 const isDue = useDue(nextDate);
 </script>
 
