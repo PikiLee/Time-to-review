@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ProgressCard from "@/components/Progress/ProgressCard.vue";
+import DueCourseSection from "@/components/Course/DueCourseSection.vue";
 import { useDueCourses } from "@/utils/useDueCourse";
 
 const dueCourses = useDueCourses();
@@ -8,20 +8,10 @@ const dueCourses = useDueCourses();
 <template>
   <main>
     <h2>Courses that need to review</h2>
-    <div v-for="course in dueCourses" :key="course.id">
-      <RouterLink
-        link-decoration-none
-        :to="{ name: 'course', params: { id: course.id } }"
-      >
-        <h2 hover:text-lime-500>{{ course.name }}</h2>
-      </RouterLink>
-      <section grid grid-cols-2 gap-6 p-4>
-        <ProgressCard
-          v-for="progress in course.progresses"
-          :key="progress.id"
-          :progress="progress"
-        />
-      </section>
-    </div>
+    <DueCourseSection
+      v-for="course in dueCourses"
+      :key="course.id"
+      :course="course"
+    />
   </main>
 </template>

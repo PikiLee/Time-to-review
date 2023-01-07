@@ -9,20 +9,17 @@ export function getDueCourses() {
   const dueCourses: Course[] = [];
   courses.value.forEach((course) => {
     let haveDueProgress = false;
-    const dueCourse = { ...course };
-    const dueProgresses: Progress[] = [];
-    course.progresses.forEach((progress) => {
+    for (const progress of course.progresses) {
       const nextDate = getNextDate(progress.lastDate, progress.stage);
       const isDue = getIsDue(nextDate);
       if (isDue) {
         haveDueProgress = true;
-        dueProgresses.push(progress);
+        break;
       }
-    });
+    }
 
     if (haveDueProgress) {
-      dueCourse.progresses = dueProgresses;
-      dueCourses.push(dueCourse);
+      dueCourses.push(course);
     }
   });
 
