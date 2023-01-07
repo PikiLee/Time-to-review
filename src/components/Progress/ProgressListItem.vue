@@ -42,7 +42,7 @@ const isDue = useDue(nextDate);
     border-b-warmgray-300
     p-2
     gap-2
-    :class="{ 'bg-yellow-300': isDue }"
+    :class="{ 'bg-yellow-300 dark:bg-yellow-800': isDue }"
     :id="progress.name"
   >
     <div col-span-1 grid place-items-center>
