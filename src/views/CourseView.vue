@@ -47,95 +47,67 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
 <template>
   <div v-if="course">
     <h2>{{ course.name }}</h2>
-    <el-table :data="course.progresses" style="width: 100%">
-      <el-table-column prop="name" label="Name">
-        <template #default="scope">
-          <el-input v-model="scope.row.name" />
-        </template>
-      </el-table-column>
-      <el-table-column prop="stage" label="Stage">
-        <template #default="scope">
-          <el-select
-            v-model="scope.row.stage"
-            class="m-2"
-            placeholder="Select"
-            size="large"
-          >
-            <el-option
-              v-for="(value, key) in ProgressStageObject"
-              :key="key"
-              :label="key"
-              :value="value"
-            />
-          </el-select>
-        </template>
-      </el-table-column>
-      <el-table-column prop="lastDate" label="Last Review Date">
-        <template #default="scope">
-          <!-- {{ dayjs(scope.row.lastDate).format("YYYY-MM-DD") }} -->
-          <el-date-picker
-            v-model="scope.row.lastDate"
-            type="date"
-            placeholder="Pick a day"
-            size="small"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column prop="nextDate" label="Next Review Date">
-        <template #default="scope">
-          {{ getNextDate(scope.row.lastDate, scope.row.stage) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="Operations">
-        <template #default="scope">
-          <el-button
-            size="small"
-            type="danger"
-            @click="
-              () => {
-                if (course) del(course.id, scope.row.id);
-              }
-            "
-            >Delete</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
     <ul list-none v-if="course.progresses.length !== 0">
       <li
         grid
-        grid-cols-5
+        grid-cols-12
         items-center
         border-b
         border-b-warmgray-300
         pb-2
         mb-2
+        gap-2
       >
-        <span>Actions</span>
-        <span>Progress Name</span>
-        <span>Stage</span>
-        <span>Last Review Date</span>
-        <span>Next Review Date</span>
+        <span col-span-1>Actions</span>
+        <span col-span-2>Progress Name</span>
+        <span col-span-3>Stage</span>
+        <span col-span-3>Last Review Date</span>
+        <span col-span-3>Next Review Date</span>
       </li>
       <li
         v-for="progress in course.progresses"
         :key="progress.id"
         grid
-        grid-cols-5
+        grid-cols-12
         items-center
         border-b
         border-b-warmgray-300
         pb-2
         mb-2
+        gap-2
       >
-        <div>
+        <div col-span-1>
           <button i-ic-round-delete-forever text-2xl hover:text-red></button>
         </div>
-        <h3 m-0>{{ progress.name }}</h3>
-        <time>{{
-          getFormatedDates(progress.lastDate, progress.stage).lastDate
-        }}</time>
-        <time>{{
+        <h3 m-0 col-span-2>
+          <!-- <template>
+            {{ progress.name }}
+          </template> -->
+          <el-input v-model="progress.name" />
+        </h3>
+        <div col-span-3>
+          <!-- {{ progress.stage }} -->
+          <div p-1>
+            <el-select v-model="progress.stage">
+              <el-option
+                v-for="(value, key) in ProgressStageObject"
+                :key="key"
+                :label="key"
+                :value="value"
+              />
+            </el-select>
+          </div>
+        </div>
+        <time col-span-3>
+          <!-- {{ getFormatedDates(progress.lastDate, progress.stage).lastDate }} -->
+          <el-date-picker
+            v-model="progress.lastDate"
+            type="date"
+            placeholder="Pick a day"
+            :style="{ width: '100%' }"
+          />
+        </time>
+        <time col-span-3>{{
           getFormatedDates(progress.lastDate, progress.stage).nextDate
         }}</time>
       </li>
