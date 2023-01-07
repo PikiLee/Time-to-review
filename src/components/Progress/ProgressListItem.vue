@@ -40,8 +40,8 @@ const isDue = useDue(nextDate);
     items-center
     border-b
     border-b-warmgray-300
-    pb-2
-    mb-2
+    py-2
+    my-1
     gap-2
     :class="{ 'bg-yellow-300': isDue }"
   >
