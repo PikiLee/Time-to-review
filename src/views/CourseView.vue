@@ -77,16 +77,21 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
         gap-2
       >
         <div col-span-1>
-          <button i-ic-round-delete-forever text-2xl hover:text-red></button>
+          <button
+            i-ic-round-delete-forever
+            text-2xl
+            hover:text-red
+            @click="
+              () => {
+                if (course) del(course.id, progress.id);
+              }
+            "
+          ></button>
         </div>
         <h3 m-0 col-span-2>
-          <!-- <template>
-            {{ progress.name }}
-          </template> -->
           <el-input v-model="progress.name" />
         </h3>
         <div col-span-3>
-          <!-- {{ progress.stage }} -->
           <div p-1>
             <el-select v-model="progress.stage">
               <el-option
@@ -99,7 +104,6 @@ function getNextDate(lastTime: number, stage: ProgressStage) {
           </div>
         </div>
         <time col-span-3>
-          <!-- {{ getFormatedDates(progress.lastDate, progress.stage).lastDate }} -->
           <el-date-picker
             v-model="progress.lastDate"
             type="date"
