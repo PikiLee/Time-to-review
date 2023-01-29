@@ -25,11 +25,11 @@ const course = useArrayFind(
         p-2
         gap-2
       >
-        <span col-span-1>Actions</span>
-        <span col-span-2>Progress Name</span>
-        <span col-span-4>Stage</span>
+        <!-- <span col-span-1>Actions</span> -->
+        <span col-span-3>Progress Name</span>
+        <span col-span-3>Stage</span>
         <span col-span-3>Last Review Date</span>
-        <span col-span-2>Next Review Date</span>
+        <span col-span-3>Next Review Date</span>
       </li>
       <ProgressListItem
         v-for="progress in course.progresses"
