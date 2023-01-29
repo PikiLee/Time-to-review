@@ -14,7 +14,7 @@ const course = useArrayFind(
 </script>
 <template>
   <div v-if="course">
-    <h2>{{ course.name }}</h2>
+    <h2 text-center>{{ course.name }}</h2>
     <ul list-none v-if="course.progresses.length">
       <li
         grid

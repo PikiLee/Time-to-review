@@ -7,7 +7,7 @@ const dueCourses = useDueCourses();
 
 <template>
   <main>
-    <h2>Courses that need review</h2>
+    <h2 text-center>Courses that need review</h2>
     <DueCourseSection
       v-for="course in dueCourses"
       :key="course.id"

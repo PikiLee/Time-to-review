@@ -7,6 +7,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    AddButton: typeof import('./src/components/AddButton.vue')['default']
     AppHeader: typeof import('./src/components/AppHeader.vue')['default']
     CourseCard: typeof import('./src/components/Course/CourseCard.vue')['default']
     CourseCreator: typeof import('./src/components/Course/CourseCreator.vue')['default']

@@ -20,10 +20,10 @@ const coursesArchived = useArrayFilter(courses, (course) => course.archived);
 </script>
 <template>
   <div>
-    <h2>All Courses</h2>
+    <h2 text-center>All Courses</h2>
     <ul list-none>
       <li>
-        <h3>In Progress</h3>
+        <h3 text-center>In Progress</h3>
         <ul
           list-none
           grid
@@ -42,7 +42,7 @@ const coursesArchived = useArrayFilter(courses, (course) => course.archived);
         <el-empty v-else description="No courses in progress yet." />
       </li>
       <li>
-        <h2>Done</h2>
+        <h2 text-center>Done</h2>
         <ul list-none grid grid-cols-2 gap-6 p-4 v-if="coursesDone.length">
           <CourseCard
             :course="course"
@@ -53,7 +53,7 @@ const coursesArchived = useArrayFilter(courses, (course) => course.archived);
         <el-empty v-else description="No courses have been done yet." />
       </li>
       <li>
-        <h2>Archived</h2>
+        <h2 text-center>Archived</h2>
         <ul list-none grid grid-cols-2 gap-6 p-4 v-if="coursesArchived.length">
           <CourseCard
             :course="course"
