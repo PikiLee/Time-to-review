@@ -18,6 +18,8 @@ export interface Course {
   progresses: Progress[];
 }
 
-export interface NewCourse extends Omit<Course, '_id' | 'owner' | 'progresses'> {
+export interface NewCourse extends Omit<Course, '_id' | 'owner' | 'status' | 'archived' | 'createdAt' | 'progresses'> {
   owner: string;
 }
+
+export type UpdateCourse =  Partial<Omit<Course, '_id' | 'owner' | 'createdAt' | 'progresses'>>

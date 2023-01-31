@@ -1,5 +1,5 @@
 import {  Progress } from './../src/types/progress.type'
-import { Course } from './../src/types/course.type'
+import { Course, NewCourse, UpdateCourse } from './../src/types/course.type'
 import { test, expect,  beforeAll, describe, expectTypeOf } from 'vitest'
 import request from 'supertest'
 import {app} from '../src/app.js'
@@ -8,19 +8,15 @@ import { generateAuthInfo } from './utils.js'
 const courseUrl = '/course'
 const progressUrl = '/progress'
 const client = request.agent(app)
-let userId = ''
-const newCourse = {
+const userId = ''
+const newCourse: NewCourse = {
 	'name': 'cool',
 	'owner': userId,
-	'status': 0,
-	'archived': false,
-	'createdAt': (new Date()).toISOString()
 }
-const updatedCourse = {
+const updateCourse: UpdateCourse = {
 	'name': 'updatedCool',
 	'status': 1,
 	'archived': true,
-	'createdAt': (new Date()).toISOString()
 }
 let retrievedCourse: Course
 const newProgress = {
@@ -46,13 +42,13 @@ beforeAll(async () => {
 			username,
 			password
 		})
-	userId = registerRes.body._id
+	newCourse.owner = registerRes.body._id
 })
 
 describe('course', () => {
 	test('create course', async () => {
 		const res = await client
-			.post(`${courseUrl}/${userId}`)
+			.post(courseUrl)
 			.send(newCourse)
 
 		retrievedCourse = res.body
@@ -72,10 +68,10 @@ describe('course', () => {
 	test('update course', async () => {
 		const res = await client
 			.put(`${courseUrl}/${retrievedCourse._id}`)
-			.send(updatedCourse)
+			.send(updateCourse)
 
 		expect(res.status).toBe(200)
-		expect(res.body).toMatchObject(updatedCourse)
+		expect(res.body).toMatchObject(updateCourse)
 	})
 
 	test('create progress', async () => {

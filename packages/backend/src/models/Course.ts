@@ -1,8 +1,7 @@
-import { courseStatusIndices } from './../types/course.type.js'
-import mongoose from 'mongoose'
+import { courseStatusIndices, NewCourse, UpdateCourse } from './../types/course.type.js'
+import mongoose, { Schema, Query } from 'mongoose'
 import type { Course as CourseType } from '../types/course.type.js'
-
-const { Schema } = mongoose
+import User from './User.js'
 
 const courseSchema = new Schema<CourseType>({
 	name: {
@@ -15,26 +14,60 @@ const courseSchema = new Schema<CourseType>({
 		type: mongoose.SchemaTypes.ObjectId,
 		ref: 'User',
 		required: true,
+		immutable: true,
 	},
 	status: {
 		type: Number,
-		required: true,
-		enum: courseStatusIndices
+		enum: courseStatusIndices,
+		default: 0
 	},
 	archived: {
 		type: Boolean,
-		required: true
+		default: false
 	},
 	createdAt: {
 		type: String,
-		required: true
+		default: () => (new Date()).toISOString()
 	},
 	progresses: [{
 		type: mongoose.SchemaTypes.ObjectId,
 		ref: 'Progress' 
 	}]
-}, {
-	versionKey: false
 })
 
-export const Course = mongoose.model<CourseType>('Blog', courseSchema)
+courseSchema.set('toJSON', {versionKey: false})
+
+export const Course = mongoose.model<CourseType>('Course', courseSchema)
+
+
+export function	popu<T, P>(query: Query<T, P>) {
+	return query.populate('owner').populate('progresses')
+}
+export async function fetch(_id: string) {
+	const query = Course.findById(_id)
+	if (query) {
+		return await popu(query)
+	} else {
+		throw Error('Not Found')
+	}
+	
+}
+
+export async function create(newCourse: NewCourse) {
+	const user = await User.findById(newCourse.owner)
+	if (user) {
+		const course = new Course(newCourse)
+		await course.save()
+		return await fetch(String(course._id))
+	} else {
+		throw Error('User not found.')
+	}
+}
+		
+export async function del(_id: string) {
+	return !!(await Course.findByIdAndDelete(_id))
+}
+
+export async function update(_id: string, updateCourse: UpdateCourse) {
+	return await popu(Course.findByIdAndUpdate(_id, updateCourse, {new: true}))
+}
