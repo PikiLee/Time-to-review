@@ -2,16 +2,7 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 import passportLocalMongoose from 'passport-local-mongoose'
 
-const User = new Schema({
-	courses: [{
-		type: mongoose.SchemaTypes.ObjectId,
-		ref: 'Course'
-	}],
-	progresses: [{
-		type: mongoose.SchemaTypes.ObjectId,
-		ref: 'Progress'
-	}]
-})
+const User = new Schema({})
 
 User.plugin(passportLocalMongoose, {
 	passwordValidator(password: string, cb: any) {
@@ -22,6 +13,18 @@ User.plugin(passportLocalMongoose, {
 		})
 		return cb()
 	}
+})
+
+User.virtual('courses', {
+	ref: 'Course',
+	localField: '_id',
+	foreignField: 'owner'
+})
+
+User.virtual('progresses', {
+	ref: 'Progress',
+	localField: '_id',
+	foreignField: 'owner'
 })
 
 export default mongoose.model('User', User)

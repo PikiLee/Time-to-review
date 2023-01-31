@@ -60,8 +60,6 @@ export async function create(newProgress: NewProgress) {
 	if (user && course) {
 		const progress = new Progress(newProgress)
 		await progress.save()
-		course.progresses.push(progress)
-		await course.save()
 		return await fetch(String(progress._id))
 	} else {
 		throw Error('User not found.')

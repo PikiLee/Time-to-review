@@ -29,11 +29,13 @@ const courseSchema = new Schema<CourseType>({
 		type: String,
 		default: () => (new Date()).toISOString(),
 		immutable: true
-	},
-	progresses: [{
-		type: mongoose.SchemaTypes.ObjectId,
-		ref: 'Progress' 
-	}]
+	}
+})
+
+courseSchema.virtual('progresses', {
+	ref: 'Progress',
+	localField: '_id',
+	foreignField: 'course'
 })
 
 courseSchema.set('toJSON', {versionKey: false, virtuals: true})
@@ -58,8 +60,6 @@ export async function create(newCourse: NewCourse) {
 	if (user) {
 		const course = new Course(newCourse)
 		await course.save()
-		user.courses.push(course)
-		await user.save()
 		return await fetch(String(course._id))
 	} else {
 		throw Error('User not found.')
