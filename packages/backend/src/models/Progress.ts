@@ -26,6 +26,10 @@ const progressSchema = new Schema<ProgressType>({
 		type: String,
 		default: () => (new Date()).toISOString(),
 		immutable: true
+	},
+	order: {
+		type: Number,
+		required: true
 	}
 }, {
 	virtuals: {

@@ -40,6 +40,7 @@ export interface Progress {
   stage: ProgressStage;
   lastDate: string;
   createdAt: string;
+  order: number;
   nextDate: string;
   isDue: boolean;
 }

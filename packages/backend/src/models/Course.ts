@@ -29,6 +29,10 @@ const courseSchema = new Schema<CourseType>({
 		type: String,
 		default: () => (new Date()).toISOString(),
 		immutable: true
+	},
+	order: {
+		type: Number,
+		required: true
 	}
 })
 

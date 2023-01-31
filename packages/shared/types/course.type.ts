@@ -15,6 +15,7 @@ export interface Course {
   status: CourseStatus;
   archived: boolean;
   createdAt: string;
+  order: number;
   progresses: Progress[];
 }
 

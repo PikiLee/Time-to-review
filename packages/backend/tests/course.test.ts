@@ -12,6 +12,7 @@ let userId = ''
 const newCourse: NewCourse = {
 	'name': 'cool',
 	'owner': userId,
+	order: 0.2,
 }
 const updateCourse: UpdateCourse = {
 	'name': 'updatedCool',
@@ -49,7 +50,8 @@ describe('course', () => {
 		newProgress = {
 			name: 'dool',
 			owner: userId,
-			course: retrievedCourse._id
+			course: retrievedCourse._id,
+			order: 0.3,
 		}
 		expect(res.status).toBe(200)
 		expectTypeOf(res.body).toMatchTypeOf<Course>()

@@ -10,6 +10,7 @@
     "watch:backend": "cd ./packages/backend && pnpm run watch",
     "dev:backend": "cd ./packages/backend && pnpm run dev",
     "dev:frontend": "cd ./packages/frontend && pnpm run dev",
+    "build:shared": "cd ./packages/shared && pnpm run build",
     "dev": "run-p dev:*"
   },
   "keywords": [],
