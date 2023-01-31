@@ -1,6 +1,6 @@
-import { NewProgress, UpdateProgress } from './../types/progress.type'
+import { NewProgress, UpdateProgress, getNextDate, getIsDue } from 'shared'
 import mongoose from 'mongoose'
-import { Progress as ProgressType, progressStageIndices } from '../types/progress.type.js'
+import { Progress as ProgressType, progressStageIndices } from 'shared'
 import { Course } from './Course.js'
 import User from './User.js'
 
@@ -26,6 +26,17 @@ const progressSchema = new Schema<ProgressType>({
 		type: String,
 		default: () => (new Date()).toISOString(),
 		immutable: true
+	}
+}, {
+	virtuals: {
+		nextDate() {
+			const self = this as ProgressType
+			return getNextDate(self.lastDate, self.stage)
+		},
+		isDue() {
+			const self = this as ProgressType
+			return getIsDue(self.nextDate)
+		}
 	}
 })
 

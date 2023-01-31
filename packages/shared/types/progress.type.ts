@@ -1,3 +1,5 @@
+import {keys, values} from 'lodash-es'
+
 export const ProgressStageObject = {
 	'Just Learned': 0,
 	'Reviewed Once': 1,
@@ -11,7 +13,8 @@ export const ProgressStageObjectReversed = {} as Record<
   ProgressStageStrings
 >
 
-for (const [key, value] of Object.entries(ProgressStageObject)) {
+for (const key of keys(ProgressStageObject)) {
+	const value = ProgressStageObject[key as (keyof typeof ProgressStageObject)]
 	ProgressStageObjectReversed[value] = key as ProgressStageStrings
 }
 
@@ -19,7 +22,15 @@ export type ProgressStage =
   typeof ProgressStageObject[keyof typeof ProgressStageObject];
 export type ProgressStageStrings = keyof typeof ProgressStageObject;
 
-export const progressStageIndices = Object.values(ProgressStageObject)
+export const progressStageIndices = values(ProgressStageObject)
+
+export const progressStageInterval = {
+	0: 1,
+	1: 7,
+	2: 14,
+	3: 28,
+	4: NaN,
+}
 
 export interface Progress {
   _id: string;
@@ -29,6 +40,8 @@ export interface Progress {
   stage: ProgressStage;
   lastDate: string;
   createdAt: string;
+  nextDate: string;
+  isDue: boolean;
 }
 
 export type NewProgress = Omit<Progress, '_id' | 'stage' | 'lastDate' | 'createdAt'> 

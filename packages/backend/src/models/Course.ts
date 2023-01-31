@@ -1,6 +1,6 @@
-import { courseStatusIndices, NewCourse, UpdateCourse } from './../types/course.type.js'
+import { courseStatusIndices, NewCourse, UpdateCourse } from 'shared'
 import mongoose, { Schema, Query } from 'mongoose'
-import type { Course as CourseType } from '../types/course.type.js'
+import type { Course as CourseType } from 'shared'
 import User from './User.js'
 
 const courseSchema = new Schema<CourseType>({

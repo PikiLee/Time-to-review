@@ -1,5 +1,5 @@
-import type { Progress } from './progress.type'
-import { User } from './user.type'
+import type { Progress } from './progress.type.js'
+import { User } from './user.type.js'
 
 export enum CourseStatus {
   'In Progress',
