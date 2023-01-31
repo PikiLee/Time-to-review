@@ -44,6 +44,6 @@ export interface Progress {
   isDue: boolean;
 }
 
-export type NewProgress = Omit<Progress, '_id' | 'stage' | 'lastDate' | 'createdAt'> 
+export type NewProgress = Omit<Progress, '_id' | 'stage' | 'lastDate' | 'createdAt' | 'nextDate' | 'isDue'> 
 
-export type UpdateProgress = Partial<Omit<Progress, 'course' | 'owner' | 'createdAt' >>
+export type UpdateProgress = Partial<Omit<Progress, 'course' | 'owner' | 'createdAt'  | 'nextDate' | 'isDue'>>

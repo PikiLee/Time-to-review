@@ -36,7 +36,7 @@ const courseSchema = new Schema<CourseType>({
 	}]
 })
 
-courseSchema.set('toJSON', {versionKey: false})
+courseSchema.set('toJSON', {versionKey: false, virtuals: true})
 
 export const Course = mongoose.model<CourseType>('Course', courseSchema)
 

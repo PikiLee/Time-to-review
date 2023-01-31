@@ -40,7 +40,7 @@ const progressSchema = new Schema<ProgressType>({
 	}
 })
 
-progressSchema.set('toJSON', {versionKey: false})
+progressSchema.set('toJSON', {versionKey: false, virtuals: true})
 
 export const Progress = mongoose.model<ProgressType>('Progress', progressSchema)
 
