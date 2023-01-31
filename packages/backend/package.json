@@ -13,7 +13,7 @@
     "watch": "tsc -w",
     "prepack": "pnpm run build",
     "run": "cross-env NODE_ENV=production node ./dist/src/index.js",
-    "dev": "cross-env NODE_ENV=development node ./dist/src/index.js"
+    "dev": "pnpm run build && cross-env NODE_ENV=development node ./dist/src/index.js"
   },
   "files": [
     "dist/src/*"

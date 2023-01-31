@@ -1,5 +1,4 @@
-import {  NewProgress, Progress, UpdateProgress } from '../../shared/types/progress.type'
-import { Course, NewCourse, UpdateCourse } from '../../shared/types/course.type'
+import {  NewProgress, Progress, UpdateProgress, Course, NewCourse, UpdateCourse } from 'shared'
 import { test, expect,  beforeAll, describe, expectTypeOf } from 'vitest'
 import request from 'supertest'
 import {app} from '../src/app.js'

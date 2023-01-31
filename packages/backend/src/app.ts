@@ -19,7 +19,6 @@ import {router as progressRouter} from './routes/progress.js'
 mongoose.connect(process.env.NODE_ENV === 'production' ? process.env.DATABASE_PRODUCTION! : process.env.DATABASE_DEVELOPMENT!)
 
 export const app = express()
-const port = 3000
 
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
