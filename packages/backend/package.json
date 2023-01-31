@@ -12,8 +12,8 @@
     "build": "rimraf dist && tsc",
     "watch": "tsc -w",
     "prepack": "pnpm run build",
-    "run": "cross-env NODE_ENV=production node ./dist/src/app.js",
-    "dev": "cross-env NODE_ENV=development node ./dist/src/app.js"
+    "run": "cross-env NODE_ENV=production node ./dist/src/index.js",
+    "dev": "cross-env NODE_ENV=development node ./dist/src/index.js"
   },
   "files": [
     "dist/src/*"

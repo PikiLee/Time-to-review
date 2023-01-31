@@ -4,6 +4,7 @@ import {app} from '../src/app.js'
 import { generateAuthInfo } from './utils.js'
 
 export const authUrl = '/auth'
+app.listen(3001)
 describe('register', () => {
 	const {username, password} = generateAuthInfo()
 	const client = request.agent(app)
@@ -57,6 +58,8 @@ describe('register', () => {
 
 		expect(logoutRes.status).toBe(200)
 	})
+
+	client
 })
 
 test('login fail', async () => {

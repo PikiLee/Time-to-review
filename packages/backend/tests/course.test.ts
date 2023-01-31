@@ -7,6 +7,7 @@ import { generateAuthInfo } from './utils.js'
 
 const courseUrl = '/course'
 const progressUrl = '/progress'
+app.listen(3002)
 const client = request.agent(app)
 let userId = ''
 const newCourse: NewCourse = {
