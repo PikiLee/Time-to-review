@@ -1,4 +1,4 @@
-import {  NewProgress, Progress } from './../src/types/progress.type'
+import {  NewProgress, Progress, UpdateProgress } from './../src/types/progress.type'
 import { Course, NewCourse, UpdateCourse } from './../src/types/course.type'
 import { test, expect,  beforeAll, describe, expectTypeOf } from 'vitest'
 import request from 'supertest'
@@ -21,11 +21,10 @@ const updateCourse: UpdateCourse = {
 let retrievedCourse: Course
 let newProgress: NewProgress
 let retrievedProgress: Progress
-const updatedProgress = {
+const updatedProgress: UpdateProgress = {
 	'name': 'pool',
 	'stage': 1,
 	'lastDate': (new Date()).toISOString(),
-	'createdAt': (new Date()).toISOString()
 }
 
 beforeAll(async () => {
@@ -97,7 +96,6 @@ describe('course', () => {
 			.get(courseUrl + '/' + retrievedCourse._id)
 
 		expect(res.status).toBe(200)
-		console.log(res.body)
 		expectTypeOf(res.body).toEqualTypeOf<Progress>(0 as never)
 	})
 

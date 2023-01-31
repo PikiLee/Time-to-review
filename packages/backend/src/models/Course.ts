@@ -27,7 +27,8 @@ const courseSchema = new Schema<CourseType>({
 	},
 	createdAt: {
 		type: String,
-		default: () => (new Date()).toISOString()
+		default: () => (new Date()).toISOString(),
+		immutable: true
 	},
 	progresses: [{
 		type: mongoose.SchemaTypes.ObjectId,
