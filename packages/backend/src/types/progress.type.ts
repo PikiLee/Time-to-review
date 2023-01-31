@@ -22,11 +22,15 @@ export type ProgressStageStrings = keyof typeof ProgressStageObject;
 export const progressStageIndices = Object.values(ProgressStageObject)
 
 export interface Progress {
-  _id: number;
+  _id: string;
+  course: string;
+  owner: string;
   name: string;
   stage: ProgressStage;
   lastDate: string;
   createdAt: string;
 }
 
-export type NewProgress = Omit<Progress, '_id'> 
+export type NewProgress = Omit<Progress, '_id' | 'stage' | 'lastDate' | 'createdAt'> 
+
+export type UpdateProgress = Partial<Omit<Progress, 'course' | 'owner' | 'createdAt' >>

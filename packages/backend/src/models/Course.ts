@@ -39,7 +39,6 @@ courseSchema.set('toJSON', {versionKey: false})
 
 export const Course = mongoose.model<CourseType>('Course', courseSchema)
 
-
 export function	popu<T, P>(query: Query<T, P>) {
 	return query.populate('owner').populate('progresses')
 }

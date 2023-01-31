@@ -1,4 +1,4 @@
-import {  Progress } from './../src/types/progress.type'
+import {  NewProgress, Progress } from './../src/types/progress.type'
 import { Course, NewCourse, UpdateCourse } from './../src/types/course.type'
 import { test, expect,  beforeAll, describe, expectTypeOf } from 'vitest'
 import request from 'supertest'
@@ -8,7 +8,7 @@ import { generateAuthInfo } from './utils.js'
 const courseUrl = '/course'
 const progressUrl = '/progress'
 const client = request.agent(app)
-const userId = ''
+let userId = ''
 const newCourse: NewCourse = {
 	'name': 'cool',
 	'owner': userId,
@@ -19,12 +19,7 @@ const updateCourse: UpdateCourse = {
 	'archived': true,
 }
 let retrievedCourse: Course
-const newProgress = {
-	'name': 'dool',
-	'stage': 0,
-	'lastDate': (new Date()).toISOString(),
-	'createdAt': (new Date()).toISOString()
-}
+let newProgress: NewProgress
 let retrievedProgress: Progress
 const updatedProgress = {
 	'name': 'pool',
@@ -42,7 +37,7 @@ beforeAll(async () => {
 			username,
 			password
 		})
-	newCourse.owner = registerRes.body._id
+	userId = newCourse.owner = registerRes.body._id
 })
 
 describe('course', () => {
@@ -52,6 +47,11 @@ describe('course', () => {
 			.send(newCourse)
 
 		retrievedCourse = res.body
+		newProgress = {
+			name: 'dool',
+			owner: userId,
+			course: retrievedCourse._id
+		}
 		expect(res.status).toBe(200)
 		expectTypeOf(res.body).toMatchTypeOf<Course>()
 	})
@@ -76,10 +76,11 @@ describe('course', () => {
 
 	test('create progress', async () => {
 		const res = await client
-			.post(progressUrl + '/' + retrievedCourse._id)
+			.post(progressUrl)
 			.send(newProgress)
 
 		retrievedProgress = res.body
+		console.log(res.body)
 		expect(res.status).toBe(200)
 		expectTypeOf(res.body).toEqualTypeOf<Progress>(0 as never)
 	})

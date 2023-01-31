@@ -9,7 +9,7 @@ export enum CourseStatus {
 export const courseStatusIndices = [0, 1]
 
 export interface Course {
-  _id: number;
+  _id: string;
   owner: User;
   name: string;
   status: CourseStatus;
