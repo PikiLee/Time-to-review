@@ -40,7 +40,7 @@ courseSchema.set('toJSON', {versionKey: false})
 export const Course = mongoose.model<CourseType>('Course', courseSchema)
 
 export function	popu<T, P>(query: Query<T, P>) {
-	return query.populate('owner').populate('progresses')
+	return query.populate({path: 'owner', select: '_id username'}).populate('progresses')
 }
 export async function fetch(_id: string) {
 	const query = Course.findById(_id)
@@ -57,6 +57,8 @@ export async function create(newCourse: NewCourse) {
 	if (user) {
 		const course = new Course(newCourse)
 		await course.save()
+		user.courses.push(course)
+		await user.save()
 		return await fetch(String(course._id))
 	} else {
 		throw Error('User not found.')

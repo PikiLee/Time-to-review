@@ -2,8 +2,15 @@ import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 import passportLocalMongoose from 'passport-local-mongoose'
 
-const User = new Schema({}, {
-	versionKey: false
+const User = new Schema({
+	courses: [{
+		type: mongoose.SchemaTypes.ObjectId,
+		ref: 'Course'
+	}],
+	progresses: [{
+		type: mongoose.SchemaTypes.ObjectId,
+		ref: 'Progress'
+	}]
 })
 
 User.plugin(passportLocalMongoose, {

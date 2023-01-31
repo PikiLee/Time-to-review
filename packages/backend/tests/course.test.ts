@@ -80,7 +80,6 @@ describe('course', () => {
 			.send(newProgress)
 
 		retrievedProgress = res.body
-		console.log(res.body)
 		expect(res.status).toBe(200)
 		expectTypeOf(res.body).toEqualTypeOf<Progress>(0 as never)
 	})
@@ -98,6 +97,7 @@ describe('course', () => {
 			.get(courseUrl + '/' + retrievedCourse._id)
 
 		expect(res.status).toBe(200)
+		console.log(res.body)
 		expectTypeOf(res.body).toEqualTypeOf<Progress>(0 as never)
 	})
 
