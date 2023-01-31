@@ -3,6 +3,20 @@ import passport from 'passport'
 import User from '../models/User.js'
 
 export const router = express.Router()
+
+router.get('/:username', async function(req, res) {
+	try {
+		const user = await User.findByUsername(req.params.username, false)
+		if (!user) {
+			res.sendStatus(200)
+		} else {
+			res.sendStatus(400)
+		}
+	} catch(err) {
+		res.status(500).send(err)
+	}
+})
+
 router.post('/register', function(req, res) {
 	User.register(new User({ username : req.body.username }), req.body.password, function(err) {
 		if (err) {

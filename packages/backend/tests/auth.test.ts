@@ -21,6 +21,12 @@ describe('register', () => {
 		expect(registerRes.body).toHaveProperty('username')
 	})
 
+	test('check a username has been used', async () => {
+		const registerRes = await client
+			.get(`${authUrl}/${username}`)
+		expect(registerRes.status).toBe(400)
+	})
+
 	test('register with the same username', async () => {
 		const registerRes = await client
 			.post(authUrl + '/register')
@@ -91,4 +97,6 @@ test('register with less than 12-character password', async () => {
 		})
 	expect(registerRes.status).toBe(400)
 })
+
+
 
