@@ -71,7 +71,7 @@ const rules = computed<FormRules>(() => ({
 	],
 }));
 
-async function onSubmit(formEl: FormInstance) {
+async function onSubmit(formEl: FormInstance | undefined) {
 	if (!formEl) return;
 	await formEl.validate((valid) => {
 		if (valid) {
