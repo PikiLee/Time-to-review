@@ -20,6 +20,7 @@ declare module '@vue/runtime-core' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElInput: typeof import('element-plus/es')['ElInput']
     ElOption: typeof import('element-plus/es')['ElOption']
+    ElPopover: typeof import('element-plus/es')['ElPopover']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     IconCommunity: typeof import('./src/components/icons/IconCommunity.vue')['default']

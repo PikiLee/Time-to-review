@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from "element-plus";
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import { AUTH_URL, getPasswordValidationRegex } from "shared";
 import { api } from "@/database/api";
 import { useRouter } from "vue-router";
 import { errorMsg } from "@/utils/useMessage";
+import { useI18n } from "vue-i18n";
 
 const router = useRouter();
+const { t } = useI18n();
 
 const ruleFormRef = ref<FormInstance>();
 const form = reactive({
@@ -14,10 +16,19 @@ const form = reactive({
 	password: "",
 });
 
-const rules = reactive<FormRules>({
+const rules = computed<FormRules>(() => ({
 	username: [
-		{ required: true, message: "Please input username", trigger: "blur" },
-		{ min: 2, max: 12, message: "Length should be 2 to 12", trigger: "change" },
+		{
+			required: true,
+			message: t("auth.errors.required", [t("auth.username")]),
+			trigger: "blur",
+		},
+		{
+			min: 2,
+			max: 12,
+			message: t("auth.errors.length", [2, 12]),
+			trigger: "change",
+		},
 		{
 			asyncValidator(_, username) {
 				return new Promise((resolve, reject) => {
@@ -27,7 +38,7 @@ const rules = reactive<FormRules>({
 							resolve();
 						})
 						.catch(() => {
-							reject("The username has existed.");
+							reject(t("auth.errors.existUsername"));
 						});
 				});
 			},
@@ -35,18 +46,22 @@ const rules = reactive<FormRules>({
 		},
 	],
 	password: [
-		{ required: true, message: "Please input password", trigger: "blur" },
+		{
+			required: true,
+			message: t("auth.errors.required", [t("auth.password")]),
+			trigger: "blur",
+		},
 		{
 			min: 12,
 			max: 24,
-			message: "Length should be 12 to 24",
+			message: t("auth.errors.length", [12, 24]),
 			trigger: "change",
 		},
 		{
 			validator(_, password) {
-				const { regex, errorMsg } = getPasswordValidationRegex();
+				const { regex } = getPasswordValidationRegex();
 				if (!regex.test(password)) {
-					return [new Error(errorMsg)];
+					return [new Error(t("auth.errors.invalidPassword", [12, 24]))];
 				} else {
 					return true;
 				}
@@ -54,7 +69,7 @@ const rules = reactive<FormRules>({
 			trigger: "change",
 		},
 	],
-});
+}));
 
 async function onSubmit(formEl: FormInstance) {
 	if (!formEl) return;
@@ -77,7 +92,6 @@ async function onSubmit(formEl: FormInstance) {
 
 <template>
 	<div grid place-items-center class="min-h-[50vh]">
-		<div>{{ $tc("message.hello") }}</div>
 		<div border border-color-warmgray-500 p-10 pt-18 rounded w-100 max-w-full>
 			<el-form
 				:model="form"
@@ -86,14 +100,14 @@ async function onSubmit(formEl: FormInstance) {
 				label-width="80px"
 			>
 				<el-form-item
-					label="Username"
+					:label="$t('auth.username')"
 					prop="username"
 					data-testid="register-form-username"
 				>
 					<el-input v-model="form.username" />
 				</el-form-item>
 				<el-form-item
-					label="Password"
+					:label="$t('auth.password')"
 					prop="password"
 					data-testid="register-form-password"
 				>
@@ -104,7 +118,7 @@ async function onSubmit(formEl: FormInstance) {
 						type="primary"
 						@click="onSubmit(ruleFormRef)"
 						data-testid="register-form-submit"
-						>Create</el-button
+						>{{ $t("auth.register") }}</el-button
 					>
 				</el-form-item>
 			</el-form>
