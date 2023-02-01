@@ -18,7 +18,8 @@ import {router as authRouter} from './routes/auth.js'
 import {router as courseRouter} from './routes/course.js'
 import {router as progressRouter} from './routes/progress.js'
 
-mongoose.connect(process.env.NODE_ENV === 'production' ? process.env.DATABASE_PRODUCTION! : process.env.DATABASE_DEVELOPMENT!)
+const IS_DEV = process.env.NODE_ENV === 'development'
+mongoose.connect(IS_DEV ?  process.env.DATABASE_DEVELOPMENT! : process.env.DATABASE_PRODUCTION!)
 
 export const app = express()
 
@@ -56,6 +57,13 @@ app.use(['/auth/logout', '/course'], (req, res, next) => {
 		next()
 })
 
+app.use((req, _res, next) => {
+	req.body = req.body.data
+	if (IS_DEV) console.log({
+		'req.body': req.body
+	})
+	next()
+})
 app.use(AUTH_URL, authRouter)
 app.use('/course', courseRouter)
 app.use('/progress', progressRouter)
