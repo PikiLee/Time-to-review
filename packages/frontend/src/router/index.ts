@@ -1,3 +1,4 @@
+import { useUserStore } from "./../store/user.store";
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import CoursesView from "../views/CoursesView.vue";
@@ -11,16 +12,19 @@ const router = createRouter({
 			path: "/home",
 			name: "home",
 			component: HomeView,
+			meta: { requiresAuth: true },
 		},
 		{
 			path: "/courses",
 			name: "courses",
 			component: CoursesView,
+			meta: { requiresAuth: true },
 		},
 		{
 			path: "/course/:id",
 			name: "course",
 			component: CourseView,
+			meta: { requiresAuth: true },
 		},
 		{
 			path: "/auth",
@@ -39,6 +43,16 @@ const router = createRouter({
 			],
 		},
 	],
+});
+
+router.beforeEach((to) => {
+	const userStore = useUserStore();
+	if (to.meta.requiresAuth && !userStore.isLogin) {
+		return {
+			name: "login",
+		};
+	}
+	return true;
 });
 
 export default router;

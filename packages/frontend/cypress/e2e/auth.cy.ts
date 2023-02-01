@@ -103,3 +103,11 @@ describe("login", () => {
 		cy.url().should("contain", "/login");
 	});
 });
+
+describe("auth guard", () => {
+	it.only("register", () => {
+		cy.visit("/home");
+
+		cy.url().should("contain", "/login");
+	});
+});
