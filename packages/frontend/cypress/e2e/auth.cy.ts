@@ -37,7 +37,6 @@ describe("register", () => {
 	});
 
 	it("Should error if the password does not contain symbol.", () => {
-		const { errorMsg } = getPasswordValidationRegex();
 		cy.visit("/auth/register");
 
 		cy.get('[data-testid="register-form-password"]')
@@ -66,5 +65,39 @@ describe("register", () => {
 			"have.class",
 			"is-error"
 		);
+	});
+});
+
+describe("register", () => {
+	const { username, password } = generateAuthInfo();
+
+	it("register", () => {
+		cy.visit("/auth/register");
+
+		cy.get('[data-testid="register-form-username"]').type(username);
+		cy.get('[data-testid="register-form-password"]').type(password);
+		cy.get('[data-testid="register-form-submit"]').click();
+
+		cy.url().should("contain", "/home");
+	});
+
+	it("Should go to home page if login succeeds.", () => {
+		cy.visit("/auth/login");
+
+		cy.get('[data-testid="register-form-username"]').type(username);
+		cy.get('[data-testid="register-form-password"]').type(password);
+		cy.get('[data-testid="register-form-submit"]').click();
+
+		cy.url().should("contain", "/home");
+	});
+
+	it("Should error if the username does not exist.", () => {
+		cy.visit("/auth/login");
+
+		cy.get('[data-testid="register-form-username"]').type("a23243243224q");
+		cy.get('[data-testid="register-form-password"]').type(password);
+		cy.get('[data-testid="register-form-submit"]').click();
+
+		cy.url().should("contain", "/login");
 	});
 });
