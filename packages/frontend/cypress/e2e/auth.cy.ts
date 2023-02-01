@@ -1,7 +1,7 @@
 import { generateAuthInfo, getPasswordValidationRegex } from "shared";
 
 describe("register", () => {
-	// const { username, password } = generateAuthInfo();
+	const { username, password } = generateAuthInfo();
 
 	it("Should error if the username is longer than 12 characters.", () => {
 		cy.visit("/auth/register");
@@ -45,12 +45,32 @@ describe("register", () => {
 		cy.contains('[data-testid="register-form-password"]', errorMsg);
 	});
 
-	it("Should error if the password does not contain symbol.", () => {
+	it.only("Should error if the password does not contain symbol.", () => {
 		const { errorMsg } = getPasswordValidationRegex();
 		cy.visit("/auth/register");
 
 		cy.get('[data-testid="register-form-password"]').type("safabcsdfsd123sdf");
 
 		cy.contains('[data-testid="register-form-password"]', errorMsg);
+	});
+
+	it.only("register", () => {
+		cy.visit("/auth/register");
+
+		cy.get('[data-testid="register-form-username"]').type(username);
+		cy.get('[data-testid="register-form-password"]').type(password);
+		cy.get('[data-testid="register-form-submit"]').click();
+
+		cy.url().should("contain", "/home");
+	});
+
+	it.only("Should error if the username has existed.", () => {
+		cy.visit("/auth/register");
+
+		cy.get('[data-testid="register-form-username"]').type(username);
+		cy.get('[data-testid="register-form-password"]').type(password);
+		cy.get('[data-testid="register-form-submit"]').click();
+
+		cy.contains("#app", "The username has existed.");
 	});
 });
