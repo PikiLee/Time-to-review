@@ -1,4 +1,4 @@
-import { generateAuthInfo, getPasswordValidationRegex } from "shared";
+import { generateAuthInfo } from "shared";
 
 describe("register", () => {
 	const { username, password } = generateAuthInfo();
@@ -68,37 +68,33 @@ describe("register", () => {
 });
 
 describe("login", () => {
-	const { username, password } = generateAuthInfo();
-
-	it("register", () => {
-		cy.visit("/auth/register");
-
-		cy.get('[data-testid="register-form-username"]').type(username);
-		cy.get('[data-testid="register-form-password"]').type(password);
-		cy.get('[data-testid="register-form-submit"]').click();
-
-		cy.url().should("contain", "/home");
-	});
-
 	it("Username should appear when logined, vice versa", () => {
 		cy.visit("/auth/register");
 
 		cy.get('[data-testid="app-header-username"').should("not.exist");
 
-		cy.get('[data-testid="register-form-username"]').type(username);
-		cy.get('[data-testid="register-form-password"]').type(password);
-		cy.get('[data-testid="register-form-submit"]').click();
+		const { username, password } = generateAuthInfo();
+		cy.register(username, password);
 
 		cy.get('[data-testid="app-header-username"')
 			.should("exist")
 			.should("have.text", username);
+		cy.get('[data-testid="app-header-logout"]').click({ force: true });
+		cy.url().should("contain", "/login");
+	});
 
-		cy.get('[data-testid="app-header-username"').click();
-		cy.get('[data-testid="app-header-logout"]').click();
+	it("logout", () => {
+		const { username, password } = generateAuthInfo();
+		cy.register(username, password);
+
+		cy.get('[data-testid="app-header-logout"]').click({ force: true });
 		cy.url().should("contain", "/login");
 	});
 
 	it("Should go to home page if login succeeds and show username", () => {
+		const { username, password } = generateAuthInfo();
+		cy.register(username, password);
+
 		cy.visit("/auth/login");
 
 		cy.get('[data-testid="register-form-username"]').type(username);
@@ -112,7 +108,7 @@ describe("login", () => {
 		cy.visit("/auth/login");
 
 		cy.get('[data-testid="register-form-username"]').type("a23243243224q");
-		cy.get('[data-testid="register-form-password"]').type(password);
+		cy.get('[data-testid="register-form-password"]').type("213124124");
 		cy.get('[data-testid="register-form-submit"]').click();
 
 		cy.url().should("contain", "/login");
