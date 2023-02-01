@@ -105,7 +105,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 					.then(() => {
 						router.push({ name: "home" });
 					})
-					.catch(() => errorMsg("Register Failed."));
+					.catch(() => errorMsg(t("auth.errors.fail", [t("auth.register")])));
 			} else {
 				api
 					.post(`${AUTH_URL}/login`, {
@@ -114,10 +114,8 @@ async function onSubmit(formEl: FormInstance | undefined) {
 					.then(() => {
 						router.push({ name: "home" });
 					})
-					.catch(() => errorMsg("Login Failed."));
+					.catch(() => errorMsg(t("auth.errors.fail", [t("auth.login")])));
 			}
-		} else {
-			errorMsg("Invalid username or password.");
 		}
 	});
 }
