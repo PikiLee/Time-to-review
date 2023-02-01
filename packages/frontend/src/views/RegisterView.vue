@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { FormRules } from "element-plus";
 import { reactive } from "vue";
-import { getPasswordValidationRegex } from "shared";
+import { AUTH_URL, getPasswordValidationRegex } from "shared";
+import { api } from "@/database/api";
 
 const form = reactive({
 	username: "",
@@ -12,6 +13,21 @@ const rules = reactive<FormRules>({
 	username: [
 		{ required: true, message: "Please input username", trigger: "blur" },
 		{ min: 2, max: 12, message: "Length should be 2 to 12", trigger: "change" },
+		{
+			asyncValidator(_, username) {
+				return new Promise((resolve, reject) => {
+					api
+						.get(`${AUTH_URL}/${username}`)
+						.then(() => {
+							resolve();
+						})
+						.catch(() => {
+							reject("The username has existed.");
+						});
+				});
+			},
+			trigger: "blur",
+		},
 	],
 	password: [
 		{ required: true, message: "Please input password", trigger: "blur" },

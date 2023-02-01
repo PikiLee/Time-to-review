@@ -7,6 +7,7 @@ import mongoose from 'mongoose'
 import passport from 'passport'
 import expressSession from 'express-session'
 import morgan from 'morgan'
+import cors from 'cors'
 import fs from 'node:fs'
 import path from 'node:path'
 import url from 'node:url'
@@ -21,6 +22,7 @@ mongoose.connect(process.env.NODE_ENV === 'production' ? process.env.DATABASE_PR
 
 export const app = express()
 
+app.use(cors())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 app.use(expressSession({
