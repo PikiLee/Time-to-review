@@ -28,7 +28,6 @@ describe("register", () => {
 	});
 
 	it("Should error if the password does not contain number.", () => {
-		const { errorMsg } = getPasswordValidationRegex();
 		cy.visit("/auth/register");
 
 		cy.get('[data-testid="register-form-password"]')
@@ -81,7 +80,25 @@ describe("login", () => {
 		cy.url().should("contain", "/home");
 	});
 
-	it("Should go to home page if login succeeds.", () => {
+	it("Username should appear when logined, vice versa", () => {
+		cy.visit("/auth/register");
+
+		cy.get('[data-testid="app-header-username"').should("not.exist");
+
+		cy.get('[data-testid="register-form-username"]').type(username);
+		cy.get('[data-testid="register-form-password"]').type(password);
+		cy.get('[data-testid="register-form-submit"]').click();
+
+		cy.get('[data-testid="app-header-username"')
+			.should("exist")
+			.should("have.text", username);
+
+		cy.get('[data-testid="app-header-username"').click();
+		cy.get('[data-testid="app-header-logout"]').click();
+		cy.url().should("contain", "/login");
+	});
+
+	it("Should go to home page if login succeeds and show username", () => {
 		cy.visit("/auth/login");
 
 		cy.get('[data-testid="register-form-username"]').type(username);
@@ -89,8 +106,6 @@ describe("login", () => {
 		cy.get('[data-testid="register-form-submit"]').click();
 
 		cy.url().should("contain", "/home");
-
-		cy.get('[data-testid="app-header-username"').should("have.text", username);
 	});
 
 	it("Should error if the username does not exist.", () => {
@@ -105,7 +120,7 @@ describe("login", () => {
 });
 
 describe("auth guard", () => {
-	it.only("register", () => {
+	it("register", () => {
 		cy.visit("/home");
 
 		cy.url().should("contain", "/login");

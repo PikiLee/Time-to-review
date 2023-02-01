@@ -1,10 +1,21 @@
 <script setup lang="ts">
+import { api } from "@/database/api";
 import { useUserStore } from "@/store/user.store";
 import { useDark, useToggle } from "@vueuse/core";
+import { AUTH_URL } from "shared";
+import { useRouter } from "vue-router";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 const userStore = useUserStore();
+const router = useRouter();
+
+function logout() {
+	api.post(`${AUTH_URL}/logout`).finally(() => {
+		userStore.user = null;
+		router.push({ name: "login" });
+	});
+}
 </script>
 
 <template>
@@ -68,11 +79,7 @@ const userStore = useUserStore();
 				/>
 				<span text-xl text-warmgray-700 i-material-symbols-light-mode v-else />
 			</div>
-			<el-popover
-				placement="bottom"
-				trigger="hover"
-				content="this is content, this is content, this is content"
-			>
+			<el-popover placement="bottom" trigger="hover">
 				<ul>
 					<li>
 						<el-button text w-full @click="$i18n.locale = 'en'"
@@ -89,9 +96,18 @@ const userStore = useUserStore();
 					<div i-mdi-spoken-language text-xl></div>
 				</template>
 			</el-popover>
-			<div v-if="userStore.user" data-testid="app-header-username">
-				{{ userStore.user.username }}
-			</div>
+			<el-popover placement="bottom" trigger="hover">
+				<div>
+					<el-button text w-full data-testid="app-header-logout" @click="logout"
+						>Log out</el-button
+					>
+				</div>
+				<template #reference>
+					<div v-if="userStore.user" data-testid="app-header-username">
+						{{ userStore.user.username }}
+					</div>
+				</template>
+			</el-popover>
 		</div>
 	</div>
 </template>
