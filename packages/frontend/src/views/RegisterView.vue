@@ -77,6 +77,7 @@ async function onSubmit(formEl: FormInstance) {
 
 <template>
 	<div grid place-items-center class="min-h-[50vh]">
+		<div>{{ $tc("message.hello") }}</div>
 		<div border border-color-warmgray-500 p-10 pt-18 rounded w-100 max-w-full>
 			<el-form
 				:model="form"
