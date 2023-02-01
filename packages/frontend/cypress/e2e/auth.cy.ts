@@ -91,7 +91,7 @@ describe("login", () => {
 		cy.url().should("contain", "/login");
 	});
 
-	it("Should go to home page if login succeeds and show username", () => {
+	it("Should go to home page if login succeeds", () => {
 		const { username, password } = generateAuthInfo();
 		cy.register(username, password);
 

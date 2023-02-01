@@ -96,14 +96,14 @@ function logout() {
 					<div i-mdi-spoken-language text-xl></div>
 				</template>
 			</el-popover>
-			<el-popover placement="bottom" trigger="hover">
+			<el-popover placement="bottom" trigger="hover" v-if="userStore.user">
 				<div>
 					<el-button text w-full data-testid="app-header-logout" @click="logout"
 						>Log out</el-button
 					>
 				</div>
 				<template #reference>
-					<div v-if="userStore.user" data-testid="app-header-username">
+					<div data-testid="app-header-username">
 						{{ userStore.user.username }}
 					</div>
 				</template>
