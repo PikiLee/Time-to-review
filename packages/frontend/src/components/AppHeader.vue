@@ -13,6 +13,7 @@ const router = useRouter();
 function logout() {
 	api.post(`${AUTH_URL}/logout`).finally(() => {
 		userStore.user = null;
+		localStorage.removeItem("user");
 		router.push({ name: "login" });
 	});
 }
