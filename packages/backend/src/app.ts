@@ -58,7 +58,9 @@ app.use(['/course'], (req, res, next) => {
 })
 
 app.use((req, _res, next) => {
-	req.body = req.body.data
+	if (req.body.data && Object.keys(req.body).length === 1) {
+		req.body = req.body.data
+	}
 	if (IS_DEV) console.log({
 		'req.body': req.body
 	})

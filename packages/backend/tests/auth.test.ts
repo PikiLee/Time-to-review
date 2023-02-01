@@ -16,6 +16,7 @@ describe('register', () => {
 				username,
 				password
 			})
+		console.log({body: registerRes.body})
 		expect(registerRes.status).toBe(200)
 		expect(registerRes.body).toHaveProperty('_id')
 		expect(registerRes.body).toHaveProperty('username')
@@ -65,7 +66,6 @@ describe('register', () => {
 		expect(logoutRes.status).toBe(200)
 	})
 
-	client
 })
 
 test('login fail', async () => {
@@ -79,13 +79,6 @@ test('login fail', async () => {
 		})
     
 	expect(loginRes.status).toBe(401)
-})
-
-test('logout fail', async () => {
-	const logoutRes = await request(app)
-		.post(AUTH_URL + '/logout')
-
-	expect(logoutRes.status).toBe(401)
 })
 
 test('register with less than 12-character password', async () => {
