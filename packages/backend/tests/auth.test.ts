@@ -1,7 +1,7 @@
 import { test, expect, describe } from 'vitest'
 import request from 'supertest'
 import {app} from '../src/app.js'
-import { generateAuthInfo } from './utils.js'
+import { generateAuthInfo } from 'shared'
 import { AUTH_URL } from 'shared'
 
 app.listen(3001)

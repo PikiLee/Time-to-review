@@ -2,7 +2,7 @@ import {  NewProgress, Progress, UpdateProgress, Course, NewCourse, UpdateCourse
 import { test, expect,  beforeAll, describe, expectTypeOf } from 'vitest'
 import request from 'supertest'
 import {app} from '../src/app.js'
-import { generateAuthInfo } from './utils.js'
+import { generateAuthInfo } from 'shared'
 
 const courseUrl = '/course'
 const progressUrl = '/progress'
