@@ -34,7 +34,7 @@ const rules = reactive<FormRules>({
 		{
 			min: 12,
 			max: 24,
-			message: "Length ",
+			message: "Length should be 12 to 24",
 			trigger: "change",
 		},
 		{
@@ -56,14 +56,27 @@ function onSubmit() {}
 	<div grid place-items-center class="min-h-[50vh]">
 		<div border border-color-warmgray-500 p-10 pt-18 rounded w-100 max-w-full>
 			<el-form :model="form" :rules="rules" label-width="80px">
-				<el-form-item label="Username" prop="username">
+				<el-form-item
+					label="Username"
+					prop="username"
+					data-testid="register-form-username"
+				>
 					<el-input v-model="form.username" />
 				</el-form-item>
-				<el-form-item label="Password" prop="password">
+				<el-form-item
+					label="Password"
+					prop="password"
+					data-testid="register-form-password"
+				>
 					<el-input type="password" v-model="form.password" />
 				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" @click="onSubmit">Create</el-button>
+				<el-form-item mt-10>
+					<el-button
+						type="primary"
+						@click="onSubmit"
+						data-testid="register-form-submit"
+						>Create</el-button
+					>
 				</el-form-item>
 			</el-form>
 		</div>
