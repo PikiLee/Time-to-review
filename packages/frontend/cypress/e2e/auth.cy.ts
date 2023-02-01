@@ -68,7 +68,7 @@ describe("register", () => {
 	});
 });
 
-describe("register", () => {
+describe("login", () => {
 	const { username, password } = generateAuthInfo();
 
 	it("register", () => {
@@ -89,6 +89,8 @@ describe("register", () => {
 		cy.get('[data-testid="register-form-submit"]').click();
 
 		cy.url().should("contain", "/home");
+
+		cy.get('[data-testid="app-header-username"').should("have.text", username);
 	});
 
 	it("Should error if the username does not exist.", () => {

@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { useUserStore } from "@/store/user.store";
 import { useDark, useToggle } from "@vueuse/core";
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
+const userStore = useUserStore();
 </script>
 
 <template>
@@ -87,6 +89,9 @@ const toggleDark = useToggle(isDark);
 					<div i-mdi-spoken-language text-xl></div>
 				</template>
 			</el-popover>
+			<div v-if="userStore.user" data-testid="app-header-username">
+				{{ userStore.user.username }}
+			</div>
 		</div>
 	</div>
 </template>

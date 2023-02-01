@@ -6,10 +6,12 @@ import { api } from "@/database/api";
 import { useRoute, useRouter } from "vue-router";
 import { errorMsg } from "@/utils/useMessage";
 import { useI18n } from "vue-i18n";
+import { useUserStore } from "@/store/user.store";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
+const userStore = useUserStore();
 
 const isRegister = computed(() => route.name === "register");
 
@@ -102,7 +104,8 @@ async function onSubmit(formEl: FormInstance | undefined) {
 					.post(`${AUTH_URL}/register`, {
 						data: form,
 					})
-					.then(() => {
+					.then((res) => {
+						userStore.user = res.data;
 						router.push({ name: "home" });
 					})
 					.catch(() => errorMsg(t("auth.errors.fail", [t("auth.register")])));
@@ -111,7 +114,8 @@ async function onSubmit(formEl: FormInstance | undefined) {
 					.post(`${AUTH_URL}/login`, {
 						data: form,
 					})
-					.then(() => {
+					.then((res) => {
+						userStore.user = res.data;
 						router.push({ name: "home" });
 					})
 					.catch(() => errorMsg(t("auth.errors.fail", [t("auth.login")])));
