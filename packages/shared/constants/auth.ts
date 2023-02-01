@@ -5,3 +5,5 @@ export function getPasswordValidationRegex() {
 	}
 }
 
+export const AUTH_URL = '/auth'
+
