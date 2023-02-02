@@ -1,5 +1,5 @@
-import {  NewProgress, Progress, UpdateProgress, Course, NewCourse, UpdateCourse } from 'shared'
-import { test, expect,  beforeAll, describe, expectTypeOf } from 'vitest'
+import {  NewProgress, Progress, UpdateProgress, Course, NewCourse, UpdateCourse, User, progressStageIndices} from 'shared'
+import { test, expect,  beforeAll, describe } from 'vitest'
 import request from 'supertest'
 import {app} from '../src/app.js'
 import { generateAuthInfo } from 'shared'
@@ -7,26 +7,52 @@ import { generateAuthInfo } from 'shared'
 const courseUrl = '/course'
 const progressUrl = '/progress'
 app.listen(3002)
-const client = request.agent(app)
-let userId = ''
-const newCourse: NewCourse = {
-	'name': 'cool',
-	'owner': userId,
-	order: 0.2,
+
+function expectToBeTypeOfCourse(course: Course) {
+	expect(course).toHaveProperty('_id')
+	expect(course.owner).toHaveProperty('_id')
+	expect(course.owner).toHaveProperty('username')
+	expect(course).toHaveProperty('name')
+	expect(course).toHaveProperty('status')
+	expect(course).toHaveProperty('archived')
+	expect(course).toHaveProperty('createdAt')
+	expect(course).toHaveProperty('order')
+	expect(course).toHaveProperty('_id')
+	expect(Array.isArray(course.progresses)).toBe(true)
 }
+
+function expectToBeTypeOfProgress(progress: Progress) {
+	expect(progress).toHaveProperty('_id')
+	expect(progress).toHaveProperty('course')
+	expect(progress).toHaveProperty('owner')
+	expect(progress.stage in progressStageIndices).toBe(true)
+	expect(progress).toHaveProperty('lastDate')
+	expect(progress).toHaveProperty('createdAt')
+	expect(progress).toHaveProperty('order')
+	expect(progress).toHaveProperty('nextDate')
+	expect(progress).toHaveProperty('isDue')
+}
+
+
+const client = request.agent(app)
+let  user: User
+let newCourse: NewCourse
+let retrievedCourse: Course
 const updateCourse: UpdateCourse = {
 	'name': 'updatedCool',
 	'status': 1,
 	'archived': true,
 }
-let retrievedCourse: Course
+let updatedCourse: Course
+
 let newProgress: NewProgress
 let retrievedProgress: Progress
-const updatedProgress: UpdateProgress = {
+const updateProgress: UpdateProgress = {
 	'name': 'pool',
 	'stage': 1,
 	'lastDate': (new Date()).toISOString(),
 }
+let updatedProgress: Progress
 
 beforeAll(async () => {
 	const {username, password} = generateAuthInfo()
@@ -37,7 +63,12 @@ beforeAll(async () => {
 			username,
 			password
 		})
-	userId = newCourse.owner = registerRes.body._id
+	user = registerRes.body
+	newCourse = {
+		'name': 'cool',
+		'owner': user._id,
+		order: 0.2,
+	}
 })
 
 describe('course', () => {
@@ -49,12 +80,12 @@ describe('course', () => {
 		retrievedCourse = res.body
 		newProgress = {
 			name: 'dool',
-			owner: userId,
+			owner: user._id,
 			course: retrievedCourse._id,
 			order: 0.3,
 		}
 		expect(res.status).toBe(200)
-		expectTypeOf(res.body).toMatchTypeOf<Course>()
+		expectToBeTypeOfCourse(res.body)
 	})
 
     
@@ -63,6 +94,8 @@ describe('course', () => {
 			.get(courseUrl + '/' + retrievedCourse._id)
 
 		expect(res.status).toBe(200)
+		console.log(res.body)
+		expectToBeTypeOfCourse(res.body)
 		expect(res.body).toEqual(retrievedCourse)
 	})
 
@@ -72,7 +105,9 @@ describe('course', () => {
 			.send(updateCourse)
 
 		expect(res.status).toBe(200)
-		expect(res.body).toMatchObject(updateCourse)
+		expectToBeTypeOfCourse(res.body)
+		updatedCourse = Object.assign({}, retrievedCourse, updateCourse)
+		expect(res.body).toEqual(updatedCourse)
 	})
 
 	test('create progress', async () => {
@@ -81,8 +116,9 @@ describe('course', () => {
 			.send(newProgress)
 
 		retrievedProgress = res.body
+		updatedCourse.progresses.push(retrievedProgress)
 		expect(res.status).toBe(200)
-		expectTypeOf(res.body).toEqualTypeOf<Progress>(0 as never)
+		expectToBeTypeOfProgress(res.body)
 	})
 
 	test('get progress', async () => {
@@ -90,6 +126,7 @@ describe('course', () => {
 			.get(progressUrl + '/' + retrievedProgress._id)
 
 		expect(res.status).toBe(200)
+		expectToBeTypeOfProgress(res.body)
 		expect(res.body).toEqual(retrievedProgress)
 	})
 
@@ -98,21 +135,32 @@ describe('course', () => {
 			.get(courseUrl + '/' + retrievedCourse._id)
 
 		expect(res.status).toBe(200)
-		expectTypeOf(res.body).toEqualTypeOf<Progress>(0 as never)
+		expectToBeTypeOfCourse(res.body)
+		expect(res.body).toEqual(updatedCourse)
 	})
 
 	test('update progress', async () => {
 		const res = await client
 			.put(`${progressUrl}/${retrievedProgress._id}`)
-			.send(updatedProgress)
+			.send(updateProgress)
 
 		expect(res.status).toBe(200)
-		expect(res.body).toMatchObject(updatedProgress)
+		updatedProgress = Object.assign({}, retrievedProgress, res.body)
+		updatedCourse.progresses = [updatedProgress]
+		expectToBeTypeOfProgress(res.body)
+		expect(res.body).toEqual(updatedProgress)
+	})
+
+	test('delete progress', async () => {
+		const res = await client
+			.delete(`${progressUrl}/${updatedProgress._id}`)
+
+		expect(res.status).toBe(200)
 	})
 
 	test('delete course', async () => {
 		const res = await client
-			.delete(`${courseUrl}/${retrievedCourse._id}`)
+			.delete(`${courseUrl}/${updatedCourse._id}`)
 
 		expect(res.status).toBe(200)
 	})
@@ -122,13 +170,6 @@ describe('course', () => {
 			.delete(`${courseUrl}/${Math.random()}`)
 
 		expect(res.status).toBe(404)
-	})
-
-	test('delete progress', async () => {
-		const res = await client
-			.delete(`${progressUrl}/${retrievedProgress._id}`)
-
-		expect(res.status).toBe(200)
 	})
 
 	test('delete non-exist progress', async () => {

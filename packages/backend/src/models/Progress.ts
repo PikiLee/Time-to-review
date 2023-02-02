@@ -1,17 +1,25 @@
 import { NewProgress, UpdateProgress, getNextDate, getIsDue } from 'shared'
 import mongoose from 'mongoose'
-import { Progress as ProgressType, progressStageIndices } from 'shared'
+import { ProgressSchema, progressStageIndices } from 'shared'
 import { Course } from './Course.js'
 import User from './User.js'
 
 const { Schema } = mongoose
 
-const progressSchema = new Schema<ProgressType>({
+const progressSchema = new Schema<ProgressSchema>({
 	name: {
 		type: String,
 		required: true,
 		minlength: 1,
 		maxlength: 20,
+	},
+	owner: {
+		type: mongoose.SchemaTypes.ObjectId,
+		ref: 'User'
+	},
+	course: {
+		type: mongoose.SchemaTypes.ObjectId,
+		ref: 'Course'
 	},
 	stage: {
 		type: Number,
@@ -32,26 +40,27 @@ const progressSchema = new Schema<ProgressType>({
 		required: true
 	}
 }, {
-	virtuals: {
-		nextDate() {
-			const self = this as ProgressType
-			return getNextDate(self.lastDate, self.stage)
-		},
-		isDue() {
-			const self = this as ProgressType
-			return getIsDue(self.nextDate)
-		}
-	}
+	id: false,
 })
+
+progressSchema.virtual('nextDate').
+	get(function() {
+		return getNextDate(this.lastDate, this.stage)
+	})
+
+progressSchema.virtual('isDue').
+	get(function() {
+		return getIsDue(this.nextDate)
+	})
 
 progressSchema.set('toJSON', {versionKey: false, virtuals: true})
 
-export const Progress = mongoose.model<ProgressType>('Progress', progressSchema)
+export const Progress = mongoose.model<ProgressSchema>('Progress', progressSchema)
 
 export async function fetch(_id: string) {
-	const query = await Progress.findById(_id)
-	if (query) {
-		return query
+	const doc = await Progress.findById(_id)
+	if (doc) {
+		return doc
 	} else {
 		throw Error('Not Found')
 	}
@@ -64,9 +73,9 @@ export async function create(newProgress: NewProgress) {
 	if (user && course) {
 		const progress = new Progress(newProgress)
 		await progress.save()
-		return await fetch(String(progress._id))
+		return progress
 	} else {
-		throw Error('User not found.')
+		throw Error('User or course not found.')
 	}
 }
 		

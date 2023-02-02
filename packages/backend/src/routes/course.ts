@@ -1,9 +1,10 @@
 import express from 'express'
-import { create, fetch, del, update } from '../models/Course.js'
+import { create, fetchAndPopulate, del, update } from '../models/Course.js'
+import { printDebugInfo } from '../utils/debug.js'
 
 export const router = express.Router()
 
-router.post('/', async (req, res) => {
+router.post('/', printDebugInfo, async (req, res) => {
 	try {
 		res.status(200).json(await create(req.body))
 	} catch(err) {
@@ -11,9 +12,9 @@ router.post('/', async (req, res) => {
 	}
 })
 
-router.get('/:courseId', async (req, res) => {
+router.get('/:courseId', printDebugInfo,  async (req, res) => {
 	try {
-		const course = await fetch(req.params.courseId)
+		const course = await fetchAndPopulate(req.params.courseId)
 		if (course) {
 			res.status(200).json(course)
 		} else {
@@ -24,7 +25,7 @@ router.get('/:courseId', async (req, res) => {
 	}
 })
 
-router.delete('/:courseId', async (req, res) => {
+router.delete('/:courseId', printDebugInfo,  async (req, res) => {
 	try {
 		if (await del(req.params.courseId)) {
 			res.sendStatus(200)
@@ -37,7 +38,7 @@ router.delete('/:courseId', async (req, res) => {
 })
 
 
-router.put('/:courseId', async (req, res) => {
+router.put('/:courseId', printDebugInfo,  async (req, res) => {
 	try {
 		const updatedCourse = await update(req.params.courseId, req.body)
 		if (updatedCourse) {

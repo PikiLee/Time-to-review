@@ -18,7 +18,7 @@ import {router as authRouter} from './routes/auth.js'
 import {router as courseRouter} from './routes/course.js'
 import {router as progressRouter} from './routes/progress.js'
 
-const IS_DEV = process.env.NODE_ENV === 'development'
+export const IS_DEV = process.env.NODE_ENV === 'development'
 mongoose.connect(IS_DEV ?  process.env.DATABASE_DEVELOPMENT! : process.env.DATABASE_PRODUCTION!)
 
 export const app = express()
@@ -58,7 +58,7 @@ app.use(morgan('combined', {stream: accessLogStream}))
 
 // auth guard
 app.use(['/course'], (req, res, next) => {
-	console.log('Auth guard triggered.')
+	if (IS_DEV) console.debug('Auth guard triggered.')
 	if (!req.user) res.sendStatus(401)
 	else 
 		next()
@@ -68,9 +68,6 @@ app.use((req, _res, next) => {
 	if (req.body.data && Object.keys(req.body).length === 1) {
 		req.body = req.body.data
 	}
-	if (IS_DEV) console.log({
-		'req.body': req.body
-	})
 	next()
 })
 app.use(AUTH_URL, authRouter)

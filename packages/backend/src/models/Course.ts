@@ -34,6 +34,8 @@ const courseSchema = new Schema<CourseType>({
 		type: Number,
 		required: true
 	}
+}, {
+	id: false
 })
 
 courseSchema.virtual('progresses', {
@@ -49,7 +51,7 @@ export const Course = mongoose.model<CourseType>('Course', courseSchema)
 export function	popu<T, P>(query: Query<T, P>) {
 	return query.populate({path: 'owner', select: '_id username'}).populate('progresses')
 }
-export async function fetch(_id: string) {
+export async function fetchAndPopulate(_id: string) {
 	const query = Course.findById(_id)
 	if (query) {
 		return await popu(query)
@@ -64,7 +66,7 @@ export async function create(newCourse: NewCourse) {
 	if (user) {
 		const course = new Course(newCourse)
 		await course.save()
-		return await fetch(String(course._id))
+		return await fetchAndPopulate(course._id)
 	} else {
 		throw Error('User not found.')
 	}
