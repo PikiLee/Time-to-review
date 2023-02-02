@@ -23,13 +23,20 @@ mongoose.connect(IS_DEV ?  process.env.DATABASE_DEVELOPMENT! : process.env.DATAB
 
 export const app = express()
 
-app.use(cors())
+app.use(cors({
+	origin: [
+		'http://localhost:4173',
+	],
+	credentials: true,
+	exposedHeaders: ['set-cookie'],
+}))
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 app.use(expressSession({
 	secret: 'keyboard cat',
 	resave: false,
-	saveUninitialized: false
+	saveUninitialized: false,
+	cookie: {httpOnly: false}
 }))
 
 // passport
