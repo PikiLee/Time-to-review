@@ -1,4 +1,5 @@
 import {keys, values} from 'lodash-es'
+import mongoose from 'mongoose'
 
 export const ProgressStageObject = {
 	'Just Learned': 0,
@@ -47,4 +48,9 @@ export interface Progress {
 
 export type NewProgress = Omit<Progress, '_id' | 'stage' | 'lastDate' | 'createdAt' | 'nextDate' | 'isDue'> 
 
-export type UpdateProgress = Partial<Omit<Progress, 'course' | 'owner' | 'createdAt'  | 'nextDate' | 'isDue'>>
+export type UpdateProgress = Partial<Omit<Progress, '_id' | 'course' | 'owner' | 'createdAt'  | 'nextDate' | 'isDue'>>
+
+export interface ProgressSchema extends Omit<Progress, 'course' | 'owner'> {
+  owner: mongoose.Schema.Types.ObjectId
+  course: mongoose.Schema.Types.ObjectId
+}
