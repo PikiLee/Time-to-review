@@ -74,6 +74,6 @@ export async function del(_id: string) {
 	return !!(await Progress.findByIdAndDelete(_id))
 }
 
-export async function update(_id: string, updateCourse: UpdateProgress) {
-	return await Progress.findByIdAndUpdate(_id, updateCourse, {new: true})
+export async function update(_id: string, updateProgress: UpdateProgress) {
+	return await Progress.findByIdAndUpdate(_id, updateProgress, {new: true})
 }
