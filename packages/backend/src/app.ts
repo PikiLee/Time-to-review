@@ -57,7 +57,7 @@ const accessLogStream = fs.createWriteStream(accessLogPath, { flags: 'a' })
 app.use(morgan('combined', {stream: accessLogStream}))
 
 // auth guard
-app.use(['/course'], (req, res, next) => {
+app.use(['/course', '/progress'], (req, res, next) => {
 	if (IS_DEV) console.debug('Auth guard triggered.')
 	if (!req.user) res.sendStatus(401)
 	else 
