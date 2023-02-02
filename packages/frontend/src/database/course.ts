@@ -1,44 +1,70 @@
-import { CourseStatus, type Course } from "./../types/course.type";
-// store.js
-import { createGlobalState, useStorage } from "@vueuse/core";
+import { keys } from "lodash-es";
+import { useCourseStore } from "./../store/course.store";
+import { useUserStore } from "./../store/user.store";
+import {
+	CourseStatus,
+	COURSE_URL,
+	type NewCourse,
+	type UpdateCourse,
+} from "shared";
+import { api } from "./api";
 
-export const useCourses = createGlobalState(() =>
-  useStorage<Course[]>("courses", [])
-);
+export async function create(name: string) {
+	if (!name) throw "Must not empty!";
+	const userStore = useUserStore();
+	if (!userStore.user) throw "Must login first!";
+	const newCourse: NewCourse = {
+		owner: userStore.user._id,
+		name,
+		order: 0,
+	};
 
-export function create(name: string) {
-  if (!name) throw "Must not empty!";
-  const courses = useCourses();
-  const newCourse: Course = {
-    id: Number(Math.random().toString().substring(2)),
-    name,
-    status: CourseStatus["In Progress"],
-    archived: false,
-    createdAt: Date.now(),
-    progresses: [],
-  };
-  courses.value.push(newCourse);
+	const res = await api.post(COURSE_URL, {
+		data: newCourse,
+	});
+
+	const courseStore = useCourseStore();
+	courseStore.courses.push(res.data);
+}
+export async function update(courseId: string, updateCourse: UpdateCourse) {
+	if (keys(updateCourse).length === 0)
+		throw new Error("Something went wrong! Please refresh!");
+
+	const res = await api.put(`${COURSE_URL}/${courseId}`, updateCourse);
+	const courseStore = useCourseStore();
+
+	if (!courseStore.replaceCourse(res.data))
+		throw new Error("Something went wrong! Please refresh!");
+
+	return res.data;
 }
 
-export function toggleArchive(id: number) {
-  const courses = useCourses();
-  courses.value.forEach((course) => {
-    if (course.id === id) course.archived = !course.archived;
-  });
+export function toggleArchive(_id: string) {
+	const courseStore = useCourseStore();
+	const course = courseStore.find(_id);
+	if (!course) throw new Error("Something went wrong! Please refresh!");
+
+	return update(_id, {
+		archived: !course.archived,
+	});
 }
 
-export function toggleStatus(id: number) {
-  const courses = useCourses();
-  courses.value.forEach((course) => {
-    if (course.id === id)
-      course.status =
-        course.status === CourseStatus["In Progress"]
-          ? CourseStatus.Done
-          : CourseStatus["In Progress"];
-  });
+export function toggleStatus(_id: string) {
+	const courseStore = useCourseStore();
+	const course = courseStore.find(_id);
+	if (!course) throw new Error("Something went wrong! Please refresh!");
+
+	return update(_id, {
+		status:
+			course.status === CourseStatus["In Progress"]
+				? CourseStatus.Done
+				: CourseStatus["In Progress"],
+	});
 }
 
-export function del(id: number) {
-  const courses = useCourses();
-  courses.value = courses.value.filter((course) => course.id !== id);
+export async function del(_id: string) {
+	await api.delete(`${COURSE_URL}/${_id}`);
+
+	const courseStore = useCourseStore();
+	courseStore.del(_id);
 }

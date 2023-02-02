@@ -18,32 +18,32 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    Unocss({
-      presets: [
-        presetAttributify(),
-        presetMini(),
-        presetTypography(),
-        presetUno(),
-        UnocssIcons({
-          prefix: "i-",
-          extraProperties: {
-            display: "inline-block",
-          },
-        }),
-      ],
-    }),
-    AutoImport({
-      resolvers: [ElementPlusResolver()],
-    }),
-    Components({
-      resolvers: [ElementPlusResolver()],
-    }),
-  ],
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
+	plugins: [
+		vue(),
+		Unocss({
+			presets: [
+				presetAttributify(),
+				presetMini(),
+				presetTypography(),
+				presetUno(),
+				UnocssIcons({
+					prefix: "i-",
+					extraProperties: {
+						display: "inline-block",
+					},
+				}),
+			],
+		}),
+		AutoImport({
+			resolvers: [ElementPlusResolver()],
+		}),
+		Components({
+			resolvers: [ElementPlusResolver()],
+		}),
+	],
+	resolve: {
+		alias: {
+			"@": fileURLToPath(new URL("./src", import.meta.url)),
+		},
+	},
 });

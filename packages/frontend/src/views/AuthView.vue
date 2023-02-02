@@ -44,8 +44,13 @@ const rules = computed<FormRules>(() => {
 									.then(() => {
 										resolve();
 									})
-									.catch(() => {
-										reject(t("auth.errors.existUsername"));
+									.catch((error) => {
+										reject(error);
+										// if (error.response.status >= 500) {
+										// 	errorMsg("Server Error");
+										// } else {
+										// 	reject(t("auth.errors.existUsername"));
+										// }
 									});
 							});
 						},

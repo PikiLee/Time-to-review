@@ -4,6 +4,7 @@ import HomeView from "../views/HomeView.vue";
 import CoursesView from "../views/CoursesView.vue";
 import CourseView from "../views/CourseView.vue";
 import RegisterView from "../views/AuthView.vue";
+import { errorMsg } from "@/utils/useMessage";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -48,6 +49,7 @@ const router = createRouter({
 router.beforeEach((to) => {
 	const userStore = useUserStore();
 	if (to.meta.requiresAuth && !userStore.isLogin) {
+		errorMsg("Please login first.");
 		return {
 			name: "login",
 		};

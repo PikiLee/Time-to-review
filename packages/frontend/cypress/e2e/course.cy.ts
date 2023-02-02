@@ -1,39 +1,121 @@
 import { generateAuthInfo } from "shared";
 
-before(() => {
+beforeEach(() => {
 	const { username, password } = generateAuthInfo();
 	cy.register(username, password);
 });
 
 describe("course", () => {
 	it("create course", () => {
-		// create course
-		cy.visit("/courses");
-		cy.get('[data-testid="add-button"]').click();
-		cy.get('[data-testid="course-creator"]').should("exist");
+		const courseName = Math.random().toString();
 
-		cy.get('[data-testid="course-creator"]')
-			.find("input")
-			.type(Math.random().toString());
-		cy.get('[data-testid="course-creator"]').find("button").click();
+		cy.createCourse(courseName);
+	});
 
-		cy.get('[data-testid="course-card"]').should("have.length", 1);
+	it("create progress", () => {
+		const courseName = Math.random().toString();
+		const progressName = Math.random().toString();
 
-		//create progress
-		cy.get('[data-testid="course-card"]:first-of-type')
-			.find('[data-testid="course-card-title"]')
-			.click();
+		cy.createCourse(courseName);
+		cy.createProgress(progressName);
+	});
 
-		cy.url().should("contain", "/course");
+	it("update progress", () => {
+		const courseName = Math.random().toString();
+		const progressName = Math.random().toString();
 
-		cy.get('[data-testid="add-button"]').click();
-		cy.get('[data-testid="course-creator"]').should("exist");
+		cy.createCourse(courseName);
+		cy.createProgress(progressName);
 
-		cy.get('[data-testid="course-creator"]')
-			.find("input")
-			.type(Math.random().toString());
-		cy.get('[data-testid="course-creator"]').find("button").click();
+		// update progress
+		const newProgressName = Math.random().toString();
 
-		cy.get('[data-testid="progress-list-item"]').should("have.length", 1);
+		cy.get('[data-testid="progress-list-item"]').last().click();
+		cy.get('[data-testid="progress-list-item-name-input"]').type(
+			`{selectAll}{del}${newProgressName}`
+		);
+		cy.get('[data-testid="progress-list-item-confirm"]').click();
+
+		cy.get('[data-testid="progress-list-item-name"]')
+			.last()
+			.should("have.text", newProgressName);
+	});
+
+	it("delete progress", () => {
+		const courseName = Math.random().toString();
+		const progressName = Math.random().toString();
+
+		cy.createCourse(courseName);
+		cy.createProgress(progressName);
+		// delete progress
+		cy.get(`[data-testid="progress-list-item"]`).click();
+		cy.get(`[data-testid="progress-list-item-delete"]`).click();
+		cy.get(`[data-testid="progress-list-item"]`).should("not.exist");
+	});
+
+	it("toggle archive", () => {
+		const courseName = Math.random().toString();
+
+		cy.createCourse(courseName);
+
+		cy.get(`[data-testid="course-card-toggle-archive"]`).click();
+		cy.get(`[data-testid="courses-view-in-progress-courses"]`).should(
+			"not.contain",
+			courseName
+		);
+		cy.get(`[data-testid="courses-view-archived-courses"]`).contains(
+			courseName
+		);
+
+		//reverse
+		cy.get(`[data-testid="course-card-toggle-archive"]`).click();
+		cy.get(`[data-testid="courses-view-archived-courses"]`).should(
+			"not.contain",
+			courseName
+		);
+		cy.get(`[data-testid="courses-view-in-progress-courses"]`).contains(
+			courseName
+		);
+	});
+
+	it("toggle status", () => {
+		const courseName = Math.random().toString();
+
+		cy.createCourse(courseName);
+
+		cy.get(`[data-testid="course-card-toggle-status"]`).click();
+		cy.get(`[data-testid="courses-view-in-progress-courses"]`).should(
+			"not.contain",
+			courseName
+		);
+		cy.get(`[data-testid="courses-view-done-courses"]`).contains(courseName);
+
+		// reverse
+		cy.get(`[data-testid="course-card-toggle-status"]`).click();
+		cy.get(`[data-testid="courses-view-done-courses"]`).should(
+			"not.contain",
+			courseName
+		);
+		cy.get(`[data-testid="courses-view-in-progress-courses"]`).contains(
+			courseName
+		);
+	});
+
+	it("delete course", () => {
+		const courseName = Math.random().toString();
+
+		cy.createCourse(courseName);
+
+		cy.get(`[data-testid="course-card-toggle-archive"]`).click();
+		cy.get(`[data-testid="courses-view-in-progress-courses"]`).should(
+			"not.contain",
+			courseName
+		);
+		cy.get(`[data-testid="courses-view-archived-courses"]`).contains(
+			courseName
+		);
+
+		cy.get(`[data-testid="course-card-delete"]`).click();
+		cy.get(`[data-testid="courses-view"]`).should("not.contain", courseName);
 	});
 });

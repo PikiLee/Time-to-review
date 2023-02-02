@@ -6,31 +6,31 @@ import { getNextDate } from "@/utils/useNextDate";
 import { useArrayFilter } from "@vueuse/shared";
 
 const props = defineProps<{
-  course: Course;
+	course: Course;
 }>();
 
 const dueProgresses = useArrayFilter(props.course.progresses, (progress) => {
-  const nextDate = getNextDate(progress.lastDate, progress.stage);
-  return getIsDue(nextDate);
+	const nextDate = getNextDate(progress.lastDate, progress.stage);
+	return getIsDue(nextDate);
 });
 </script>
 
 <template>
-  <div>
-    <RouterLink
-      link-decoration-none
-      :to="{ name: 'course', params: { id: course.id } }"
-    >
-      <h2 hover:text-lime-500>{{ course.name }}</h2>
-    </RouterLink>
-    <section grid grid-cols-3 gap-6 p-4>
-      <ProgressCard
-        v-for="progress in dueProgresses"
-        :key="progress.id"
-        :courseId="course.id"
-        :name="progress.name"
-        :stage="progress.stage"
-      />
-    </section>
-  </div>
+	<div>
+		<RouterLink
+			link-decoration-none
+			:to="{ name: 'course', params: { id: course.id } }"
+		>
+			<h2 hover:text-lime-500>{{ course.name }}</h2>
+		</RouterLink>
+		<section grid grid-cols-3 gap-6 p-4>
+			<ProgressCard
+				v-for="progress in dueProgresses"
+				:key="progress.id"
+				:courseId="course.id"
+				:name="progress.name"
+				:stage="progress.stage"
+			/>
+		</section>
+	</div>
 </template>

@@ -115,9 +115,21 @@ describe("login", () => {
 	});
 });
 
-describe("auth guard", () => {
-	it("register", () => {
+describe.only("auth guard", () => {
+	it("home", () => {
 		cy.visit("/home");
+
+		cy.url().should("contain", "/login");
+	});
+
+	it("courses", () => {
+		cy.visit("/courses");
+
+		cy.url().should("contain", "/login");
+	});
+
+	it("course", () => {
+		cy.visit("/course/sdfsd");
 
 		cy.url().should("contain", "/login");
 	});
