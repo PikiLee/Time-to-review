@@ -6,3 +6,10 @@ export function errorMsg(msg: string) {
 		type: "error",
 	});
 }
+
+export function successMsg(msg: string) {
+	ElMessage({
+		message: msg,
+		type: "success",
+	});
+}
