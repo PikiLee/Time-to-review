@@ -1,5 +1,5 @@
 import express from 'express'
-import { create, fetchAndPopulate, del, update } from '../models/Course.js'
+import { create, fetch, del, update } from '../models/Course.js'
 import { printDebugInfo } from '../utils/debug.js'
 
 export const router = express.Router()
@@ -14,7 +14,7 @@ router.post('/', printDebugInfo, async (req, res) => {
 
 router.get('/:courseId', printDebugInfo,  async (req, res) => {
 	try {
-		const course = await fetchAndPopulate(req.params.courseId)
+		const course = await fetch(req.params.courseId)
 		if (course) {
 			res.status(200).json(course)
 		} else {

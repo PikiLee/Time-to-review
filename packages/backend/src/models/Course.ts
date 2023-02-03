@@ -1,6 +1,8 @@
 import { courseStatusIndices, NewCourse, UpdateCourse } from 'shared'
 import mongoose, { Schema, Query } from 'mongoose'
+import autopopulate from 'mongoose-autopopulate'
 import type { Course as CourseType } from 'shared'
+import lodash from 'lodash-es'
 import User from './User.js'
 
 const courseSchema = new Schema<CourseType>({
@@ -15,6 +17,7 @@ const courseSchema = new Schema<CourseType>({
 		ref: 'User',
 		required: true,
 		immutable: true,
+		autopopulate: true
 	},
 	status: {
 		type: Number,
@@ -41,22 +44,24 @@ const courseSchema = new Schema<CourseType>({
 courseSchema.virtual('progresses', {
 	ref: 'Progress',
 	localField: '_id',
-	foreignField: 'course'
+	foreignField: 'course',
+	autopopulate: true
 })
 
 courseSchema.set('toJSON', {versionKey: false, virtuals: true})
+courseSchema.plugin(autopopulate)
 
 export const Course = mongoose.model<CourseType>('Course', courseSchema)
 
 export function	popu<T, P>(query: Query<T, P>) {
 	return query.populate({path: 'owner', select: '_id username'}).populate('progresses')
 }
-export async function fetchAndPopulate(_id: string) {
-	const query = Course.findById(_id)
-	if (query) {
-		return await popu(query)
+export async function fetch(_id: string) {
+	const course = await Course.findById(_id)
+	if (course) {
+		return course
 	} else {
-		throw Error('Not Found')
+		throw Error('Course Not Found')
 	}
 	
 }
@@ -66,7 +71,7 @@ export async function create(newCourse: NewCourse) {
 	if (user) {
 		const course = new Course(newCourse)
 		await course.save()
-		return await fetchAndPopulate(course._id)
+		return course
 	} else {
 		throw Error('User not found.')
 	}
@@ -77,5 +82,10 @@ export async function del(_id: string) {
 }
 
 export async function update(_id: string, updateCourse: UpdateCourse) {
-	return await popu(Course.findByIdAndUpdate(_id, updateCourse, {new: true}))
+	const course = await fetch(_id)
+	for (const [key, value] of lodash.entries(updateCourse)) {
+		(course as any)[key] = value
+	}
+	await course.save()
+	return course
 }

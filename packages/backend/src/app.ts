@@ -36,7 +36,7 @@ app.use(expressSession({
 	secret: 'keyboard cat',
 	resave: false,
 	saveUninitialized: false,
-	cookie: {httpOnly: false, secure: true}
+	cookie: {httpOnly: false, secure: !IS_DEV}
 }))
 
 // passport

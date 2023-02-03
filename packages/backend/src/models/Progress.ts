@@ -2,6 +2,7 @@ import { NewProgress, UpdateProgress, getNextDate, getIsDue } from 'shared'
 import mongoose from 'mongoose'
 import { ProgressSchema, progressStageIndices } from 'shared'
 import { Course } from './Course.js'
+import lodash from 'lodash-es'
 import User from './User.js'
 
 const { Schema } = mongoose
@@ -69,14 +70,14 @@ export async function fetch(_id: string) {
 
 export async function create(newProgress: NewProgress) {
 	const user = await User.findById(newProgress.owner)
+	if (!user) throw Error('User not found.')
+
 	const course = await Course.findById(newProgress.course)
-	if (user && course) {
-		const progress = new Progress(newProgress)
-		await progress.save()
-		return progress
-	} else {
-		throw Error('User or course not found.')
-	}
+	if (!course) throw Error('Course not found.')
+
+	const progress = new Progress(newProgress)
+	await progress.save()
+	return progress
 }
 		
 export async function del(_id: string) {
@@ -84,5 +85,10 @@ export async function del(_id: string) {
 }
 
 export async function update(_id: string, updateProgress: UpdateProgress) {
-	return await Progress.findByIdAndUpdate(_id, updateProgress, {new: true})
+	const progress = await fetch(_id)
+	for (const [key, value] of lodash.entries(updateProgress)) {
+		(progress as any)[key] = value
+	}
+	await progress.save()
+	return progress
 }
