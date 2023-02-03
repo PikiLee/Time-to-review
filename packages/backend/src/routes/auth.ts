@@ -41,10 +41,7 @@ router.post('/logout', function(req, res) {
 function loginHandler(req: express.Request, res: express.Response) {
 	if (req.user) {
 		const user = req.user as any
-		res.status(200).json({
-			_id: user._id,
-			username: user.username
-		})
+		res.status(200).json(user)
 	} else {
 		res.sendStatus(400)
 	}

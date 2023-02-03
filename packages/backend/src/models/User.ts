@@ -3,7 +3,10 @@ const Schema = mongoose.Schema
 import passportLocalMongoose from 'passport-local-mongoose'
 import { getPasswordValidationRegex } from 'shared'
 
-const User = new Schema({})
+const User = new Schema({}, {
+	id: false,
+	timestamps: true
+})
 
 User.plugin(passportLocalMongoose, {
 	passwordValidator(password: string, cb: any) {
@@ -27,5 +30,12 @@ User.virtual('progresses', {
 	localField: '_id',
 	foreignField: 'owner'
 })
+
+User.set('toJSON', {versionKey:false, transform:(_, ret) => {
+	return {
+		_id: ret._id,
+		username: ret.username
+	}
+}})
 
 export default mongoose.model('User', User)
