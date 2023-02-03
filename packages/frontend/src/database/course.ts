@@ -68,3 +68,10 @@ export async function del(_id: string) {
 	const courseStore = useCourseStore();
 	courseStore.del(_id);
 }
+
+export async function fetchDue() {
+	const res = await api.get(`${COURSE_URL}/due`);
+
+	const courseStore = useCourseStore();
+	courseStore.dueCourses = res.data;
+}

@@ -5,6 +5,7 @@ import CoursesView from "../views/CoursesView.vue";
 import CourseView from "../views/CourseView.vue";
 import RegisterView from "../views/AuthView.vue";
 import { errorMsg } from "@/utils/useMessage";
+import { fetchDue } from "@/database/course";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +15,9 @@ const router = createRouter({
 			name: "home",
 			component: HomeView,
 			meta: { requiresAuth: true },
+			beforeEnter() {
+				return fetchDue();
+			},
 		},
 		{
 			path: "/courses",

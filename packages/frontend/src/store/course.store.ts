@@ -6,6 +6,8 @@ import { useArrayFilter } from "@vueuse/shared";
 export const useCourseStore = defineStore("course", () => {
 	const courses = ref<Course[]>([]);
 
+	const dueCourses = ref<Course[]>([]);
+
 	const coursesInProgress = useArrayFilter(
 		courses,
 		(course) =>
@@ -75,6 +77,7 @@ export const useCourseStore = defineStore("course", () => {
 
 	return {
 		courses,
+		dueCourses,
 		coursesInProgress,
 		coursesDone,
 		coursesArchived,

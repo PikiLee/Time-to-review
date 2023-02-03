@@ -2,11 +2,14 @@
 // import DueCourseSection from "@/components/Course/DueCourseSection.vue";
 // import { useDueCourses } from "@/utils/useDueCourse";
 
-// const dueCourses = useDueCourses();
+import { useCourseStore } from "@/store/course.store";
+
+const courseStore = useCourseStore();
 </script>
 
 <template>
 	<main>
+		<pre>{{ courseStore.dueCourses }}</pre>
 		<!-- <h2 text-center>Courses that need review</h2>
 		<DueCourseSection
 			v-for="course in dueCourses"
