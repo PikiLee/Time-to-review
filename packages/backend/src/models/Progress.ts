@@ -29,7 +29,19 @@ const progressSchema = new Schema<ProgressSchema>({
 	},
 	lastDate: {
 		type: String,
-		default: () => (new Date()).toISOString()
+		default: () => (new Date()).toISOString(),
+		set(lastDate: string) {
+			const self = this as any
+			self.nextDate = getNextDate(lastDate, self.stage)
+			self.isDue = getIsDue(self.nextDate)
+			return lastDate
+		}
+	},
+	nextDate: {
+		type: String,
+	},
+	isDue: {
+		type: Boolean,
 	},
 	order: {
 		type: Number,
@@ -39,16 +51,6 @@ const progressSchema = new Schema<ProgressSchema>({
 	id: false,
 	timestamps: true,
 })
-
-progressSchema.virtual('nextDate').
-	get(function() {
-		return getNextDate(this.lastDate, this.stage)
-	})
-
-progressSchema.virtual('isDue').
-	get(function() {
-		return getIsDue(this.nextDate)
-	})
 
 progressSchema.set('toJSON', {versionKey: false, virtuals: true})
 

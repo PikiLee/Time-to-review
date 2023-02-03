@@ -1,4 +1,4 @@
-import { create, del, fetch, update } from './../models/Progress.js'
+import { create, del, fetch, Progress, update } from './../models/Progress.js'
 import express from 'express'
 import { printDebugInfo } from '../utils/debug.js'
 
@@ -9,6 +9,15 @@ router.post('/', printDebugInfo, async (req, res) => {
 		const doc = await create(req.body)
 		console.log({doc})
 		res.json(doc)	
+	} catch(err) {
+		res.status(400).send(err)
+	}
+})
+
+router.get('/due', printDebugInfo, async (req, res) => {
+	try {
+		const dueProgresses = await Progress.find({isDue: true}).populate('course')
+		res.json(dueProgresses)
 	} catch(err) {
 		res.status(400).send(err)
 	}

@@ -53,7 +53,7 @@ let retrievedProgress: Progress
 const updateProgress: UpdateProgress = {
 	'name': 'pool',
 	'stage': 1,
-	'lastDate': (new Date()).toISOString(),
+	'lastDate': (new Date(23123123)).toISOString(),
 }
 let updatedProgress: Progress
 
@@ -153,6 +153,15 @@ describe('course', () => {
 		updatedCourse.progresses = [updatedProgress]
 		expectToBeTypeOfProgress(res.body)
 		expect(res.body).toEqual(updatedProgress)
+	})
+
+	test('get due progress', async () => {
+		const res = await client
+			.get(`${progressUrl}/due`)
+
+		expect(res.status).toBe(200)
+		expectToBeTypeOfProgress(res.body[0])
+		expect(res.body[0]._id).toBe(updatedProgress._id)
 	})
 
 	test('delete progress', async () => {
