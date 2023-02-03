@@ -19,21 +19,38 @@ import {router as courseRouter} from './routes/course.js'
 import {router as progressRouter} from './routes/progress.js'
 
 export const IS_DEV = process.env.NODE_ENV === 'development'
+
+// throw error if enviorment variables do not exist
+function checkEnvVarExistence(value: (string | undefined) | (string | undefined)[]) {
+	let error = false
+	if (typeof value === undefined) error = true
+	if (Array.isArray(value) && value.some(v => v === undefined)) error = false
+	if (error) throw new Error('Enviornment variable not exist!')
+}
+if (IS_DEV) {
+	checkEnvVarExistence([process.env.DATABASE_DEVELOPMENT, process.env.SESSION_SECRET_DEVELOPMRNT])
+} else {
+	checkEnvVarExistence([process.env.DATABASE_PRODUCTION, process.env.SESSION_SECRET_PRODUCTION])
+}
+
 mongoose.connect(IS_DEV ?  process.env.DATABASE_DEVELOPMENT! : process.env.DATABASE_PRODUCTION!)
 
 export const app = express()
 
-app.use(cors({
-	origin: [
-		'http://localhost:4173',
-	],
-	credentials: true,
-	exposedHeaders: ['set-cookie'],
-}))
+// only allow cors in dev mode
+if (IS_DEV) {
+	app.use(cors({
+		origin: [
+			'http://localhost:4173',
+		],
+		credentials: true,
+		exposedHeaders: ['set-cookie'],
+	}))
+}
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
 app.use(expressSession({
-	secret: 'keyboard cat',
+	secret: IS_DEV ? process.env.SESSION_SECRET_DEVELOPMRNT! : process.env.SESSION_SECRET_PRODUCITON!,
 	resave: false,
 	saveUninitialized: false,
 	cookie: {httpOnly: false, secure: !IS_DEV}
