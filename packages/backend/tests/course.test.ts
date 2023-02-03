@@ -17,10 +17,11 @@ function expectToBeTypeOfCourse(course: Course) {
 	expect(course).toHaveProperty('status')
 	expect(course).toHaveProperty('archived')
 	expect(course).toHaveProperty('createdAt')
+	expect(course).toHaveProperty('updatedAt')
 	expect(course).toHaveProperty('order')
-	expect(course).toHaveProperty('_id')
+	expect(course).toHaveProperty('isDue')
 	expect(Array.isArray(course.progresses)).toBe(true)
-	expect(lodash.keys(course)).toHaveLength(9)
+	expect(lodash.keys(course)).toHaveLength(10)
 }
 
 function expectToBeTypeOfProgress(progress: Progress) {
@@ -30,6 +31,7 @@ function expectToBeTypeOfProgress(progress: Progress) {
 	expect(progress.stage in progressStageIndices).toBe(true)
 	expect(progress).toHaveProperty('lastDate')
 	expect(progress).toHaveProperty('createdAt')
+	expect(progress).toHaveProperty('updatedAt')
 	expect(progress).toHaveProperty('order')
 	expect(progress).toHaveProperty('nextDate')
 	expect(progress).toHaveProperty('isDue')
@@ -120,6 +122,7 @@ describe('course', () => {
 			.send(newProgress)
 
 		retrievedProgress = res.body
+		console.log({body: res.body})
 		updatedCourse.progresses.push(retrievedProgress)
 		expect(res.status).toBe(200)
 		expectToBeTypeOfProgress(res.body)
@@ -150,18 +153,22 @@ describe('course', () => {
 
 		expect(res.status).toBe(200)
 		updatedProgress = Object.assign({}, retrievedProgress, res.body)
+		updatedCourse.isDue = true
+		console.log({updatedProgress})
 		updatedCourse.progresses = [updatedProgress]
 		expectToBeTypeOfProgress(res.body)
 		expect(res.body).toEqual(updatedProgress)
 	})
 
-	test('get due progress', async () => {
+	test('get dued course', async () => {
 		const res = await client
-			.get(`${progressUrl}/due`)
+			.get(courseUrl + '/due')
 
 		expect(res.status).toBe(200)
-		expectToBeTypeOfProgress(res.body[0])
-		expect(res.body[0]._id).toBe(updatedProgress._id)
+		console.log({body: res.body, updatedCourse})
+		expectToBeTypeOfCourse(res.body[0])
+		updatedCourse.updatedAt = res.body[0].updatedAt
+		expect(res.body[0]).toEqual(updatedCourse)
 	})
 
 	test('delete progress', async () => {

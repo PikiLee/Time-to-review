@@ -1,5 +1,5 @@
 import express from 'express'
-import { create, fetch, del, update } from '../models/Course.js'
+import { create, fetch, del, update, Course } from '../models/Course.js'
 import { printDebugInfo } from '../utils/debug.js'
 
 export const router = express.Router()
@@ -7,6 +7,16 @@ export const router = express.Router()
 router.post('/', printDebugInfo, async (req, res) => {
 	try {
 		res.status(200).json(await create(req.body))
+	} catch(err) {
+		res.status(400).send(err)
+	}
+})
+
+router.get('/due', printDebugInfo, async (req, res) => {
+	try {
+		if (!req.user) throw new Error('User not found')
+		const courses = await Course.find({isDue: true})
+		res.json(courses)
 	} catch(err) {
 		res.status(400).send(err)
 	}

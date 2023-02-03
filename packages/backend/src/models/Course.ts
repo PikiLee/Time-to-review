@@ -31,6 +31,10 @@ const courseSchema = new Schema<CourseType>({
 	order: {
 		type: Number,
 		required: true
+	},
+	isDue: {
+		type: Boolean,
+		default: false,
 	}
 }, {
 	id: false,

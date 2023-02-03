@@ -16,11 +16,13 @@ const progressSchema = new Schema<ProgressSchema>({
 	},
 	owner: {
 		type: mongoose.SchemaTypes.ObjectId,
-		ref: 'User'
+		ref: 'User',
+		required: true
 	},
 	course: {
 		type: mongoose.SchemaTypes.ObjectId,
-		ref: 'Course'
+		ref: 'Course',
+		required: true
 	},
 	stage: {
 		type: Number,

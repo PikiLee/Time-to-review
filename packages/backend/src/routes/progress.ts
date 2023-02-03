@@ -1,4 +1,5 @@
-import { create, del, fetch, Progress, update } from './../models/Progress.js'
+import { del, fetch,  Progress,  update } from './../models/Progress.js'
+import { fetch as fetchCourse} from '../models/Course.js'
 import express from 'express'
 import { printDebugInfo } from '../utils/debug.js'
 
@@ -6,18 +7,14 @@ export const router = express.Router()
 
 router.post('/', printDebugInfo, async (req, res) => {
 	try {
-		const doc = await create(req.body)
-		console.log({doc})
-		res.json(doc)	
-	} catch(err) {
-		res.status(400).send(err)
-	}
-})
+		const progress = new Progress(req.body)
+		await progress.save()
+		const course = await fetchCourse((progress as any).course)
+		if (!course) throw new Error('Course not found')
+		course.isDue = progress.isDue ?? course.progresses.some(progress => progress.isDue)
+		await course.save()
 
-router.get('/due', printDebugInfo, async (req, res) => {
-	try {
-		const dueProgresses = await Progress.find({isDue: true}).populate('course')
-		res.json(dueProgresses)
+		res.json(progress)
 	} catch(err) {
 		res.status(400).send(err)
 	}
@@ -47,6 +44,10 @@ router.put('/:progressId', printDebugInfo, async (req, res) => {
 	try {
 		const updatedProgress = await update(req.params.progressId, req.body)
 		if (updatedProgress) {
+			const course = await fetchCourse((updatedProgress as any).course)
+			if (!course) throw new Error('Course not found')
+			course.isDue = updatedProgress.isDue ?? course.progresses.some(progress => progress.isDue)
+			await course.save()
 			return res.json(updatedProgress)
 		} else {
 			res.sendStatus(404)
