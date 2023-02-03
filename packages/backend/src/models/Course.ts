@@ -1,5 +1,5 @@
 import { courseStatusIndices, NewCourse, UpdateCourse } from 'shared'
-import mongoose, { Schema, Query } from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import autopopulate from 'mongoose-autopopulate'
 import type { Course as CourseType } from 'shared'
 import lodash from 'lodash-es'
@@ -28,17 +28,13 @@ const courseSchema = new Schema<CourseType>({
 		type: Boolean,
 		default: false
 	},
-	createdAt: {
-		type: String,
-		default: () => (new Date()).toISOString(),
-		immutable: true
-	},
 	order: {
 		type: Number,
 		required: true
 	}
 }, {
-	id: false
+	id: false,
+	timestamps: true
 })
 
 courseSchema.virtual('progresses', {
@@ -53,9 +49,6 @@ courseSchema.plugin(autopopulate)
 
 export const Course = mongoose.model<CourseType>('Course', courseSchema)
 
-export function	popu<T, P>(query: Query<T, P>) {
-	return query.populate({path: 'owner', select: '_id username'}).populate('progresses')
-}
 export async function fetch(_id: string) {
 	const course = await Course.findById(_id)
 	if (course) {

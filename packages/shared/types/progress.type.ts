@@ -41,14 +41,15 @@ export interface Progress {
   stage: ProgressStage;
   lastDate: string;
   createdAt: string;
+  updatedAt: string;
   order: number;
   nextDate: string;
   isDue: boolean;
 }
 
-export type NewProgress = Omit<Progress, '_id' | 'stage' | 'lastDate' | 'createdAt' | 'nextDate' | 'isDue'> 
+export type NewProgress = Omit<Progress, '_id' | 'stage' | 'lastDate' | 'createdAt' | 'nextDate' | 'isDue' | 'updatedAt'> 
 
-export type UpdateProgress = Partial<Omit<Progress, '_id' | 'course' | 'owner' | 'createdAt'  | 'nextDate' | 'isDue'>>
+export type UpdateProgress = Partial<Omit<Progress, '_id' | 'course' | 'owner' | 'createdAt'  | 'nextDate' | 'isDue' | 'updatedAt'>>
 
 export interface ProgressSchema extends Omit<Progress, 'course' | 'owner'> {
   owner: mongoose.Schema.Types.ObjectId

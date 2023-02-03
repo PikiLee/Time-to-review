@@ -15,12 +15,13 @@ export interface Course {
   status: CourseStatus;
   archived: boolean;
   createdAt: string;
+  updatedAt: string;
   order: number;
   progresses: Progress[];
 }
 
-export interface NewCourse extends Omit<Course, '_id' | 'owner' | 'status' | 'archived' | 'createdAt' | 'progresses'> {
+export interface NewCourse extends Omit<Course, '_id' | 'owner' | 'status' | 'archived' | 'createdAt' | 'progresses' | 'updatedAt'> {
   owner: string;
 }
 
-export type UpdateCourse =  Partial<Omit<Course, '_id' | 'owner' | 'createdAt' | 'progresses'>>
+export type UpdateCourse =  Partial<Omit<Course, '_id' | 'owner' | 'createdAt' | 'progresses' | 'updatedAt'>>

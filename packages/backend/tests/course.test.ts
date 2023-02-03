@@ -3,6 +3,7 @@ import { test, expect,  beforeAll, describe } from 'vitest'
 import request from 'supertest'
 import {app} from '../src/app.js'
 import { generateAuthInfo } from 'shared'
+import lodash from 'lodash-es'
 
 const courseUrl = '/course'
 const progressUrl = '/progress'
@@ -19,6 +20,7 @@ function expectToBeTypeOfCourse(course: Course) {
 	expect(course).toHaveProperty('order')
 	expect(course).toHaveProperty('_id')
 	expect(Array.isArray(course.progresses)).toBe(true)
+	expect(lodash.keys(course)).toHaveLength(9)
 }
 
 function expectToBeTypeOfProgress(progress: Progress) {
@@ -31,6 +33,7 @@ function expectToBeTypeOfProgress(progress: Progress) {
 	expect(progress).toHaveProperty('order')
 	expect(progress).toHaveProperty('nextDate')
 	expect(progress).toHaveProperty('isDue')
+	expect(lodash.keys(progress)).toHaveLength(11)
 }
 
 
@@ -107,6 +110,7 @@ describe('course', () => {
 		expect(res.status).toBe(200)
 		expectToBeTypeOfCourse(res.body)
 		updatedCourse = Object.assign({}, retrievedCourse, updateCourse)
+		updatedCourse.updatedAt = res.body.updatedAt
 		expect(res.body).toEqual(updatedCourse)
 	})
 

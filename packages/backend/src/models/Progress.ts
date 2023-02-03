@@ -31,17 +31,13 @@ const progressSchema = new Schema<ProgressSchema>({
 		type: String,
 		default: () => (new Date()).toISOString()
 	},
-	createdAt: {
-		type: String,
-		default: () => (new Date()).toISOString(),
-		immutable: true
-	},
 	order: {
 		type: Number,
 		required: true
 	}
 }, {
 	id: false,
+	timestamps: true,
 })
 
 progressSchema.virtual('nextDate').
