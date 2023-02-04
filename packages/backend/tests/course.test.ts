@@ -116,6 +116,16 @@ describe('course', () => {
 		expect(res.body).toEqual(retrievedCourse)
 	})
 
+	test('get all course', async () => {
+		const res = await client
+			.get(courseUrl)
+
+		console.log({body: res.body})
+		expect(res.status).toBe(200)
+		expectToBeTypeOfCourse(res.body[0])
+		expect(res.body[0]).toEqual(retrievedCourse)
+	})
+
 	test('update course', async () => {
 		const res = await client
 			.put(`${courseUrl}/${retrievedCourse._id}`)

@@ -148,11 +148,13 @@ function createDueCourseProjection(rawUserId: string | mongoose.Types.ObjectId) 
 /**
  * fetch a course by id
  */
-export async function fetch(rawCourseId: string, options = {
-	withProgresses: false
+export async function fetch(rawCourseId: string, options?: {
+	withProgresses?: boolean;
 }) {
+	const {withProgresses} = lodash.assign({}, {withProgresses: false,
+		userId: null}, options)
 	let result
-	if (!options.withProgresses) {
+	if (!withProgresses) {
 		result = await Course.aggregate(createCourseProjection(rawCourseId))
 	} else {
 		const courseId = toObjectId(rawCourseId)
@@ -199,6 +201,15 @@ export async function fetch(rawCourseId: string, options = {
 	} else {
 		throw Error('Course Not Found')
 	}
+}
+
+export async function fetchAll(rawUserId:string) {
+	const result = await Course.aggregate([
+		{ $match: { owner: toObjectId(rawUserId) }},
+		lookupStage,
+		projectStage
+	])
+	return result
 }
 
 /**
