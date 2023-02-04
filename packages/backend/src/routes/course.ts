@@ -92,7 +92,7 @@ router.get('/due', async (req, res) => {
 
 router.get('/:courseId', async (req, res) => {
 	try {
-		const course = await fetch(req.params.courseId)
+		const course = await fetch(req.params.courseId, {withProgresses: !!req.query.withProgresses})
 		if (!course.owner.equals((req.user as any)._id)) throw new Error('Not authorized.')
 		res.status(200).json(course)
 	} catch (err) {

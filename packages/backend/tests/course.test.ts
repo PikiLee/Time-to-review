@@ -47,7 +47,8 @@ beforeAll(async () => {
 })
 
 function expectToBeTypeOfCourse(course: Course, options = {
-	withDueProgresses: false
+	withDueProgresses: false,
+	withProgresses: false,
 }) {
 	expect(course).toHaveProperty('_id')
 	expect(course).toHaveProperty('name')
@@ -60,12 +61,15 @@ function expectToBeTypeOfCourse(course: Course, options = {
 	expect(course).toHaveProperty('dueCount')
 	expect(course).toHaveProperty('isDue')
 	expect(course).toHaveProperty('progressCount')
+	let length = 11
 	if (options.withDueProgresses) {
 		expect(course).toHaveProperty('dueProgresses')
-		expect(lodash.keys(course)).toHaveLength(12)
-
+		length++
+	} else if (options.withProgresses) {
+		expect(course).toHaveProperty('progresses')
+		length++
 	} else {
-		expect(lodash.keys(course)).toHaveLength(11)
+		expect(lodash.keys(course)).toHaveLength(length)
 	}
 }
 
@@ -178,6 +182,18 @@ describe('course', () => {
 		expect(res.body).toEqual(updatedCourse)
 	})
 
+	test('get a course with progresses field ', async () => {
+		const res = await client
+			.get(courseUrl + '/' + retrievedCourse._id)
+			.query({
+				withProgresses: true
+			})
+
+		console.log({body: res.body})
+		expect(res.status).toBe(200)
+		expectToBeTypeOfCourse(res.body, {withProgresses: true, withDueProgresses: false})
+	})
+
 	test('get all progresses of a course', async () => {
 		const res = await client
 			.get(progressUrl + '/course/' + retrievedCourse._id)
@@ -193,7 +209,7 @@ describe('course', () => {
 
 		console.log({body: res.body, progresses: res.body[0].progresses, updatedCourse})
 		expect(res.status).toBe(200)
-		expectToBeTypeOfCourse(res.body[0], {withDueProgresses: true})
+		expectToBeTypeOfCourse(res.body[0], {withDueProgresses: true, withProgresses:false})
 		updatedCourse.updatedAt = res.body[0].updatedAt
 	})
 

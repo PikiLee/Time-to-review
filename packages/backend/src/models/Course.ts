@@ -148,8 +148,52 @@ function createDueCourseProjection(rawUserId: string | mongoose.Types.ObjectId) 
 /**
  * fetch a course by id
  */
-export async function fetch(courseId: string) {
-	const result = await Course.aggregate(createCourseProjection(courseId))
+export async function fetch(rawCourseId: string, options = {
+	withProgresses: false
+}) {
+	let result
+	if (!options.withProgresses) {
+		result = await Course.aggregate(createCourseProjection(rawCourseId))
+	} else {
+		const courseId = toObjectId(rawCourseId)
+		result = await Course.aggregate( [{ $match: { _id: courseId } }, lookupStage, {
+			$project: {
+				name: 1,
+				owner: 1,
+				status: 1,
+				archived: 1,
+				order: 1,
+				createdAt: 1,
+				updatedAt: 1,
+				dueCount: {
+					$size: {
+						$filter: {
+							input: '$progresses',
+							as: 'item',
+							cond: { $eq: ['$$item.isDue', true] },
+						},
+					},
+				},
+				isDue: {
+					$gt: [
+						{
+							$size: {
+								$filter: {
+									input: '$progresses',
+									as: 'item',
+									cond: { $eq: ['$$item.isDue', true] },
+								},
+							},
+						},
+						0,
+					],
+				},
+				progressCount: { $size: '$progresses' },
+				progresses: '$progresses'
+			}
+		}])
+	}
+
 	if (result.length > 0) {
 		return result[0]
 	} else {
