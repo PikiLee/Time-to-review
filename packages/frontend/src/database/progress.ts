@@ -9,12 +9,11 @@ export async function create(courseId: string, name: string) {
 	if (!userStore.user) throw Error("Please login first.");
 
 	const courseStore = useCourseStore();
-	const course = courseStore.find(courseId);
-	if (!course) throw Error("Can not find course");
+	if (!courseStore.currentCourse) throw Error("Can not find course");
 
 	const newProgress: NewProgress = {
 		owner: userStore.user._id,
-		course: courseId,
+		course: courseStore.currentCourse._id,
 		name,
 		order: 0,
 	};
@@ -23,7 +22,7 @@ export async function create(courseId: string, name: string) {
 		data: newProgress,
 	});
 
-	course.progresses.push(res.data);
+	courseStore.currentCourse.progresses.push(res.data);
 }
 
 export async function update(
@@ -35,16 +34,16 @@ export async function update(
 	});
 
 	const courseStore = useCourseStore();
-	if (!courseStore.replaceProgress(res.data))
-		throw new Error("Something went wrong!");
+	if (!courseStore.currentCourse) throw Error("Can not find course");
+	courseStore.replaceProgress(res.data);
 
 	return res.data;
 }
 
-export async function del(courseId: string, progressId: string) {
+export async function del(progressId: string) {
 	const courseStore = useCourseStore();
 
 	await api.delete(`${PROGRESS_URL}/${progressId}`);
 
-	courseStore.delProgress(courseId, progressId);
+	courseStore.delProgress(progressId);
 }

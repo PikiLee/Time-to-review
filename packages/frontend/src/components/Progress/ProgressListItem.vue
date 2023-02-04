@@ -149,7 +149,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 				Confirm
 			</el-button>
 			<el-button
-				@click="del(progress.course, progress._id)"
+				@click="del(progress._id)"
 				data-testid="progress-list-item-delete"
 				>Delete</el-button
 			>

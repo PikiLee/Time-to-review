@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import { type Course, CourseStatus, type Progress } from "shared";
+import {
+	type Course,
+	CourseStatus,
+	type Progress,
+	type CourseWithProgress,
+} from "shared";
 import { ref } from "vue";
 import { useArrayFilter } from "@vueuse/shared";
 
@@ -7,6 +12,8 @@ export const useCourseStore = defineStore("course", () => {
 	const courses = ref<Course[]>([]);
 
 	const dueCourses = ref<Course[]>([]);
+
+	const currentCourse = ref<CourseWithProgress>();
 
 	const coursesInProgress = useArrayFilter(
 		courses,
@@ -47,37 +54,39 @@ export const useCourseStore = defineStore("course", () => {
 	}
 
 	function findProgress(course: Course, _id: string) {
-		return course.progresses.find((progress) => progress._id === _id);
+		if (!currentCourse.value) throw Error("Can not find course");
+		return currentCourse.value.progresses.find(
+			(progress) => progress._id === _id
+		);
 	}
 
 	function replaceProgress(replace: Progress) {
-		const course = find(replace.course);
-		if (course) {
-			course.progresses = course.progresses.map((progress) => {
+		if (!currentCourse.value) throw Error("Can not find course");
+		currentCourse.value.progresses = currentCourse.value.progresses.map(
+			(progress) => {
 				if (progress._id === replace._id) {
 					return replace;
 				} else {
 					return progress;
 				}
-			});
-			return true;
-		} else {
-			return false;
-		}
+			}
+		);
 	}
 
-	function delProgress(courseId: string, progressId: String) {
-		const course = find(courseId);
-		if (!course) return;
-		const idx = course.progresses.findIndex(
+	function delProgress(progressId: String) {
+		if (!currentCourse.value) throw Error("Can not find course");
+		const idx = currentCourse.value.progresses.findIndex(
 			(progress) => progress._id === progressId
 		);
-		course.progresses.splice(idx, 1);
+		if (idx !== -1) {
+			currentCourse.value.progresses.splice(idx, 1);
+		}
 	}
 
 	return {
 		courses,
 		dueCourses,
+		currentCourse,
 		coursesInProgress,
 		coursesDone,
 		coursesArchived,

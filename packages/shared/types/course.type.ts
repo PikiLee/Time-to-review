@@ -31,3 +31,7 @@ export type UpdateCourse =  Partial<Omit<Course, '_id' | 'owner' | 'createdAt' |
 export interface CourseWithDueProgresses extends Course {
   dueProgresses: Progress[]
 }
+
+export interface CourseWithProgress extends Course {
+  progresses: Progress[]
+}
