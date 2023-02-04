@@ -1,5 +1,6 @@
-import { del, fetch,  Progress,  update } from './../models/Progress.js'
+import { del, fetch,  fetchProgressesByCourseId,  Progress,  update } from './../models/Progress.js'
 import express from 'express'
+import { printDebugInfo } from '../utils/debug.js'
 
 export const router = express.Router()
 
@@ -10,6 +11,17 @@ router.post('/', async (req, res) => {
 		res.json(progress)
 	} catch(err) {
 		res.status(400).send(err)
+	}
+})
+
+router.get('/course/:courseId', async (req, res) => {
+	try {
+		const progresses = await fetchProgressesByCourseId(req.params.courseId, (req.user as any)._id)
+		res.status(200).json(progresses)
+	} catch(err) {
+		printDebugInfo(req)
+		console.log({err})
+		res.status(404).send(err)
 	}
 })
 

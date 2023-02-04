@@ -140,6 +140,7 @@ describe('course', () => {
 		const res = await client
 			.get(progressUrl + '/' + retrievedProgress._id)
 
+		console.log(res.body)
 		expect(res.status).toBe(200)
 		expectToBeTypeOfProgress(res.body)
 		expect(res.body).toEqual(retrievedProgress)
@@ -175,6 +176,15 @@ describe('course', () => {
 		expect(res.status).toBe(200)
 		expectToBeTypeOfCourse(res.body)
 		expect(res.body).toEqual(updatedCourse)
+	})
+
+	test('get all progresses of a course', async () => {
+		const res = await client
+			.get(progressUrl + '/course/' + retrievedCourse._id)
+
+		expect(res.status).toBe(200)
+		expect(res.body).toHaveLength(1)
+		expectToBeTypeOfProgress(res.body[0])
 	})
 
 	test('get dued course', async () => {

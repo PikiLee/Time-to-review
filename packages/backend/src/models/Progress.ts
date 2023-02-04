@@ -92,3 +92,8 @@ export async function update(_id: string, updateProgress: UpdateProgress) {
 	await progress.save()
 	return progress
 }
+
+export async function fetchProgressesByCourseId(courseId: string, userId: string) {
+	const progresses = await Progress.find({course: courseId, owner: userId})
+	return progresses
+}
