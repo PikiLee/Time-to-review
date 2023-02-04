@@ -1,45 +1,16 @@
 import {  NewProgress, Progress, UpdateProgress, Course, NewCourse, UpdateCourse, User, progressStageIndices} from 'shared'
 import { test, expect,  beforeAll, describe } from 'vitest'
 import request from 'supertest'
-import {app} from '../src/app.js'
+import { createApp } from '../src/app.js'
 import { generateAuthInfo } from 'shared'
 import lodash from 'lodash-es'
 
 const courseUrl = '/course'
 const progressUrl = '/progress'
-app.listen(3002)
-
-function expectToBeTypeOfCourse(course: Course) {
-	expect(course).toHaveProperty('_id')
-	expect(course.owner).toHaveProperty('_id')
-	expect(course.owner).toHaveProperty('username')
-	expect(course).toHaveProperty('name')
-	expect(course).toHaveProperty('status')
-	expect(course).toHaveProperty('archived')
-	expect(course).toHaveProperty('createdAt')
-	expect(course).toHaveProperty('updatedAt')
-	expect(course).toHaveProperty('order')
-	expect(course).toHaveProperty('isDue')
-	expect(Array.isArray(course.progresses)).toBe(true)
-	expect(lodash.keys(course)).toHaveLength(10)
-}
-
-function expectToBeTypeOfProgress(progress: Progress) {
-	expect(progress).toHaveProperty('_id')
-	expect(progress).toHaveProperty('course')
-	expect(progress).toHaveProperty('owner')
-	expect(progress.stage in progressStageIndices).toBe(true)
-	expect(progress).toHaveProperty('lastDate')
-	expect(progress).toHaveProperty('createdAt')
-	expect(progress).toHaveProperty('updatedAt')
-	expect(progress).toHaveProperty('order')
-	expect(progress).toHaveProperty('nextDate')
-	expect(progress).toHaveProperty('isDue')
-	expect(lodash.keys(progress)).toHaveLength(11)
-}
-
-
+const app = createApp({port:3002})
 const client = request.agent(app)
+const {username, password} = generateAuthInfo()
+
 let  user: User
 let newCourse: NewCourse
 let retrievedCourse: Course
@@ -60,14 +31,13 @@ const updateProgress: UpdateProgress = {
 let updatedProgress: Progress
 
 beforeAll(async () => {
-	const {username, password} = generateAuthInfo()
-
 	const registerRes = await client
 		.post('/auth' + '/register')
 		.send({
 			username,
 			password
 		})
+	expect(registerRes.status).toBe(200)
 	user = registerRes.body
 	newCourse = {
 		'name': 'cool',
@@ -75,6 +45,43 @@ beforeAll(async () => {
 		order: 0.2,
 	}
 })
+
+function expectToBeTypeOfCourse(course: Course, options = {
+	withDueProgresses: false
+}) {
+	expect(course).toHaveProperty('_id')
+	expect(course).toHaveProperty('name')
+	expect(course).toHaveProperty('owner')
+	expect(course).toHaveProperty('status')
+	expect(course).toHaveProperty('archived')
+	expect(course).toHaveProperty('createdAt')
+	expect(course).toHaveProperty('updatedAt')
+	expect(course).toHaveProperty('order')
+	expect(course).toHaveProperty('dueCount')
+	expect(course).toHaveProperty('isDue')
+	expect(course).toHaveProperty('progressCount')
+	if (options.withDueProgresses) {
+		expect(course).toHaveProperty('dueProgresses')
+		expect(lodash.keys(course)).toHaveLength(12)
+
+	} else {
+		expect(lodash.keys(course)).toHaveLength(11)
+	}
+}
+
+function expectToBeTypeOfProgress(progress: Progress) {
+	expect(progress).toHaveProperty('_id')
+	expect(progress).toHaveProperty('course')
+	expect(progress).toHaveProperty('owner')
+	expect(progress.stage in progressStageIndices).toBe(true)
+	expect(progress).toHaveProperty('lastDate')
+	expect(progress).toHaveProperty('createdAt')
+	expect(progress).toHaveProperty('updatedAt')
+	expect(progress).toHaveProperty('order')
+	expect(progress).toHaveProperty('nextDate')
+	expect(progress).toHaveProperty('isDue')
+	expect(lodash.keys(progress)).toHaveLength(11)
+}
 
 describe('course', () => {
 	test('create course', async () => {
@@ -89,6 +96,7 @@ describe('course', () => {
 			course: retrievedCourse._id,
 			order: 0.3,
 		}
+		console.log(res.body)
 		expect(res.status).toBe(200)
 		expectToBeTypeOfCourse(res.body)
 	})
@@ -98,8 +106,8 @@ describe('course', () => {
 		const res = await client
 			.get(courseUrl + '/' + retrievedCourse._id)
 
+		console.log({body: res.body})
 		expect(res.status).toBe(200)
-		console.log(res.body)
 		expectToBeTypeOfCourse(res.body)
 		expect(res.body).toEqual(retrievedCourse)
 	})
@@ -123,7 +131,7 @@ describe('course', () => {
 
 		retrievedProgress = res.body
 		console.log({body: res.body})
-		updatedCourse.progresses.push(retrievedProgress)
+		updatedCourse.progressCount++
 		expect(res.status).toBe(200)
 		expectToBeTypeOfProgress(res.body)
 	})
@@ -151,24 +159,32 @@ describe('course', () => {
 			.put(`${progressUrl}/${retrievedProgress._id}`)
 			.send(updateProgress)
 
+		console.log({body: res.body})
 		expect(res.status).toBe(200)
 		updatedProgress = Object.assign({}, retrievedProgress, res.body)
 		updatedCourse.isDue = true
-		console.log({updatedProgress})
-		updatedCourse.progresses = [updatedProgress]
+		updatedCourse.dueCount++
 		expectToBeTypeOfProgress(res.body)
 		expect(res.body).toEqual(updatedProgress)
+	})
+
+	test('get course again', async () => {
+		const res = await client
+			.get(courseUrl + '/' + retrievedCourse._id)
+
+		expect(res.status).toBe(200)
+		expectToBeTypeOfCourse(res.body)
+		expect(res.body).toEqual(updatedCourse)
 	})
 
 	test('get dued course', async () => {
 		const res = await client
 			.get(courseUrl + '/due')
 
+		console.log({body: res.body, progresses: res.body[0].progresses, updatedCourse})
 		expect(res.status).toBe(200)
-		console.log({body: res.body, updatedCourse})
-		expectToBeTypeOfCourse(res.body[0])
+		expectToBeTypeOfCourse(res.body[0], {withDueProgresses: true})
 		updatedCourse.updatedAt = res.body[0].updatedAt
-		expect(res.body[0]).toEqual(updatedCourse)
 	})
 
 	test('delete progress', async () => {

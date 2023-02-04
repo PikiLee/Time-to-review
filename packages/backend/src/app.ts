@@ -78,7 +78,7 @@ export function createApp(options = {
 
 	// auth guard
 	app.use(['/course', '/progress'], (req, res, next) => {
-		if (IS_DEV) console.debug('Auth guard triggered.')
+		if (IS_DEV && !req.user) console.debug('Auth guard triggered. Not login.')
 		if (!req.user) res.sendStatus(401)
 		else 
 			next()

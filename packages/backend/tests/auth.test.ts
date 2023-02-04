@@ -1,11 +1,11 @@
 import lodash from 'lodash-es'
 import { test, expect, describe } from 'vitest'
 import request from 'supertest'
-import {app} from '../src/app.js'
+import { createApp } from '../src/app.js'
 import { generateAuthInfo, User } from 'shared'
 import { AUTH_URL } from 'shared'
 
-app.listen(3001)
+const app = createApp({port: 3001})
 
 function expectTypeOfUser(user: User) {
 	expect(user).toHaveProperty('username')

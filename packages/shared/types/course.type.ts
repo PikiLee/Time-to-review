@@ -16,13 +16,18 @@ export interface Course {
   archived: boolean;
   createdAt: string;
   updatedAt: string;
+  dueCount: number;
   isDue: boolean;
   order: number;
-  progresses: Progress[];
+  progressCount: number;
 }
 
-export interface NewCourse extends Omit<Course, '_id' | 'owner' | 'status' | 'archived' | 'createdAt' | 'progresses' | 'updatedAt' | 'isDue'> {
+export interface NewCourse extends Omit<Course, '_id' | 'owner' | 'status' | 'archived' | 'createdAt' | 'progresses' | 'updatedAt' | 'isDue' | 'progressCount' | 'dueCount'> {
   owner: string;
 }
 
-export type UpdateCourse =  Partial<Omit<Course, '_id' | 'owner' | 'createdAt' | 'progresses' | 'updatedAt' | 'isDue'>>
+export type UpdateCourse =  Partial<Omit<Course, '_id' | 'owner' | 'createdAt' | 'progresses' | 'updatedAt' | 'isDue' | 'progressCount' | 'dueCount'>>
+
+export interface CourseWithDueProgresses extends Course {
+  dueProgresses: Progress[]
+}
