@@ -33,66 +33,76 @@ if (IS_DEV) {
 	checkEnvVarExistence([process.env.DATABASE_PRODUCTION, process.env.SESSION_SECRET_PRODUCTION])
 }
 
-mongoose.connect(IS_DEV ?  process.env.DATABASE_DEVELOPMENT! : process.env.DATABASE_PRODUCTION!)
+export function createApp(options = {
+	port: 3000
+}) {
+	mongoose.connect(IS_DEV ?  process.env.DATABASE_DEVELOPMENT! : process.env.DATABASE_PRODUCTION!)
 
-export const app = express()
+	const app = express()
 
-// only allow cors in dev mode
-if (IS_DEV) {
-	app.use(cors({
-		origin: [
-			'http://localhost:4173',
-		],
-		credentials: true,
-		exposedHeaders: ['set-cookie'],
-	}))
-}
-app.use(bodyParser.urlencoded({extended: false}))
-app.use(bodyParser.json())
-app.use(expressSession({
-	secret: IS_DEV ? process.env.SESSION_SECRET_DEVELOPMRNT! : process.env.SESSION_SECRET_PRODUCITON!,
-	resave: false,
-	saveUninitialized: false,
-	cookie: {httpOnly: false, secure: !IS_DEV}
-}))
-
-// passport
-app.use(passport.initialize())
-app.use(passport.session())
-passport.use(User.createStrategy())
-passport.serializeUser(User.serializeUser())
-passport.deserializeUser(User.deserializeUser())
-
-// log
-const logsDir = path.resolve(url.fileURLToPath(import.meta.url), '../../logs')
-const accessLogPath = path.join(logsDir, 'access.log') 
-if (!fs.existsSync(logsDir)) {
-	fs.mkdirSync(logsDir)
-	console.log(`Created logs direcotry at ${logsDir}`)
-}
-const accessLogStream = fs.createWriteStream(accessLogPath, { flags: 'a' })
-app.use(morgan('combined', {stream: accessLogStream}))
-
-// auth guard
-app.use(['/course', '/progress'], (req, res, next) => {
-	if (IS_DEV) console.debug('Auth guard triggered.')
-	if (!req.user) res.sendStatus(401)
-	else 
-		next()
-})
-
-app.use((req, _res, next) => {
-	if (req.body.data && Object.keys(req.body).length === 1) {
-		req.body = req.body.data
+	// only allow cors in dev mode
+	if (IS_DEV) {
+		app.use(cors({
+			origin: [
+				'http://localhost:4173',
+			],
+			credentials: true,
+			exposedHeaders: ['set-cookie'],
+		}))
 	}
-	next()
-})
-app.use(AUTH_URL, authRouter)
-app.use(COURSE_URL, courseRouter)
-app.use(PROGRESS_URL, progressRouter)
+	app.use(bodyParser.urlencoded({extended: false}))
+	app.use(bodyParser.json())
+	app.use(expressSession({
+		secret: IS_DEV ? process.env.SESSION_SECRET_DEVELOPMRNT! : process.env.SESSION_SECRET_PRODUCITON!,
+		resave: false,
+		saveUninitialized: false,
+		cookie: {httpOnly: false, secure: !IS_DEV}
+	}))
 
-app.post('/', (_req, res) => {
-	res.sendStatus(200)
-})
+	// passport
+	app.use(passport.initialize())
+	app.use(passport.session())
+	passport.use(User.createStrategy())
+	passport.serializeUser(User.serializeUser())
+	passport.deserializeUser(User.deserializeUser())
+
+	// log
+	const logsDir = path.resolve(url.fileURLToPath(import.meta.url), '../../logs')
+	const accessLogPath = path.join(logsDir, 'access.log') 
+	if (!fs.existsSync(logsDir)) {
+		fs.mkdirSync(logsDir)
+		console.log(`Created logs direcotry at ${logsDir}`)
+	}
+	const accessLogStream = fs.createWriteStream(accessLogPath, { flags: 'a' })
+	app.use(morgan('combined', {stream: accessLogStream}))
+
+	// auth guard
+	app.use(['/course', '/progress'], (req, res, next) => {
+		if (IS_DEV) console.debug('Auth guard triggered.')
+		if (!req.user) res.sendStatus(401)
+		else 
+			next()
+	})
+
+	app.use((req, _res, next) => {
+		if (req.body.data && Object.keys(req.body).length === 1) {
+			req.body = req.body.data
+		}
+		next()
+	})
+	app.use(AUTH_URL, authRouter)
+	app.use(COURSE_URL, courseRouter)
+	app.use(PROGRESS_URL, progressRouter)
+
+	app.post('/', (_req, res) => {
+		res.sendStatus(200)
+	})
+
+	app.listen(options.port, () => {
+		console.log(`Example app listening on port ${options.port}`)
+	})
+
+	return app
+}
 
 
