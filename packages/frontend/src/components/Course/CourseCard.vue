@@ -77,6 +77,7 @@ async function toggleStatus(courseId: string) {
 					<div
 						v-else
 						i-mdi-archive-cancel
+						class="translate-y-0.25"
 						@click="toggleArchive(course._id)"
 					></div>
 				</button>
@@ -104,18 +105,20 @@ async function toggleStatus(courseId: string) {
 					<div v-else i-mdi-undo @click="toggleStatus(course._id)"></div>
 				</button>
 			</el-tooltip>
-			<el-tooltip v-else class="box-item" :content="$t('components.actions.delete')" placement="top">
+			<el-tooltip v-else class="box-item" :content="$t('actions.delete')" placement="top">
 				<button
 					row-span-2
-					text-size-3xl
+					text-3xl
 					justify-self-center
 					cursor-pointer
+					align-middle
 					hover:text-lime-500
-					i-ic-round-delete-forever
 					@click="del(course._id)"
-					:aria-label="$t('components.actions.delete')"
+					:aria-label="$t('actions.delete')"
 					data-testid="course-card-delete"
-				></button>
+				>
+				<div i-ic-round-delete-forever></div>
+			</button>
 			</el-tooltip>
 			<RouterLink
 				link-decoration-none
