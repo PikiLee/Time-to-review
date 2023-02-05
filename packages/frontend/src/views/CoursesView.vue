@@ -26,7 +26,7 @@ const courseStore = useCourseStore()
 						:key="course._id"
 					/>
 				</ul>
-				<el-empty v-else description="No courses in progress yet." />
+				<el-empty v-else :description="$t('common.empty')" />
 			</li>
 			<li data-testid="courses-view-done-courses">
 				<h2 text-center>{{$t('courses.done')}}</h2>
@@ -44,7 +44,7 @@ const courseStore = useCourseStore()
 						:key="course._id"
 					/>
 				</ul>
-				<el-empty v-else description="No courses have been done yet." />
+				<el-empty v-else :description="$t('common.empty')" />
 			</li>
 			<li data-testid="courses-view-archived-courses">
 				<h2 text-center>{{$t('courses.archived')}}</h2>
@@ -62,7 +62,7 @@ const courseStore = useCourseStore()
 						:key="course._id"
 					/>
 				</ul>
-				<el-empty v-else description="No courses have been archived yet." />
+				<el-empty v-else :description="$t('common.empty')" />
 			</li>
 		</ul>
 	</div>

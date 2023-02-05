@@ -8,6 +8,9 @@ export const messages = {
 			delete: 'Delete',
 			create: 'Create',
 		},
+		common: {
+			empty: 'Nothing here.',
+		},
 		header: {
 			home: 'Home',
 			course: 'Course',
@@ -42,7 +45,7 @@ export const messages = {
 			name: 'Progress',
 			stage: 'Stage',
 			lastReviewDate: 'Last Review Date',
-			nextReviewDate: 'Next Review Date'
+			nextReviewDate: 'Next Review Date',
 		},
 		addButton: {
 			course: {
@@ -71,6 +74,9 @@ export const messages = {
 			confirm: '确认',
 			delete: '删除',
 			create: '创建',
+		},
+		common: {
+			empty: '这里什么也没有',
 		},
 		header: {
 			home: '主页',
@@ -106,7 +112,7 @@ export const messages = {
 			name: '进度',
 			stage: '阶段',
 			lastReviewDate: '上次复习时间',
-			nextReviewDate: '下次复习时间'
+			nextReviewDate: '下次复习时间',
 		},
 		addButton: {
 			course: {

@@ -30,9 +30,9 @@ const courseStore = useCourseStore()
 				:progress="progress"
 			/>
 		</ul>
-		<el-empty v-else description="No progress created yet." />
+		<el-empty v-else :description="$t('common.empty')" />
 	</div>
-	<el-empty description="Course Not Found." v-else />
+	<el-empty :description="$t('common.empty')" v-else />
 </template>
 
 <style scoped></style>
