@@ -4,7 +4,7 @@ import { computed, reactive, ref } from 'vue'
 import { AUTH_URL, getPasswordValidationRegex } from 'shared'
 import { api } from '@/database/api'
 import { useRoute, useRouter } from 'vue-router'
-import { errorMsg } from '@/utils/useMessage'
+import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user.store'
 
@@ -106,6 +106,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 					})
 					.then((res) => {
 						userStore.user = res.data
+						successMsg(t('auth.success', [t('auth.register')]))
 						router.push({ name: 'home' })
 					})
 					.catch(() => errorMsg(t('auth.errors.fail', [t('auth.register')])))
@@ -116,6 +117,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 					})
 					.then((res) => {
 						userStore.user = res.data
+						successMsg(t('auth.success', [t('auth.login')]))
 						router.push({ name: 'home' })
 					})
 					.catch(() => errorMsg(t('auth.errors.fail', [t('auth.login')])))

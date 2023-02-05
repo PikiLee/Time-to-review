@@ -10,6 +10,8 @@ export const messages = {
 		},
 		common: {
 			empty: 'Nothing here.',
+			course: 'course',
+			progress: 'progress'
 		},
 		header: {
 			home: 'Home',
@@ -23,6 +25,7 @@ export const messages = {
 			toRegister: 'Go to @:auth.register',
 			toLogin: 'Go to @:auth.login',
 			logout: 'Logout',
+			success: '{0} succeeded.',
 			errors: {
 				length: 'Length should be {0} to {1}',
 				required: 'Please input {0}',
@@ -50,9 +53,13 @@ export const messages = {
 		addButton: {
 			course: {
 				create: 'Create Course',
+				success: 'Course {0} Have been Created.',
+				fail: 'Created failed.'
 			},
 			progress: {
 				create: 'Create Progress',
+				success: 'Progress {0} Have been Created.',
+				fail: 'Created failed.'
 			},
 		},
 		components: {
@@ -77,6 +84,8 @@ export const messages = {
 		},
 		common: {
 			empty: '这里什么也没有',
+			course: '课程',
+			progress: '进度'
 		},
 		header: {
 			home: '主页',
@@ -90,6 +99,7 @@ export const messages = {
 			toRegister: '去@:auth.register',
 			toLogin: '去@:auth.login',
 			logout: '退出',
+			success: '{0} 成功.',
 			errors: {
 				length: '长度应在{0}至{1}之间',
 				required: '请输入{0}',
@@ -117,9 +127,13 @@ export const messages = {
 		addButton: {
 			course: {
 				create: '创建课程',
+				success: '课程{0}创建成功',
+				fail: '课程创建失败'
 			},
 			progress: {
 				create: '创建进度',
+				success: '进度{0}创建成功',
+				fail: '进度创建失败'
 			},
 		},
 		components: {
