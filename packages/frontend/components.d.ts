@@ -12,6 +12,7 @@ declare module '@vue/runtime-core' {
     CourseCard: typeof import('./src/components/Course/CourseCard.vue')['default']
     CourseCreator: typeof import('./src/components/Course/CourseCreator.vue')['default']
     DueCourseSection: typeof import('./src/components/Course/DueCourseSection.vue')['default']
+    ElBadge: typeof import('element-plus/es')['ElBadge']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
     ElDialog: typeof import('element-plus/es')['ElDialog']
