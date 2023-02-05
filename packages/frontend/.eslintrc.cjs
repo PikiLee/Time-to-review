@@ -6,22 +6,22 @@ module.exports = {
 	extends: [
 		'plugin:vue/vue3-essential',
 		'eslint:recommended',
-		'@vue/eslint-config-typescript'
+		'@vue/eslint-config-typescript',
 	],
 	overrides: [
 		{
 			files: ['cypress/e2e/**/*.{cy,spec}.{js,ts,jsx,tsx}'],
-			extends: ['plugin:cypress/recommended']
-		}
+			extends: ['plugin:cypress/recommended'],
+		},
 	],
 	parserOptions: {
-		ecmaVersion: 'latest'
+		ecmaVersion: 'latest',
 	},
 	rules: {
 		'no-console': 'error',
 		indent: ['error', 'tab'],
 		'linebreak-style': ['error', 'unix'],
 		quotes: ['error', 'single'],
-		semi: ['error', 'never']
-	}
+		semi: ['error', 'never'],
+	},
 }

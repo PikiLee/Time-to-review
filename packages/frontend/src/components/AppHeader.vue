@@ -29,7 +29,7 @@ function logout() {
 			flex-row
 			gap-3
 			col-span-2
-			md:col-span-4
+			md:col-span-3
 			link-decoration-none
 			:to="{ name: 'home' }"
 		>
@@ -63,7 +63,7 @@ function logout() {
 		</div>
 		<div
 			col-span-3
-			md:col-span-2
+			md:col-span-3
 			flex
 			flex-row
 			items-center
@@ -109,6 +109,24 @@ function logout() {
 					</div>
 				</template>
 			</el-popover>
+			<div v-else text-xl flex gap-2>
+				<RouterLink
+					font-600
+					text-lg
+					link-decoration-none
+					hover:text-lime-500
+					:to="{ name: 'register' }"
+					>{{ $t('auth.register') }}</RouterLink
+				>
+				<RouterLink
+					font-600
+					text-lg
+					link-decoration-none
+					hover:text-lime-500
+					:to="{ name: 'login' }"
+					>{{ $t('auth.login') }}</RouterLink
+				>
+			</div>
 		</div>
 	</div>
 </template>

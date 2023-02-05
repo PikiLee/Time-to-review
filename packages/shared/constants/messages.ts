@@ -7,6 +7,9 @@ export const messages = {
 			username: 'username',
 			password: 'password',
 			register: 'register',
+			login: 'login',
+			toRegister: 'go to @:auth.register',
+			toLogin: 'go to @:auth.login',
 			errors: {
 				length: 'Length should be {0} to {1}',
 				required: 'Please input {0}',
@@ -24,6 +27,9 @@ export const messages = {
 			username: '用户名',
 			password: '密码',
 			register: '注册',
+			login: '登录',
+			toRegister: '去@:auth.register',
+			toLogin: '去@:auth.login',
 			errors: {
 				length: '长度应在{0}至{1}之间',
 				required: '请输入{0}',
