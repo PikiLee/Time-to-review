@@ -103,7 +103,7 @@ async function toggleStatus(courseId: string) {
 					<div v-else i-mdi-undo @click="toggleStatus(course._id)"></div>
 				</button>
 			</el-tooltip>
-			<el-tooltip v-else class="box-item" :content="$t('components.course.courseCard.delete')" placement="top">
+			<el-tooltip v-else class="box-item" :content="$t('components.actions.delete')" placement="top">
 				<button
 					row-span-2
 					text-size-3xl
@@ -112,7 +112,7 @@ async function toggleStatus(courseId: string) {
 					hover:text-lime-500
 					i-ic-round-delete-forever
 					@click="del(course._id)"
-					:aria-label="$t('components.course.courseCard.delete')"
+					:aria-label="$t('components.actions.delete')"
 					data-testid="course-card-delete"
 				></button>
 			</el-tooltip>

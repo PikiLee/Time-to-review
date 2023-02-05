@@ -8,7 +8,7 @@ const courseStore = useCourseStore()
 <template>
 	<AddButton />
 	<div v-if="courseStore.currentCourse" data-testid="course-view">
-		<h2 text-center>CourseName</h2>
+		<h2 text-center>{{courseStore.currentCourse.name}}</h2>
 		<ul list-none v-if="courseStore.currentCourse.progresses.length">
 			<li
 				grid
@@ -19,10 +19,10 @@ const courseStore = useCourseStore()
 				p-2
 				gap-2
 			>
-				<span col-span-3>Progress Name</span>
-				<span col-span-3>Stage</span>
-				<span col-span-3>Last Review Date</span>
-				<span col-span-3>Next Review Date</span>
+				<span col-span-3>{{$t('course.name')}}</span>
+				<span col-span-3>{{$t('course.stage')}}</span>
+				<span col-span-3>{{$t('course.lastReviewDate')}}</span>
+				<span col-span-3>{{$t('course.nextReviewDate')}}</span>
 			</li>
 			<ProgressListItem
 				v-for="progress in courseStore.currentCourse.progresses"

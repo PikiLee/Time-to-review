@@ -3,6 +3,11 @@ export const messages = {
 		message: {
 			hello: 'hello world',
 		},
+		actions: {
+			confirm: 'Confirm',
+			delete: 'Delete',
+			create: 'Create',
+		},
 		header: {
 			home: 'Home',
 			course: 'Course',
@@ -33,8 +38,13 @@ export const messages = {
 			done: 'Done',
 			archived: 'Archived',
 		},
+		course: {
+			name: 'Progress',
+			stage: 'Stage',
+			lastReviewDate: 'Last Review Date',
+			nextReviewDate: 'Next Review Date'
+		},
 		addButton: {
-			create: 'Create',
 			course: {
 				create: 'Create Course',
 			},
@@ -49,7 +59,6 @@ export const messages = {
 					markInProgress: 'Mark as In Progress',
 					markArchived: 'Archive',
 					markUnarchived: 'Unarchive',
-					delete: 'Delete',
 				},
 			},
 		},
@@ -57,6 +66,11 @@ export const messages = {
 	'zh-Hans': {
 		message: {
 			hello: '你好，世界',
+		},
+		actions: {
+			confirm: '确认',
+			delete: '删除',
+			create: '创建',
 		},
 		header: {
 			home: '主页',
@@ -88,8 +102,13 @@ export const messages = {
 			done: '已完成',
 			archived: '已归档',
 		},
+		course: {
+			name: '进度',
+			stage: '阶段',
+			lastReviewDate: '上次复习时间',
+			nextReviewDate: '下次复习时间'
+		},
 		addButton: {
-			create: '创建',
 			course: {
 				create: '创建课程',
 			},
@@ -104,7 +123,6 @@ export const messages = {
 					markInProgress: '标记为进行中',
 					markArchived: '归档',
 					markUnarchived: '撤销归档',
-					delete: '删除',
 				},
 			},
 		},
