@@ -4,8 +4,7 @@ import { create as createCourse } from '@/database/course'
 import { create as createProgress } from '@/database/progress'
 import { useRoute, useRouter } from 'vue-router'
 import { useCustomRouter } from '@/utils/useCustomRouter'
-import { ElMessage } from 'element-plus'
-import { errorMsg } from '@/utils/useMessage'
+import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
 
 const emit = defineEmits(['ok'])
@@ -38,14 +37,10 @@ async function handleCreate() {
 			router.push({ name: 'courses' })
 		}
 		emit('ok')
-		ElMessage({
-			message: `${isCoursePage ? 'Progress' : 'Course'} ${
-				input.value
-			} has been created.`,
-			type: 'success'
-		})
+		successMsg(isCoursePage.value ? t('addButton.progress.success', [input.value]) : t('addButton.course.success', [input.value]))
 	} catch (err) {
 		errorMsg(String(err))
+		errorMsg(isCoursePage.value ? t('addButton.progress.success', [input.value]) : t('addButton.course.success', [input.value]))
 	} finally {
 		input.value = ''
 	}
