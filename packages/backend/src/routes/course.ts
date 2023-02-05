@@ -1,6 +1,14 @@
 import express from 'express'
-import { create, fetch, del, update, fetchDue, fetchAll } from '../models/Course.js'
+import {
+	create,
+	fetch,
+	del,
+	update,
+	fetchDue,
+	fetchAll,
+} from '../models/Course.js'
 import { printDebugInfo } from '../utils/debug.js'
+import { toObjectId } from '../utils/id.js'
 
 export const router = express.Router()
 
@@ -12,6 +20,9 @@ router.post('/', async (req, res) => {
 	}
 })
 
+/**
+ * get all courses for a user
+ */
 router.get('/', async (req, res) => {
 	try {
 		if (!req.user) throw new Error('login first')
@@ -24,6 +35,9 @@ router.get('/', async (req, res) => {
 	}
 })
 
+/**
+ * get all due courses for a user
+ */
 router.get('/due', async (req, res) => {
 	try {
 		if (!req.user) throw new Error('User not found')
@@ -32,15 +46,20 @@ router.get('/due', async (req, res) => {
 		res.json(result)
 	} catch (err) {
 		printDebugInfo(req)
-		console.debug({err})
+		console.debug({ err })
 		res.status(400).send(err)
 	}
 })
 
+/**
+ * get a course
+ */
 router.get('/:courseId', async (req, res) => {
 	try {
-		const course = await fetch(req.params.courseId, {withProgresses: !!req.query.withProgresses})
-		if (!course.owner.equals((req.user as any)._id)) throw new Error('Not authorized.')
+		const course = await fetch(toObjectId(req.params.courseId), {
+			withProgresses: !!req.query.withProgresses,
+			userId: toObjectId((req.user as any)._id),
+		})
 		res.status(200).json(course)
 	} catch (err) {
 		res.status(400).send(err)
@@ -49,7 +68,11 @@ router.get('/:courseId', async (req, res) => {
 
 router.delete('/:courseId', async (req, res) => {
 	try {
-		if (await del(req.params.courseId)) {
+		if (
+			await del(toObjectId(req.params.courseId), {
+				userId: toObjectId((req.user as any)._id),
+			})
+		) {
 			res.sendStatus(200)
 		} else {
 			res.sendStatus(404)
@@ -59,15 +82,21 @@ router.delete('/:courseId', async (req, res) => {
 	}
 })
 
-router.put('/:courseId',  async (req, res) => {
+router.put('/:courseId', async (req, res) => {
 	try {
-		const updatedCourse = await update(req.params.courseId, req.body)
+		const updatedCourse = await update(
+			toObjectId(req.params.courseId),
+			req.body,
+			{ userId: toObjectId((req.user as any)._id) }
+		)
 		if (updatedCourse) {
 			res.status(200).json(updatedCourse)
 		} else {
 			res.sendStatus(404)
 		}
 	} catch (err) {
+		printDebugInfo(req)
+		console.trace({ err })
 		res.status(400).send(err)
 	}
 })

@@ -1,42 +1,49 @@
-import { courseStatusIndices, NewCourse, UpdateCourse } from 'shared'
-import mongoose, { Schema } from 'mongoose'
-import type { Course as CourseType } from 'shared'
+import {
+	courseStatusIndices,
+	NewCourse,
+	UpdateCourse,
+	CourseSchema as CourseSchemaType,
+} from 'shared'
+import mongoose, { Schema, Types } from 'mongoose'
 import lodash from 'lodash-es'
 import User from './User.js'
+import { toObjectId } from '../utils/id.js'
 
-const courseSchema = new Schema<CourseType>({
-	name: {
-		type: String,
-		required: true,
-		minlength: 1,
-		maxlength: 20,
+const courseSchema = new Schema<CourseSchemaType>(
+	{
+		name: {
+			type: String,
+			required: true,
+			minlength: 1,
+			maxlength: 20,
+		},
+		owner: {
+			type: mongoose.SchemaTypes.ObjectId,
+			ref: 'User',
+			required: true,
+			immutable: true,
+		},
+		status: {
+			type: Number,
+			enum: courseStatusIndices,
+			default: 0,
+		},
+		archived: {
+			type: Boolean,
+			default: false,
+		},
+		order: {
+			type: Number,
+			required: true,
+		},
 	},
-	owner: {
-		type: mongoose.SchemaTypes.ObjectId,
-		ref: 'User',
-		required: true,
-		immutable: true,
-		// autopopulate: true
-	},
-	status: {
-		type: Number,
-		enum: courseStatusIndices,
-		default: 0
-	},
-	archived: {
-		type: Boolean,
-		default: false
-	},
-	order: {
-		type: Number,
-		required: true
-	},
-}, {
-	id: false,
-	timestamps: true,
-})
+	{
+		id: false,
+		timestamps: true,
+	}
+)
 
-export const Course = mongoose.model<CourseType>('Course', courseSchema)
+export const Course = mongoose.model<CourseSchemaType>('Course', courseSchema)
 
 const lookupStage = {
 	$lookup: {
@@ -47,8 +54,7 @@ const lookupStage = {
 	},
 }
 
-const projectStage = 
-{
+const projectStage = {
 	$project: {
 		name: 1,
 		owner: 1,
@@ -81,12 +87,7 @@ const projectStage =
 			],
 		},
 		progressCount: { $size: '$progresses' },
-	}
-}
-
-function toObjectId(id: string | mongoose.Types.ObjectId) {
-	if (typeof id === 'string') return new mongoose.Types.ObjectId(id)
-	return id
+	},
 }
 
 function createCourseProjection(rawCourseId: string | mongoose.Types.ObjectId) {
@@ -94,71 +95,21 @@ function createCourseProjection(rawCourseId: string | mongoose.Types.ObjectId) {
 	return [{ $match: { _id: courseId } }, lookupStage, projectStage]
 }
 
-
-function createDueCourseProjection(rawUserId: string | mongoose.Types.ObjectId) {
+function createDueCourseProjection(
+	rawUserId: string | mongoose.Types.ObjectId
+) {
 	const userId = toObjectId(rawUserId)
-	return [{ $match: { owner: userId } }, {$lookup: {
-		from: 'progresses',
-		localField: '_id',
-		foreignField: 'course',
-		as: 'progresses',
-	}}, 
-	{
-		$project: {
-			name: 1,
-			owner: 1,
-			status: 1,
-			archived: 1,
-			order: 1,
-			createdAt: 1,
-			updatedAt: 1,
-			dueCount: {
-				$size: {
-					$filter: {
-						input: '$progresses',
-						as: 'item',
-						cond: { $eq: ['$$item.isDue', true] },
-					},
-				},
+	return [
+		{ $match: { owner: userId } },
+		{
+			$lookup: {
+				from: 'progresses',
+				localField: '_id',
+				foreignField: 'course',
+				as: 'progresses',
 			},
-			dueProgresses: {$filter: {
-				input: '$progresses',
-				as: 'item',
-				cond: { $eq: ['$$item.isDue', true] },
-			}},
-			isDue: {
-				$gt: [
-					{
-						$size: {
-							$filter: {
-								input: '$progresses',
-								as: 'item',
-								cond: { $eq: ['$$item.isDue', true] },
-							},
-						},
-					},
-					0,
-				],
-			},
-			progressCount: { $size: '$progresses' },
-		}
-	}, {$match: {isDue: true}}]
-}
-
-/**
- * fetch a course by id
- */
-export async function fetch(rawCourseId: string, options?: {
-	withProgresses?: boolean;
-}) {
-	const {withProgresses} = lodash.assign({}, {withProgresses: false,
-		userId: null}, options)
-	let result
-	if (!withProgresses) {
-		result = await Course.aggregate(createCourseProjection(rawCourseId))
-	} else {
-		const courseId = toObjectId(rawCourseId)
-		result = await Course.aggregate( [{ $match: { _id: courseId } }, lookupStage, {
+		},
+		{
 			$project: {
 				name: 1,
 				owner: 1,
@@ -176,6 +127,13 @@ export async function fetch(rawCourseId: string, options?: {
 						},
 					},
 				},
+				dueProgresses: {
+					$filter: {
+						input: '$progresses',
+						as: 'item',
+						cond: { $eq: ['$$item.isDue', true] },
+					},
+				},
 				isDue: {
 					$gt: [
 						{
@@ -191,9 +149,73 @@ export async function fetch(rawCourseId: string, options?: {
 					],
 				},
 				progressCount: { $size: '$progresses' },
-				progresses: '$progresses'
-			}
-		}])
+			},
+		},
+		{ $match: { isDue: true } },
+	]
+}
+
+/**
+ * fetch a course by id
+ */
+export async function fetch(
+	courseId: Types.ObjectId,
+	options?: {
+		withProgresses?: boolean
+		userId?: Types.ObjectId
+	}
+) {
+	const { withProgresses } = lodash.assign(
+		{},
+		{ withProgresses: false, userId: null },
+		options
+	)
+	let result
+	if (!withProgresses) {
+		result = await Course.aggregate(createCourseProjection(courseId))
+	} else {
+		const filter = { _id: courseId } as CourseSchemaType
+		if (options?.userId) filter.owner = options.userId
+		result = await Course.aggregate([
+			{ $match: filter },
+			lookupStage,
+			{
+				$project: {
+					name: 1,
+					owner: 1,
+					status: 1,
+					archived: 1,
+					order: 1,
+					createdAt: 1,
+					updatedAt: 1,
+					dueCount: {
+						$size: {
+							$filter: {
+								input: '$progresses',
+								as: 'item',
+								cond: { $eq: ['$$item.isDue', true] },
+							},
+						},
+					},
+					isDue: {
+						$gt: [
+							{
+								$size: {
+									$filter: {
+										input: '$progresses',
+										as: 'item',
+										cond: { $eq: ['$$item.isDue', true] },
+									},
+								},
+							},
+							0,
+						],
+					},
+					progressCount: { $size: '$progresses' },
+					progresses: '$progresses',
+				},
+			},
+		])
 	}
 
 	if (result.length > 0) {
@@ -203,11 +225,11 @@ export async function fetch(rawCourseId: string, options?: {
 	}
 }
 
-export async function fetchAll(rawUserId:string) {
+export async function fetchAll(rawUserId: string) {
 	const result = await Course.aggregate([
-		{ $match: { owner: toObjectId(rawUserId) }},
+		{ $match: { owner: toObjectId(rawUserId) } },
 		lookupStage,
-		projectStage
+		projectStage,
 	])
 	return result
 }
@@ -215,7 +237,7 @@ export async function fetchAll(rawUserId:string) {
 /**
  * fetch due course for a user
  */
-export async function fetchDue(userId: string) {
+export async function fetchDue(userId: Types.ObjectId) {
 	return await Course.aggregate(createDueCourseProjection(userId))
 }
 
@@ -229,14 +251,31 @@ export async function create(newCourse: NewCourse) {
 		throw Error('User not found.')
 	}
 }
-		
-export async function del(_id: string) {
-	return !!(await Course.findByIdAndDelete(_id))
+
+export async function del(
+	_id: Types.ObjectId,
+	options?: {
+		userId?: Types.ObjectId
+	}
+) {
+	const filter: any = { _id }
+	if (options?.userId) filter.owner = options.userId
+	return !!(await Course.findOneAndDelete({ _id }))
 }
 
-export async function update(_id: string, updateCourse: UpdateCourse) {
+export async function update(
+	_id: Types.ObjectId,
+	updateCourse: UpdateCourse,
+	options?: {
+		userId?: Types.ObjectId
+	}
+) {
 	const course = await Course.findById(_id)
 	if (!course) throw new Error('Course not found.')
+
+	if (options?.userId && !course.owner.equals(options?.userId))
+		throw new Error('Not authorized.')
+
 	for (const [key, value] of lodash.entries(updateCourse)) {
 		(course as any)[key] = value
 	}
