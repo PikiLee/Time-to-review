@@ -86,3 +86,10 @@ export async function fetchWithProgresses(courseId: string) {
 	const courseStore = useCourseStore();
 	courseStore.currentCourse = res.data;
 }
+
+export async function fetchAll() {
+	const res = await api.get(`${COURSE_URL}/`);
+
+	const courseStore = useCourseStore();
+	courseStore.courses = res.data;
+}

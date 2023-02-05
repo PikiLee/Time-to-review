@@ -5,7 +5,7 @@ import CoursesView from "../views/CoursesView.vue";
 import CourseView from "../views/CourseView.vue";
 import RegisterView from "../views/AuthView.vue";
 import { errorMsg } from "@/utils/useMessage";
-import { fetchDue, fetchWithProgresses } from "@/database/course";
+import { fetchAll, fetchDue, fetchWithProgresses } from "@/database/course";
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +24,9 @@ const router = createRouter({
 			name: "courses",
 			component: CoursesView,
 			meta: { requiresAuth: true },
+			async beforeEnter() {
+				await fetchAll();
+			},
 		},
 		{
 			path: "/course/:id",
