@@ -1,5 +1,5 @@
-import {keys, values} from 'lodash-es'
-import mongoose from 'mongoose'
+import { keys, values } from 'lodash-es'
+import { Types } from 'mongoose'
 
 export const ProgressStageObject = {
 	'Just Learned': 0,
@@ -10,18 +10,18 @@ export const ProgressStageObject = {
 } as const
 
 export const ProgressStageObjectReversed = {} as Record<
-  ProgressStage,
-  ProgressStageStrings
+	ProgressStage,
+	ProgressStageStrings
 >
 
 for (const key of keys(ProgressStageObject)) {
-	const value = ProgressStageObject[key as (keyof typeof ProgressStageObject)]
+	const value = ProgressStageObject[key as keyof typeof ProgressStageObject]
 	ProgressStageObjectReversed[value] = key as ProgressStageStrings
 }
 
 export type ProgressStage =
-  typeof ProgressStageObject[keyof typeof ProgressStageObject];
-export type ProgressStageStrings = keyof typeof ProgressStageObject;
+	(typeof ProgressStageObject)[keyof typeof ProgressStageObject]
+export type ProgressStageStrings = keyof typeof ProgressStageObject
 
 export const progressStageIndices = values(ProgressStageObject)
 
@@ -34,24 +34,46 @@ export const progressStageInterval = {
 }
 
 export interface Progress {
-  _id: string;
-  course: string;
-  owner: string;
-  name: string;
-  stage: ProgressStage;
-  lastDate: string;
-  createdAt: string;
-  updatedAt: string;
-  order: number;
-  nextDate: string;
-  isDue: boolean;
+	_id: string
+	course: string
+	owner: string
+	name: string
+	stage: ProgressStage
+	lastDate: string
+	createdAt: string
+	updatedAt: string
+	order: number
+	nextDate: string
+	isDue: boolean
 }
 
-export type NewProgress = Omit<Progress, '_id' | 'stage' | 'lastDate' | 'createdAt' | 'nextDate' | 'isDue' | 'updatedAt'> 
+export type NewProgress = Omit<
+	Progress,
+	| '_id'
+	| 'stage'
+	| 'lastDate'
+	| 'createdAt'
+	| 'nextDate'
+	| 'isDue'
+	| 'updatedAt'
+>
 
-export type UpdateProgress = Partial<Omit<Progress, '_id' | 'course' | 'owner' | 'createdAt'  | 'nextDate' | 'isDue' | 'updatedAt'>>
+export type UpdateProgress = Partial<
+	Omit<
+		Progress,
+		| '_id'
+		| 'course'
+		| 'owner'
+		| 'createdAt'
+		| 'nextDate'
+		| 'isDue'
+		| 'updatedAt'
+	>
+>
 
-export interface ProgressSchema extends Omit<Progress, 'course' | 'owner'> {
-  owner: mongoose.Schema.Types.ObjectId
-  course: mongoose.Schema.Types.ObjectId
+export interface ProgressSchema
+	extends Omit<Progress, 'course' | 'owner' | '_id'> {
+	_id: Types.ObjectId
+	owner: Types.ObjectId
+	course: Types.ObjectId
 }
