@@ -126,7 +126,7 @@ describe('course', () => {
 		expect(res.body[0]).toEqual(retrievedCourse)
 	})
 
-	test('update course', async () => {
+	test('mark course archived', async () => {
 		const res = await client
 			.put(`${courseUrl}/${retrievedCourse._id}`)
 			.send(updateCourse)
@@ -135,6 +135,7 @@ describe('course', () => {
 		expectToBeTypeOfCourse(res.body)
 		updatedCourse = Object.assign({}, retrievedCourse, updateCourse)
 		updatedCourse.updatedAt = res.body.updatedAt
+		updatedCourse.isDue = false
 		expect(res.body).toEqual(updatedCourse)
 	})
 
@@ -181,6 +182,20 @@ describe('course', () => {
 		updatedCourse.dueCount++
 		expectToBeTypeOfProgress(res.body)
 		expect(res.body).toEqual(updatedProgress)
+	})
+
+	test('mark course unarchived', async () => {
+		updateCourse.archived = false
+		const res = await client
+			.put(`${courseUrl}/${retrievedCourse._id}`)
+			.send(updateCourse)
+
+		expect(res.status).toBe(200)
+		expectToBeTypeOfCourse(res.body)
+		updatedCourse = Object.assign({}, updatedCourse, updateCourse)
+		updatedCourse.updatedAt = res.body.updatedAt
+		updatedCourse.isDue = true
+		expect(res.body).toEqual(updatedCourse)
 	})
 
 	test('get course again', async () => {

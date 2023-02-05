@@ -3,6 +3,7 @@ import {
 	NewCourse,
 	UpdateCourse,
 	CourseSchema as CourseSchemaType,
+	CourseStatus,
 } from 'shared'
 import mongoose, { Schema, Types } from 'mongoose'
 import lodash from 'lodash-es'
@@ -73,18 +74,22 @@ const projectStage = {
 			},
 		},
 		isDue: {
-			$gt: [
-				{
-					$size: {
-						$filter: {
-							input: '$progresses',
-							as: 'item',
-							cond: { $eq: ['$$item.isDue', true] },
+			$and: [
+				{$gt: [
+					{
+						$size: {
+							$filter: {
+								input: '$progresses',
+								as: 'item',
+								cond: { $eq: ['$$item.isDue', true] },
+							},
 						},
 					},
-				},
-				0,
-			],
+					0,
+				]},
+				{$ne: ['$archived', true]},
+				{$ne: ['$status', CourseStatus.Done]}
+			]
 		},
 		progressCount: { $size: '$progresses' },
 	},
@@ -135,18 +140,22 @@ function createDueCourseProjection(
 					},
 				},
 				isDue: {
-					$gt: [
-						{
-							$size: {
-								$filter: {
-									input: '$progresses',
-									as: 'item',
-									cond: { $eq: ['$$item.isDue', true] },
+					$and: [
+						{$gt: [
+							{
+								$size: {
+									$filter: {
+										input: '$progresses',
+										as: 'item',
+										cond: { $eq: ['$$item.isDue', true] },
+									},
 								},
 							},
-						},
-						0,
-					],
+							0,
+						]},
+						{$ne: ['$archived', true]},
+						{$ne: ['$status', CourseStatus.Done]}
+					]
 				},
 				progressCount: { $size: '$progresses' },
 			},
@@ -198,18 +207,22 @@ export async function fetch(
 						},
 					},
 					isDue: {
-						$gt: [
-							{
-								$size: {
-									$filter: {
-										input: '$progresses',
-										as: 'item',
-										cond: { $eq: ['$$item.isDue', true] },
+						$and: [
+							{$gt: [
+								{
+									$size: {
+										$filter: {
+											input: '$progresses',
+											as: 'item',
+											cond: { $eq: ['$$item.isDue', true] },
+										},
 									},
 								},
-							},
-							0,
-						],
+								0,
+							]},
+							{$ne: ['$archived', true]},
+							{$ne: ['$status', CourseStatus.Done]}
+						]
 					},
 					progressCount: { $size: '$progresses' },
 					progresses: '$progresses',
