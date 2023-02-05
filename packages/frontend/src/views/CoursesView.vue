@@ -11,7 +11,7 @@ const courseStore = useCourseStore()
 		<h2 text-center>{{$t('courses.title')}}</h2>
 		<ul list-none>
 			<li data-testid="courses-view-in-progress-courses">
-				<h3 text-center>{{$t('courses.inProgress')}}</h3>
+				<h2 text-center>{{$t('courses.inProgress')}}</h2>
 				<ul
 					list-none
 					grid

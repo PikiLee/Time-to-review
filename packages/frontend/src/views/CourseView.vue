@@ -9,7 +9,7 @@ const courseStore = useCourseStore()
 	<AddButton />
 	<div v-if="courseStore.currentCourse" data-testid="course-view">
 		<h2 text-center>{{courseStore.currentCourse.name}}</h2>
-		<ul list-none v-if="courseStore.currentCourse.progresses.length">
+		<ul list-none p-none v-if="courseStore.currentCourse.progresses.length">
 			<li
 				grid
 				grid-cols-12

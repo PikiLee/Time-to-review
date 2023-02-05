@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-	<div>
+	<div mt-6 px-5>
 		<el-badge :value="course.dueCount">
 			<RouterLink
 			link-decoration-none
@@ -17,7 +17,7 @@ defineProps<{
 			<h2 m-none hover:text-lime-500>{{ course.name }}</h2>
 		</RouterLink>
 		</el-badge>
-		<section grid grid-cols-3 gap-6 p-4>
+		<section grid grid-cols-2 gap-6 p-4>
 			<ProgressCard
 				v-for="progress in course.dueProgresses"
 				:key="progress._id"

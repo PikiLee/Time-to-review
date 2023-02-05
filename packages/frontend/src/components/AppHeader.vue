@@ -20,16 +20,16 @@ function logout() {
 </script>
 
 <template>
-	<div grid grid-cols-12 py-4 gap-8>
-		<div col-span-1 md:col-span-2></div>
+	<div flex py-4 gap-8>
+		<div flex-grow-1></div>
+
+		<!-- Web site icon -->
 		<RouterLink
 			flex
 			justify-start
 			items-center
 			flex-row
 			gap-3
-			col-span-2
-			md:col-span-3
 			link-decoration-none
 			:to="{ name: 'home' }"
 		>
@@ -43,7 +43,9 @@ function logout() {
 			</div>
 			<h1 text-5 display-none md:block>Time To Review</h1>
 		</RouterLink>
-		<div col-span-6 md-col-span-4 flex flex-row gap-4 items-center justify-end>
+
+		<!-- Home Course Link -->
+		<div flex-grow-3 flex flex-row gap-4 items-center justify-end>
 			<RouterLink
 				font-600
 				text-lg
@@ -60,10 +62,7 @@ function logout() {
 				:to="{ name: 'courses' }"
 				>{{$t('header.course')}}</RouterLink
 			>
-		</div>
-		<div
-			col-span-3
-			md:col-span-3
+			<div
 			flex
 			flex-row
 			items-center
@@ -128,5 +127,7 @@ function logout() {
 				>
 			</div>
 		</div>
+		</div>
+		<div flex-grow-1></div>
 	</div>
 </template>

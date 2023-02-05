@@ -22,8 +22,9 @@ if (user) {
 		dark:bg-warmgray-800
 	>
 		<AppHeader />
-		<div w-4xl max-w-screen mx-auto px-8 gap-4>
+		<div w-4xl max-w-screen mx-auto px-2 gap-4>
 			<RouterView />
 		</div>
+		<div h-30></div>
 	</div>
 </template>

@@ -9,7 +9,7 @@ defineProps<{
 </script>
 
 <template>
-	<div grid grid-rows-2 grid-cols-1 gap-2 items-center>
+	<div grid grid-rows-2 grid-cols-1 gap-2 items-center p-4>
 		<RouterLink
 			link-decoration-none
 			:to="{ name: 'course', params: { id: courseId }, hash: '#' + name }"
