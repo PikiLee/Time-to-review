@@ -3,16 +3,18 @@ import { useUserStore } from '@/store/user.store'
 import { useCustomRouter } from '@/utils/useCustomRouter'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import CourseCreator from './Course/CourseCreator.vue'
 
 const userStore = useUserStore()
 const dialogVisible = ref(false)
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const largerThanMd = breakpoints.greater('md')
+const { t } = useI18n()
 
 const { isCoursePage } = useCustomRouter()
 const toolTip = computed(() =>
-	isCoursePage.value ? 'Create Progress' : 'Create Course'
+	isCoursePage.value ? t('addButton.progress.create') : t('addButton.course.create')
 )
 const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
 </script>
@@ -42,7 +44,7 @@ const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
 
 	<el-dialog
 		v-model="dialogVisible"
-		title="Create"
+		:title="toolTip"
 		:width="largerThanMd ? '40%' : '90%'"
 	>
 		<CourseCreator @ok="dialogVisible = false" />

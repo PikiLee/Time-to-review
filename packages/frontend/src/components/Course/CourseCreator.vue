@@ -6,16 +6,17 @@ import { useRoute, useRouter } from 'vue-router'
 import { useCustomRouter } from '@/utils/useCustomRouter'
 import { ElMessage } from 'element-plus'
 import { errorMsg } from '@/utils/useMessage'
+import { useI18n } from 'vue-i18n'
 
 const emit = defineEmits(['ok'])
 
 const route = useRoute()
 const router = useRouter()
 const { isCoursePage } = useCustomRouter()
-
+const {t} = useI18n()
 const input = ref('')
 const defaultPlaceholder = computed(() => {
-	return isCoursePage.value ? 'New Progress Name' : 'New Course Name'
+	return isCoursePage.value ? t('addButton.progress.create') : t('addButton.course.create')
 })
 const placeholder = ref(defaultPlaceholder.value)
 watch(
@@ -75,7 +76,7 @@ const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
 			bg-lime-500
 			@click="handleCreate"
 			data-test="add-course"
-			>Create</el-button
+			>{{$t('actions.create')}}</el-button
 		>
 	</div>
 </template>
