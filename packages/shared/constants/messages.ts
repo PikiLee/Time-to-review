@@ -3,6 +3,10 @@ export const messages = {
 		message: {
 			hello: 'hello world'
 		},
+		header: {
+			home: 'home',
+			course: 'course',
+		},
 		auth: {
 			username: 'username',
 			password: 'password',
@@ -10,6 +14,7 @@ export const messages = {
 			login: 'login',
 			toRegister: 'go to @:auth.register',
 			toLogin: 'go to @:auth.login',
+			logout: 'logout',
 			errors: {
 				length: 'Length should be {0} to {1}',
 				required: 'Please input {0}',
@@ -23,6 +28,10 @@ export const messages = {
 		message: {
 			hello: '你好，世界'
 		},
+		header: {
+			home: '主页',
+			course: '课程',
+		},
 		auth: {
 			username: '用户名',
 			password: '密码',
@@ -30,6 +39,7 @@ export const messages = {
 			login: '登录',
 			toRegister: '去@:auth.register',
 			toLogin: '去@:auth.login',
+			logout: '退出',
 			errors: {
 				length: '长度应在{0}至{1}之间',
 				required: '请输入{0}',

@@ -50,7 +50,7 @@ function logout() {
 				link-decoration-none
 				hover:text-lime-500
 				:to="{ name: 'home' }"
-				>HOME</RouterLink
+				>{{$t('header.home')}}</RouterLink
 			>
 			<RouterLink
 				font-600
@@ -58,7 +58,7 @@ function logout() {
 				link-decoration-none
 				hover:text-lime-500
 				:to="{ name: 'courses' }"
-				>COURSES</RouterLink
+				>{{$t('header.course')}}</RouterLink
 			>
 		</div>
 		<div
