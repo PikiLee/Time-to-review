@@ -56,7 +56,7 @@ async function toggleStatus(courseId: string) {
 		<li grid grid-rows-2 grid-cols-5 gap-2 items-center>
 			<el-tooltip
 				class="box-item"
-				:content="isArchived ? 'Unarchive' : 'Archive'"
+				:content="isArchived ? $t('components.course.courseCard.markUnarchived') : $t('components.course.courseCard.markArchived')"
 				placement="top"
 			>
 				<button
@@ -65,7 +65,7 @@ async function toggleStatus(courseId: string) {
 					justify-self-center
 					cursor-pointer
 					hover:text-lime-500
-					:aria-label="isArchived ? 'Unarchive' : 'Archive'"
+					:aria-label="isArchived ? $t('components.course.courseCard.markUnarchived') : $t('components.course.courseCard.markArchived')"
 					data-testid="course-card-toggle-archive"
 				>
 					<div
@@ -83,7 +83,7 @@ async function toggleStatus(courseId: string) {
 			<el-tooltip
 				v-if="!isArchived"
 				class="box-item"
-				:content="isInProgress ? 'Mark as done' : 'Mark as in progress'"
+				:content="isInProgress ? $t('components.course.courseCard.markDone') : $t('components.course.courseCard.markInProgress')"
 				placement="top"
 			>
 				<button
@@ -92,7 +92,7 @@ async function toggleStatus(courseId: string) {
 					justify-self-center
 					cursor-pointer
 					hover:text-lime-500
-					:aria-label="isInProgress ? 'Mark as done' : 'Mark as in progress'"
+					:aria-label="isInProgress ? $t('components.course.courseCard.markDone') : $t('components.course.courseCard.markInProgress')"
 					data-testid="course-card-toggle-status"
 				>
 					<div
@@ -103,7 +103,7 @@ async function toggleStatus(courseId: string) {
 					<div v-else i-mdi-undo @click="toggleStatus(course._id)"></div>
 				</button>
 			</el-tooltip>
-			<el-tooltip v-else class="box-item" content="Delete" placement="top">
+			<el-tooltip v-else class="box-item" :content="$t('components.course.courseCard.delete')" placement="top">
 				<button
 					row-span-2
 					text-size-3xl
@@ -112,7 +112,7 @@ async function toggleStatus(courseId: string) {
 					hover:text-lime-500
 					i-ic-round-delete-forever
 					@click="del(course._id)"
-					aria-label="delete"
+					:aria-label="$t('components.course.courseCard.delete')"
 					data-testid="course-card-delete"
 				></button>
 			</el-tooltip>

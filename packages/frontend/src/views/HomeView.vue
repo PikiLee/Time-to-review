@@ -8,7 +8,7 @@ const courseStore = useCourseStore()
 
 <template>
 	<main>
-		<h2 text-center>Courses that need review</h2>
+		<h2 text-center>{{$t('home.title')}}</h2>
 		<DueCourseSection
 			v-for="course in courseStore.dueCourses"
 			:key="course._id"
