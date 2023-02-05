@@ -119,13 +119,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		v-if="showEditor"
 		mt-6
 	>
-		<el-form-item label="Progress name" prop="name">
+		<el-form-item :label="$t('course.name')" prop="name">
 			<el-input
 				v-model="ruleForm.name"
 				data-testid="progress-list-item-name-input"
 			/>
 		</el-form-item>
-		<el-form-item label="Stage" prop="region">
+		<el-form-item :label="$t('course.stage')" prop="stage">
 			<el-select v-model="ruleForm.stage">
 				<el-option
 					v-for="(value, key) in ProgressStageObject"
@@ -135,7 +135,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 				/>
 			</el-select>
 		</el-form-item>
-		<el-form-item label="Last Review Date" prop="count">
+		<el-form-item :label="$t('course.lastReviewDate')" prop="lastDate">
 			<el-date-picker
 				v-model="ruleForm.lastDate"
 				type="date"
