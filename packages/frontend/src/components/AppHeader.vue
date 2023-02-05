@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import { api } from "@/database/api";
-import { useUserStore } from "@/store/user.store";
-import { useDark, useToggle } from "@vueuse/core";
-import { AUTH_URL } from "shared";
-import { useRouter } from "vue-router";
+import { api } from '@/database/api'
+import { useUserStore } from '@/store/user.store'
+import { useDark, useToggle } from '@vueuse/core'
+import { AUTH_URL } from 'shared'
+import { useRouter } from 'vue-router'
 
-const isDark = useDark();
-const toggleDark = useToggle(isDark);
-const userStore = useUserStore();
-const router = useRouter();
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
+const userStore = useUserStore()
+const router = useRouter()
 
 function logout() {
 	api.post(`${AUTH_URL}/logout`).finally(() => {
-		userStore.user = null;
-		localStorage.removeItem("user");
-		router.push({ name: "login" });
-	});
+		userStore.user = null
+		localStorage.removeItem('user')
+		router.push({ name: 'login' })
+	})
 }
 </script>
 

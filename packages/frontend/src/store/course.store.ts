@@ -1,85 +1,86 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 import {
 	type Course,
 	CourseStatus,
 	type Progress,
 	type CourseWithProgress,
-} from "shared";
-import { ref } from "vue";
-import { useArrayFilter } from "@vueuse/shared";
+	type CourseWithDueProgresses
+} from 'shared'
+import { ref } from 'vue'
+import { useArrayFilter } from '@vueuse/shared'
 
-export const useCourseStore = defineStore("course", () => {
-	const courses = ref<Course[]>([]);
+export const useCourseStore = defineStore('course', () => {
+	const courses = ref<Course[]>([])
 
-	const dueCourses = ref<Course[]>([]);
+	const dueCourses = ref<CourseWithDueProgresses[]>([])
 
-	const currentCourse = ref<CourseWithProgress>();
+	const currentCourse = ref<CourseWithProgress>()
 
 	const coursesInProgress = useArrayFilter(
 		courses,
 		(course) =>
-			course.status === CourseStatus["In Progress"] && course.archived === false
-	);
+			course.status === CourseStatus['In Progress'] && course.archived === false
+	)
 
 	const coursesDone = useArrayFilter(
 		courses,
 		(course) => course.status === CourseStatus.Done && course.archived === false
-	);
+	)
 
-	const coursesArchived = useArrayFilter(courses, (course) => course.archived);
+	const coursesArchived = useArrayFilter(courses, (course) => course.archived)
 
 	function find(_id: string) {
-		return courses.value.find((course) => course._id === _id);
+		return courses.value.find((course) => course._id === _id)
 	}
 
 	function del(_id: string) {
-		const idx = courses.value.findIndex((course) => course._id === _id);
-		courses.value.splice(idx, 1);
+		const idx = courses.value.findIndex((course) => course._id === _id)
+		courses.value.splice(idx, 1)
 	}
 
 	function replaceCourse(replace: Course) {
-		const course = find(replace._id);
+		const course = find(replace._id)
 		if (course) {
 			courses.value = courses.value.map((course) => {
 				if (course._id === replace._id) {
-					return replace;
+					return replace
 				} else {
-					return course;
+					return course
 				}
-			});
-			return true;
+			})
+			return true
 		} else {
-			return false;
+			return false
 		}
 	}
 
 	function findProgress(course: Course, _id: string) {
-		if (!currentCourse.value) throw Error("Can not find course");
+		if (!currentCourse.value) throw Error('Can not find course')
 		return currentCourse.value.progresses.find(
 			(progress) => progress._id === _id
-		);
+		)
 	}
 
 	function replaceProgress(replace: Progress) {
-		if (!currentCourse.value) throw Error("Can not find course");
+		if (!currentCourse.value) throw Error('Can not find course')
 		currentCourse.value.progresses = currentCourse.value.progresses.map(
 			(progress) => {
 				if (progress._id === replace._id) {
-					return replace;
+					return replace
 				} else {
-					return progress;
+					return progress
 				}
 			}
-		);
+		)
 	}
 
 	function delProgress(progressId: String) {
-		if (!currentCourse.value) throw Error("Can not find course");
+		if (!currentCourse.value) throw Error('Can not find course')
 		const idx = currentCourse.value.progresses.findIndex(
 			(progress) => progress._id === progressId
-		);
+		)
 		if (idx !== -1) {
-			currentCourse.value.progresses.splice(idx, 1);
+			currentCourse.value.progresses.splice(idx, 1)
 		}
 	}
 
@@ -95,6 +96,6 @@ export const useCourseStore = defineStore("course", () => {
 		del,
 		findProgress,
 		replaceProgress,
-		delProgress,
-	};
-});
+		delProgress
+	}
+})

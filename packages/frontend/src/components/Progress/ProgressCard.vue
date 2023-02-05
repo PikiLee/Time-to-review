@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import {
-	ProgressStageObjectReversed,
-	type ProgressStage,
-} from "@/types/progress.type";
+import { type ProgressStage, ProgressStageObjectReversed } from 'shared'
 
 defineProps<{
-	courseId: number;
-	name: string;
-	stage: ProgressStage;
-}>();
+	courseId: string
+	name: string
+	stage: ProgressStage
+}>()
 </script>
 
 <template>

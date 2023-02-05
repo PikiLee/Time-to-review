@@ -4,77 +4,82 @@ import {
 	ProgressStageObject,
 	ProgressStageObjectReversed,
 	type Progress,
-	type UpdateProgress,
-} from "shared";
-import { del } from "@/database/progress";
-import { ref, reactive, watchEffect } from "vue";
-import dayjs from "dayjs/esm";
-import type { FormInstance, FormRules } from "element-plus";
-import { update } from "@/database/progress";
-import { errorMsg, successMsg } from "@/utils/useMessage";
+	type UpdateProgress
+} from 'shared'
+import { del } from '@/database/progress'
+import { ref, reactive, watchEffect } from 'vue'
+import dayjs from 'dayjs/esm'
+import type { FormInstance, FormRules } from 'element-plus'
+import { update } from '@/database/progress'
+import { errorMsg, successMsg } from '@/utils/useMessage'
 
 const props = defineProps<{
-	progress: Progress;
-}>();
+	progress: Progress
+}>()
 
-const showEditor = ref(false);
-const ruleFormRef = ref<FormInstance>();
-let ruleForm: UpdateProgress;
+const showEditor = ref(false)
+const ruleFormRef = ref<FormInstance>()
+let ruleForm: UpdateProgress
 watchEffect(() => {
 	const copy = {
 		name: props.progress.name,
 		stage: props.progress.stage,
 		lastDate: props.progress.lastDate,
-		order: props.progress.order,
-	};
-	ruleForm = reactive(copy);
-});
+		order: props.progress.order
+	}
+	ruleForm = reactive(copy)
+})
 
 const rules = reactive<FormRules>({
 	name: [
-		{ required: true, message: "Please input name", trigger: "blur" },
-		{ min: 1, max: 20, message: "Length should be 1 to 20", trigger: "blur" },
+		{ required: true, message: 'Please input name', trigger: 'blur' },
+		{
+			min: 1,
+			max: 20,
+			message: 'Length should be 1 to 20',
+			trigger: 'blur'
+		}
 	],
 	stage: [
 		{
 			required: true,
-			message: "Please select a stage",
-			trigger: "change",
+			message: 'Please select a stage',
+			trigger: 'change'
 		},
 		{
 			validator(_, value) {
-				return value in progressStageIndices;
+				return value in progressStageIndices
 			},
-			message: "Please select a valid stage",
-			trigger: "change",
-		},
+			message: 'Please select a valid stage',
+			trigger: 'change'
+		}
 	],
 	lastDate: [
 		{
 			required: true,
-			message: "Please select last review date",
-			trigger: "change",
-		},
-	],
-});
+			message: 'Please select last review date',
+			trigger: 'change'
+		}
+	]
+})
 
 const submitForm = async (formEl: FormInstance | undefined) => {
-	if (!formEl) return;
+	if (!formEl) return
 	await formEl.validate((valid) => {
 		if (valid) {
 			update(props.progress._id, ruleForm)
 				.then(() => {
-					successMsg("Updation succeeded.");
-					showEditor.value = false;
+					successMsg('Updation succeeded.')
+					showEditor.value = false
 				})
 				.catch((err) => {
-					errorMsg(`Updation failed. ${err}`);
-				});
+					errorMsg(`Updation failed. ${err}`)
+				})
 		} else {
-			errorMsg("Updation failed.");
+			errorMsg('Updation failed.')
 		}
-	});
-};
+	})
+}
 </script>
 
 <template>
@@ -99,7 +104,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 			{{ ProgressStageObjectReversed[progress.stage] }}
 		</div>
 		<time col-span-3 data-testid="progress-list-item-lastDate">
-			{{ dayjs(progress.lastDate).format("YYYY-MM-DD") }}
+			{{ dayjs(progress.lastDate).format('YYYY-MM-DD') }}
 		</time>
 		<time col-span-3>{{ progress.nextDate }}</time>
 	</li>

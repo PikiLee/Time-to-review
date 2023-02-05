@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { useUserStore } from "@/store/user.store";
-import { useCustomRouter } from "@/utils/useCustomRouter";
-import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-import { computed, ref } from "vue";
-import CourseCreator from "./Course/CourseCreator.vue";
+import { useUserStore } from '@/store/user.store'
+import { useCustomRouter } from '@/utils/useCustomRouter'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import { computed, ref } from 'vue'
+import CourseCreator from './Course/CourseCreator.vue'
 
-const userStore = useUserStore();
-const dialogVisible = ref(false);
-const breakpoints = useBreakpoints(breakpointsTailwind);
-const largerThanMd = breakpoints.greater("md");
+const userStore = useUserStore()
+const dialogVisible = ref(false)
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const largerThanMd = breakpoints.greater('md')
 
-const { isCoursePage } = useCustomRouter();
+const { isCoursePage } = useCustomRouter()
 const toolTip = computed(() =>
-	isCoursePage.value ? "Create Progress" : "Create Course"
-);
-const buttonType = computed(() => (isCoursePage.value ? "info" : "primary"));
+	isCoursePage.value ? 'Create Progress' : 'Create Course'
+)
+const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
 </script>
 
 <template>

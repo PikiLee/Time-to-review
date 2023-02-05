@@ -1,52 +1,52 @@
 <script setup lang="ts">
-import { type Course, CourseStatus } from "shared";
-import dayjs from "dayjs/esm";
-import relativeTime from "dayjs/esm/plugin/relativeTime";
-import { computed } from "vue";
+import { type Course, CourseStatus } from 'shared'
+import dayjs from 'dayjs/esm'
+import relativeTime from 'dayjs/esm/plugin/relativeTime'
+import { computed } from 'vue'
 import {
 	toggleArchive as rawToggleArchive,
 	toggleStatus as rawToggleStatus,
-	del,
-} from "@/database/course";
-import { errorMsg, successMsg } from "@/utils/useMessage";
+	del
+} from '@/database/course'
+import { errorMsg, successMsg } from '@/utils/useMessage'
 
-dayjs.extend(relativeTime);
+dayjs.extend(relativeTime)
 
 const props = defineProps<{
-	course: Course;
-}>();
+	course: Course
+}>()
 
 const isInProgress = computed(
-	() => props.course.status === CourseStatus["In Progress"]
-);
+	() => props.course.status === CourseStatus['In Progress']
+)
 
-const isArchived = computed(() => props.course.archived);
+const isArchived = computed(() => props.course.archived)
 
 const createdTime = computed(() => {
-	const now = dayjs();
-	const created = dayjs(props.course.createdAt);
+	const now = dayjs()
+	const created = dayjs(props.course.createdAt)
 
-	const difference = now.diff(created, "day");
+	const difference = now.diff(created, 'day')
 
-	if (difference < 7) return created.fromNow();
-	return created.format("YYYY-MM-DD");
-});
+	if (difference < 7) return created.fromNow()
+	return created.format('YYYY-MM-DD')
+})
 
 async function toggleArchive(courseId: string) {
 	try {
-		await rawToggleArchive(courseId);
-		successMsg("Action succeeded.");
+		await rawToggleArchive(courseId)
+		successMsg('Action succeeded.')
 	} catch (err) {
-		errorMsg(`Action Failed. ${err}`);
+		errorMsg(`Action Failed. ${err}`)
 	}
 }
 
 async function toggleStatus(courseId: string) {
 	try {
-		await rawToggleStatus(courseId);
-		successMsg("Action succeeded.");
+		await rawToggleStatus(courseId)
+		successMsg('Action succeeded.')
 	} catch (err) {
-		errorMsg(`Action Failed. ${err}`);
+		errorMsg(`Action Failed. ${err}`)
 	}
 }
 </script>

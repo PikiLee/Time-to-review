@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import CourseCard from "@/components/Course/CourseCard.vue";
-import { useCourseStore } from "@/store/course.store";
-import AddButton from "../components/AddButton.vue";
+import CourseCard from '@/components/Course/CourseCard.vue'
+import { useCourseStore } from '@/store/course.store'
+import AddButton from '../components/AddButton.vue'
 
-const courseStore = useCourseStore();
+const courseStore = useCourseStore()
 </script>
 <template>
 	<AddButton />

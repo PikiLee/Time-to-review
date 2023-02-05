@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import AddButton from "../components/AddButton.vue";
-import ProgressListItem from "@/components/Progress/ProgressListItem.vue";
-import { useCourseStore } from "@/store/course.store";
+import AddButton from '../components/AddButton.vue'
+import ProgressListItem from '@/components/Progress/ProgressListItem.vue'
+import { useCourseStore } from '@/store/course.store'
 
-const courseStore = useCourseStore();
+const courseStore = useCourseStore()
 </script>
 <template>
 	<AddButton />
