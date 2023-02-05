@@ -151,7 +151,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 				@click="submitForm(ruleFormRef)"
 				data-testid="progress-list-item-confirm"
 			>
-			{{$t('actions.confrim')}}
+			{{$t('actions.confirm')}}
 			</el-button>
 			<el-button
 				@click="del(progress._id)"

@@ -52,6 +52,7 @@ async function toggleStatus(courseId: string) {
 </script>
 
 <template>
+	
 	<div data-testid="course-card">
 		<li grid grid-rows-2 grid-cols-5 gap-2 items-center>
 			<el-tooltip
@@ -128,7 +129,12 @@ async function toggleStatus(courseId: string) {
 					hover:text-lime-500
 					data-testid="course-card-name"
 				>
+				<el-badge :value="course.dueCount" v-if="course.dueCount > 0">
 					{{ course.name }}
+				</el-badge>
+				<span v-else>
+					{{ course.name }}
+				</span>
 				</h3>
 			</RouterLink>
 			<time col-span-3 :datetime="dayjs(course.createdAt).toISOString()">{{
@@ -136,4 +142,5 @@ async function toggleStatus(courseId: string) {
 			}}</time>
 		</li>
 	</div>
+
 </template>
