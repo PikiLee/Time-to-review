@@ -13,6 +13,11 @@ export const messages = {
 			course: 'course',
 			progress: 'progress'
 		},
+		stages: {
+			learned: 'Learned',
+			done: 'Done',
+			review: 'Reviewed {count} Time | Reviewed {count} Times'
+		},
 		header: {
 			home: 'Home',
 			course: 'Course',
@@ -86,6 +91,11 @@ export const messages = {
 			empty: '这里什么也没有',
 			course: '课程',
 			progress: '进度'
+		},
+		stages: {
+			learned: '已学习',
+			done: '已完成',
+			review: '已复习{count}次'
 		},
 		header: {
 			home: '主页',

@@ -1,9 +1,12 @@
+import { useI18n } from 'vue-i18n'
+
 export function getStageString(stage: number, numIntervals: number) {
+	const {t} = useI18n()
 	if (stage === 0) {
-		return 'Learned'
+		return t('stages.learned')
 	} else if (stage === numIntervals + 1) {
-		return 'Done'
+		return t('stages.done')
 	} else {
-		return `Reviewed ${stage} Times`
+		return t('stages.review',  {count: stage})
 	}
 }
