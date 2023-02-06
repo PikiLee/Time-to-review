@@ -1,37 +1,15 @@
-import {
-	del,
-	fetch,
-	fetchProgressesByCourseId,
-	Progress,
-	update,
-} from './../models/Progress.js'
+import { create, del, fetch, update } from './../models/Progress.js'
 import express from 'express'
-import { printDebugInfo } from '../utils/debug.js'
 import { toObjectId } from '../utils/id.js'
 
 export const router = express.Router()
 
 router.post('/', async (req, res) => {
 	try {
-		const progress = new Progress(req.body)
-		await progress.save()
+		const progress = await create(req.body)
 		res.json(progress)
 	} catch (err) {
 		res.status(400).send(err)
-	}
-})
-
-router.get('/course/:courseId', async (req, res) => {
-	try {
-		const progresses = await fetchProgressesByCourseId(
-			toObjectId(req.params.courseId),
-			{ userId: (req.user as any)._id }
-		)
-		res.status(200).json(progresses)
-	} catch (err) {
-		printDebugInfo(req)
-		console.log({ err })
-		res.status(404).send(err)
 	}
 })
 

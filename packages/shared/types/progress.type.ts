@@ -1,44 +1,13 @@
-import { keys, values } from 'lodash-es'
 import { Types } from 'mongoose'
 
-export const ProgressStageObject = {
-	'Just Learned': 0,
-	'Reviewed Once': 1,
-	'Reviewed Twice': 2,
-	'Reviewed Three Times': 3,
-	'Reviewed Fourth Times': 4,
-} as const
-
-export const ProgressStageObjectReversed = {} as Record<
-	ProgressStage,
-	ProgressStageStrings
->
-
-for (const key of keys(ProgressStageObject)) {
-	const value = ProgressStageObject[key as keyof typeof ProgressStageObject]
-	ProgressStageObjectReversed[value] = key as ProgressStageStrings
-}
-
-export type ProgressStage =
-	(typeof ProgressStageObject)[keyof typeof ProgressStageObject]
-export type ProgressStageStrings = keyof typeof ProgressStageObject
-
-export const progressStageIndices = values(ProgressStageObject)
-
-export const progressStageInterval = {
-	0: 1,
-	1: 7,
-	2: 14,
-	3: 28,
-	4: NaN,
-}
+export type ProgressStage = number
 
 export interface Progress {
 	_id: string
 	course: string
 	owner: string
 	name: string
-	stage: ProgressStage
+	stage: number
 	lastDate: string
 	createdAt: string
 	updatedAt: string
@@ -72,8 +41,12 @@ export type UpdateProgress = Partial<
 >
 
 export interface ProgressSchema
-	extends Omit<Progress, 'course' | 'owner' | '_id'> {
+	extends Omit<
+		Progress,
+		'course' | 'owner' | '_id' | 'lastDate' | 'nextDate' | 'isDue'
+	> {
 	_id: Types.ObjectId
 	owner: Types.ObjectId
 	course: Types.ObjectId
+	lastDate: Date
 }

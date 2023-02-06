@@ -14,6 +14,7 @@ export interface Course {
 	name: string
 	status: CourseStatus
 	archived: boolean
+	intervals: number[]
 	createdAt: string
 	updatedAt: string
 	dueCount: number
@@ -44,8 +45,10 @@ export interface NewCourse
 		| 'isDue'
 		| 'progressCount'
 		| 'dueCount'
+		| 'intervals'
 	> {
 	owner: string
+	intervals?: number[]
 }
 
 export type UpdateCourse = Partial<
@@ -59,6 +62,7 @@ export type UpdateCourse = Partial<
 		| 'isDue'
 		| 'progressCount'
 		| 'dueCount'
+		| 'intervals'
 	>
 >
 

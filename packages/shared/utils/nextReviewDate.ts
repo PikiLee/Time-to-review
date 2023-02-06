@@ -1,14 +1,13 @@
-import { progressStageInterval } from '../types/progress.type.js'
-import {
-	type ProgressStage,
-	ProgressStageObject,
-} from '../types/progress.type.js'
+import { type ProgressStage } from '../types/progress.type.js'
 import dayjs from 'dayjs'
 
-export function getNextDate(lastTime: string | number, stage: ProgressStage) {
+export function getNextDate(
+	lastTime: string | number,
+	stage: ProgressStage,
+	intervals: number[]
+) {
 	const lastDate = dayjs(lastTime)
-	const nextDate =
-    stage === ProgressStageObject['Reviewed Fourth Times'] ? 'Done': lastDate.add(progressStageInterval[stage], 'day').format('YYYY-MM-DD')
+	const nextDate = lastDate.add(intervals[stage], 'day').toISOString()
 
 	return nextDate
 }
