@@ -109,7 +109,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		<time col-span-3 data-testid="progress-list-item-lastDate">
 			{{ dayjs(progress.lastDate).format('YYYY-MM-DD') }}
 		</time>
-		<time col-span-3>{{ progress.nextDate }}</time>
+		<time col-span-3>{{ dayjs(progress.nextDate).format('YYYY-MM-DD') }}</time>
 
 		<el-form
 		ref="ruleFormRef"
