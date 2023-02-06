@@ -107,6 +107,7 @@ describe('course', () => {
 			owner: user._id,
 			course: retrievedCourse._id,
 			order: 0.3,
+			lastDate: (new Date()).toISOString()
 		}
 		console.log(res.body)
 		expect(res.status).toBe(200)

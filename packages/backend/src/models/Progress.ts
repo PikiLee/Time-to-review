@@ -32,9 +32,9 @@ const progressSchema = new Schema<ProgressSchemaType>(
 		},
 		lastDate: {
 			type: Date,
-			default: Date.now,
+			required: true,
 			set(lastDate: string) {
-				return dayjs(lastDate).startOf('day').toDate()
+				return dayjs(lastDate).toDate()
 			},
 		},
 		order: {

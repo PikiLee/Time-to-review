@@ -1,5 +1,6 @@
 import { useCourseStore } from '@/store/course.store'
 import { useUserStore } from '@/store/user.store'
+import { getStartOfDay } from '@/utils/progress.utils'
 import { PROGRESS_URL, type NewProgress, type UpdateProgress } from 'shared'
 import { api } from './api'
 
@@ -15,7 +16,8 @@ export async function create(name: string) {
 		owner: userStore.user._id,
 		course: courseStore.currentCourse._id,
 		name,
-		order: (courseStore.currentCourse.progresses.at(-1)?.order ?? 2000) + 100
+		order: (courseStore.currentCourse.progresses.at(-1)?.order ?? 2000) + 100,
+		lastDate: getStartOfDay(Date.now())
 	}
 
 	const res = await api.post(PROGRESS_URL, {
@@ -29,6 +31,8 @@ export async function update(
 	progressId: string,
 	updateProgress: UpdateProgress
 ) {
+	if (updateProgress.lastDate) updateProgress.lastDate = getStartOfDay(updateProgress.lastDate)
+
 	const res = await api.put(`${PROGRESS_URL}/${progressId}`, {
 		data: updateProgress
 	})

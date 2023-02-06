@@ -1,3 +1,4 @@
+import dayjs from 'dayjs'
 import { useI18n } from 'vue-i18n'
 
 export function getStageString(stage: number, numIntervals: number) {
@@ -9,4 +10,9 @@ export function getStageString(stage: number, numIntervals: number) {
 	} else {
 		return t('stages.review',  {count: stage})
 	}
+}
+
+export function getStartOfDay(rawDate: Date | number | string) {
+	const date = dayjs(new Date(rawDate)).startOf('day').toISOString()
+	return date
 }

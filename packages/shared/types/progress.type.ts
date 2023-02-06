@@ -20,7 +20,6 @@ export type NewProgress = Omit<
 	Progress,
 	| '_id'
 	| 'stage'
-	| 'lastDate'
 	| 'createdAt'
 	| 'nextDate'
 	| 'isDue'
