@@ -64,13 +64,14 @@ function expectToBeTypeOfCourse(
 	expect(course).toHaveProperty('owner')
 	expect(course).toHaveProperty('status')
 	expect(course).toHaveProperty('archived')
+	expect(course).toHaveProperty('intervals')
 	expect(course).toHaveProperty('createdAt')
 	expect(course).toHaveProperty('updatedAt')
 	expect(course).toHaveProperty('order')
 	expect(course).toHaveProperty('dueCount')
 	expect(course).toHaveProperty('isDue')
 	expect(course).toHaveProperty('progressCount')
-	let length = 11
+	let length = 12
 	if (options.withDueProgresses) {
 		expect(course).toHaveProperty('dueProgresses')
 		length++

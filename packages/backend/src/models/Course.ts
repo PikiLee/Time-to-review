@@ -36,7 +36,7 @@ const courseSchema = new Schema<CourseSchemaType>(
 		},
 		intervals: {
 			type: [Number],
-			default: [1, 7, 14, 28],
+			default: () => [1, 7, 14, 28],
 		},
 		order: {
 			type: Number,
@@ -94,6 +94,7 @@ const projectFields = {
 	owner: 1,
 	status: 1,
 	archived: 1,
+	intervals: 1,
 	order: 1,
 	createdAt: 1,
 	updatedAt: 1,
