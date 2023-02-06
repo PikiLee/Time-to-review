@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AddButton from '@/components/AddButton.vue'
 import DueCourseSection from '@/components/Course/DueCourseSection.vue'
 
 import { useCourseStore } from '@/store/course.store'
@@ -7,6 +8,7 @@ const courseStore = useCourseStore()
 </script>
 
 <template>
+	<AddButton />
 	<main>
 		<h2 text-center>{{$t('home.title')}}</h2>
 		<DueCourseSection
@@ -15,7 +17,7 @@ const courseStore = useCourseStore()
 			:course="course"
 		/>
 		<el-empty
-			description="No courses need review yet."
+			:description="$t('common.empty')"
 			v-if="courseStore.dueCourses.length === 0"
 		/>
 	</main>

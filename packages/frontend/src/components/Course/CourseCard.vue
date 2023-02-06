@@ -9,6 +9,7 @@ import {
 	del
 } from '@/database/course'
 import { errorMsg, successMsg } from '@/utils/useMessage'
+import { useCreatedTime } from '@/utils/useDayjs'
 
 dayjs.extend(relativeTime)
 
@@ -22,15 +23,7 @@ const isInProgress = computed(
 
 const isArchived = computed(() => props.course.archived)
 
-const createdTime = computed(() => {
-	const now = dayjs()
-	const created = dayjs(props.course.createdAt)
-
-	const difference = now.diff(created, 'day')
-
-	if (difference < 7) return created.fromNow()
-	return created.format('YYYY-MM-DD')
-})
+const {createdTime} = useCreatedTime(props.course.createdAt)
 
 async function toggleArchive(courseId: string) {
 	try {
