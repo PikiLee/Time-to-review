@@ -123,6 +123,12 @@ export function createProgressProjectStage(
 	}
 }
 
+export function createSortStage() {
+	return {
+		$sort: { order: 1 },
+	} as const
+}
+
 export async function fetch(
 	_id: Types.ObjectId,
 	options?: {
@@ -142,6 +148,7 @@ export async function fetch(
 			},
 		},
 		createProgressProjectStage('$$CURRENT', { $arrayElemAt: ['$c', 0] }),
+		createSortStage(),
 	])
 	if (doc.length > 0) {
 		return doc[0]

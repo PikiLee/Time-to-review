@@ -14,8 +14,6 @@ export const useCourseStore = defineStore('course', () => {
 
 	const dueCourses = ref<CourseWithDueProgresses[]>([])
 
-	const currentCourse = ref<CourseWithProgress>()
-
 	const coursesInProgress = useArrayFilter(
 		courses,
 		(course) =>
@@ -83,6 +81,17 @@ export const useCourseStore = defineStore('course', () => {
 			currentCourse.value.progresses.splice(idx, 1)
 		}
 	}
+
+	const currentCourse = ref<CourseWithProgress>()
+
+	// function exchangeProgresses(idx1: number, idx2: number) {
+	// 	if (!currentCourse.value) throw new Error("currentCourse does not exist.")
+	// 	if (idx1 === idx2) return
+	// 	const front = Math.min(idx1, idx2)
+	// 	const after = Math.max(idx1, idx2)
+
+	// 	const afterProgress = currentCourse.value.progresses.splice(after, 1)
+	// }
 
 	return {
 		courses,

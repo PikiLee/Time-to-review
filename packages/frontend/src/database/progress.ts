@@ -3,7 +3,7 @@ import { useUserStore } from '@/store/user.store'
 import { PROGRESS_URL, type NewProgress, type UpdateProgress } from 'shared'
 import { api } from './api'
 
-export async function create(courseId: string, name: string) {
+export async function create(name: string) {
 	if (!name) throw Error('Please input name.')
 	const userStore = useUserStore()
 	if (!userStore.user) throw Error('Please login first.')
@@ -15,7 +15,7 @@ export async function create(courseId: string, name: string) {
 		owner: userStore.user._id,
 		course: courseStore.currentCourse._id,
 		name,
-		order: 0
+		order: (courseStore.currentCourse.progresses.at(-1)?.order ?? 2000) + 100
 	}
 
 	const res = await api.post(PROGRESS_URL, {
@@ -36,6 +36,7 @@ export async function update(
 	const courseStore = useCourseStore()
 	if (!courseStore.currentCourse) throw Error('Can not find course')
 	courseStore.replaceProgress(res.data)
+	courseStore.currentCourse.progresses.sort((a, b) => a.order - b.order)
 
 	return res.data
 }

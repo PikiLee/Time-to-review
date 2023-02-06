@@ -97,8 +97,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		@click="showEditor = !showEditor"
 		data-testid="progress-list-item"
 		v-if="courseStore.currentCourse"
+		class="progress-list-item-draggable"
 	>
-		<h3 m-0 col-span-3 data-testid="progress-list-item-name">
+	<div class="progress-list-item-draggable-handle" col-span-1 my-handle i-radix-icons-drag-handle-horizontal @click.prevent.stop text-xl></div>
+		<h3 m-0 col-span-2 data-testid="progress-list-item-name">
 			{{ progress.name }}
 		</h3>
 		<div col-span-3 data-testid="progress-list-item-stage">
@@ -108,9 +110,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 			{{ dayjs(progress.lastDate).format('YYYY-MM-DD') }}
 		</time>
 		<time col-span-3>{{ progress.nextDate }}</time>
-	</li>
 
-	<el-form
+		<el-form
 		ref="ruleFormRef"
 		:model="ruleForm"
 		:rules="rules"
@@ -119,6 +120,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		status-icon
 		v-if="showEditor && courseStore.currentCourse"
 		mt-6
+		col-span-12
 	>
 		<el-form-item :label="$t('course.name')" prop="name">
 			<el-input
@@ -161,4 +163,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 			>
 		</el-form-item>
 	</el-form>
+	</li>
+
+	
 </template>

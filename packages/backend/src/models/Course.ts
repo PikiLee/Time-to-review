@@ -1,4 +1,4 @@
-import { createProgressProjectStage } from './Progress.js'
+import { createProgressProjectStage, createSortStage } from './Progress.js'
 import {
 	courseStatusIndices,
 	NewCourse,
@@ -57,7 +57,10 @@ const lookupStage = {
 		localField: '_id',
 		foreignField: 'course',
 		let: { c: '$$CURRENT' },
-		pipeline: [createProgressProjectStage('$$CURRENT', '$$c')],
+		pipeline: [
+			createProgressProjectStage('$$CURRENT', '$$c'),
+			createSortStage(),
+		],
 		as: 'progresses',
 	},
 }

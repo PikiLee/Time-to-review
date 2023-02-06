@@ -2,15 +2,61 @@
 import AddButton from '../components/AddButton.vue'
 import ProgressListItem from '@/components/Progress/ProgressListItem.vue'
 import { useCourseStore } from '@/store/course.store'
+import Sortable from 'sortablejs'
+import { onMounted, ref } from 'vue'
+import type { Progress } from 'shared'
+import { update } from '@/database/progress'
+import { errorMsg, successMsg } from '@/utils/useMessage'
 
 const courseStore = useCourseStore()
+const dragContainerEl = ref<HTMLDivElement>()
+
+async function  calcOrder(fromIndex: number, toIndex: number, items: Progress[]) {
+	if (fromIndex === toIndex) return
+	
+	if (fromIndex < toIndex) {
+		if (toIndex === items.length - 1) {
+			items[fromIndex].order = items[toIndex].order + 100
+		} else {
+			items[fromIndex].order = (items[toIndex].order + items[toIndex + 1].order) * 0.5
+		}
+	} else {
+		if (toIndex === 0) {
+			items[fromIndex].order = items[toIndex].order - 100
+		} else {
+			items[fromIndex].order = (items[toIndex].order + items[toIndex - 1].order) * 0.5
+		}
+	}
+	
+	await update(items[fromIndex]._id, {order:  items[fromIndex].order})
+}
+
+onMounted(() => {
+	const sortable = Sortable.create(dragContainerEl.value!, {
+		handle: '.progress-list-item-draggable-handle',
+		draggable: '.progress-list-item-draggable',
+		onEnd: async function (/**Event*/evt) {
+			try {
+				sortable.option('disabled', true)
+				if (!courseStore.currentCourse) return
+				await calcOrder(evt.oldDraggableIndex!, evt.newDraggableIndex!, courseStore.currentCourse?.progresses)
+				successMsg('sort succeeded.')
+			} catch(err) {
+				errorMsg(String(err))
+			} finally {
+				sortable.option('disabled', false)
+			}
+		},
+	})
+})
 </script>
 <template>
 	<AddButton />
-	<div v-if="courseStore.currentCourse" data-testid="course-view">
-		<h2 text-center>{{courseStore.currentCourse.name}}</h2>
-		<ul list-none p-none v-if="courseStore.currentCourse.progresses.length">
-			<li
+	<div data-testid="course-view">
+		<div v-if="courseStore.currentCourse">
+			<h2 text-center>{{courseStore.currentCourse.name}}</h2>
+			<ul list-none p-none v-if="courseStore.currentCourse.progresses.length">
+				<li
 				grid
 				grid-cols-12
 				items-center
@@ -18,21 +64,25 @@ const courseStore = useCourseStore()
 				border-b-warmgray-300
 				p-2
 				gap-2
-			>
-				<span col-span-3>{{$t('course.name')}}</span>
+				>
+				<span col-span-1></span>
+				<span col-span-2>{{$t('course.name')}}</span>
 				<span col-span-3>{{$t('course.stage')}}</span>
 				<span col-span-3>{{$t('course.lastReviewDate')}}</span>
 				<span col-span-3>{{$t('course.nextReviewDate')}}</span>
 			</li>
-			<ProgressListItem
-				v-for="progress in courseStore.currentCourse.progresses"
-				:key="progress._id"
-				:progress="progress"
-			/>
+			
 		</ul>
 		<el-empty v-else :description="$t('common.empty')" />
+		<div ref="dragContainerEl">
+			<ProgressListItem
+			v-for="progress in courseStore.currentCourse?.progresses"
+			:key="progress._id"
+			:progress="progress"
+			/>
+		</div>
 	</div>
-	<el-empty :description="$t('common.empty')" v-else />
+	</div>
 </template>
 
 <style scoped></style>

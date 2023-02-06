@@ -2,14 +2,13 @@
 import { ref, computed, watch } from 'vue'
 import { create as createCourse } from '@/database/course'
 import { create as createProgress } from '@/database/progress'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useCustomRouter } from '@/utils/useCustomRouter'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
 
 const emit = defineEmits(['ok'])
 
-const route = useRoute()
 const router = useRouter()
 const { isCoursePage } = useCustomRouter()
 const {t} = useI18n()
@@ -24,14 +23,10 @@ watch(
 	{ immediate: true }
 )
 
-const courseId = Array.isArray(route.params.id)
-	? route.params.id[0]
-	: route.params.id
-
 async function handleCreate() {
 	try {
 		if (isCoursePage.value) {
-			await createProgress(courseId, input.value)
+			await createProgress(input.value)
 		} else {
 			await createCourse(input.value)
 			router.push({ name: 'courses' })
