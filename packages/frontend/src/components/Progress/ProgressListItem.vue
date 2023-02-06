@@ -121,6 +121,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		v-if="showEditor && courseStore.currentCourse"
 		mt-6
 		col-span-12
+		@click.stop
 	>
 		<el-form-item :label="$t('course.name')" prop="name">
 			<el-input
