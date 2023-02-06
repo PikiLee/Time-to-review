@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import {
-	progressStageIndices,
-	ProgressStageObject,
-	ProgressStageObjectReversed,
-	type Progress,
-	type UpdateProgress
+import type {
+	Progress,
+	UpdateProgress
 } from 'shared'
 import { del } from '@/database/progress'
 import { ref, reactive, watchEffect } from 'vue'
@@ -12,6 +9,8 @@ import dayjs from 'dayjs/esm'
 import type { FormInstance, FormRules } from 'element-plus'
 import { update } from '@/database/progress'
 import { errorMsg, successMsg } from '@/utils/useMessage'
+import { useCourseStore } from '@/store/course.store'
+import {getStageString} from '../../utils/progress.utils'
 
 const props = defineProps<{
 	progress: Progress
@@ -19,6 +18,7 @@ const props = defineProps<{
 
 const showEditor = ref(false)
 const ruleFormRef = ref<FormInstance>()
+const courseStore = useCourseStore()
 let ruleForm: UpdateProgress
 watchEffect(() => {
 	const copy = {
@@ -48,7 +48,7 @@ const rules = reactive<FormRules>({
 		},
 		{
 			validator(_, value) {
-				return value in progressStageIndices
+				return courseStore.currentCourse && value < courseStore.currentCourse?.intervals.length
 			},
 			message: 'Please select a valid stage',
 			trigger: 'change'
@@ -96,12 +96,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		:id="progress.name"
 		@click="showEditor = !showEditor"
 		data-testid="progress-list-item"
+		v-if="courseStore.currentCourse"
 	>
 		<h3 m-0 col-span-3 data-testid="progress-list-item-name">
 			{{ progress.name }}
 		</h3>
 		<div col-span-3 data-testid="progress-list-item-stage">
-			{{ ProgressStageObjectReversed[progress.stage] }}
+			{{ getStageString(progress.stage, courseStore.currentCourse?.intervals.length) }}
 		</div>
 		<time col-span-3 data-testid="progress-list-item-lastDate">
 			{{ dayjs(progress.lastDate).format('YYYY-MM-DD') }}
@@ -116,7 +117,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		label-width="200px"
 		label-position="left"
 		status-icon
-		v-if="showEditor"
+		v-if="showEditor && courseStore.currentCourse"
 		mt-6
 	>
 		<el-form-item :label="$t('course.name')" prop="name">
@@ -128,10 +129,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		<el-form-item :label="$t('course.stage')" prop="stage">
 			<el-select v-model="ruleForm.stage">
 				<el-option
-					v-for="(value, key) in ProgressStageObject"
-					:key="key"
-					:label="key"
-					:value="value"
+					v-for="value in (courseStore.currentCourse?.intervals.length + 1)"
+					:key="value"
+					:label="getStageString(value - 1, courseStore.currentCourse.intervals.length)"
+					:value="value - 1"
 				/>
 			</el-select>
 		</el-form-item>
