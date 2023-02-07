@@ -26,15 +26,20 @@ export async function create(name: string) {
 	const courseStore = useCourseStore()
 	courseStore.courses.push(res.data)
 }
-export async function update(courseId: string, updateCourse: UpdateCourse) {
+export async function update(courseId: string, updateCourse: UpdateCourse, options: {
+	withProgresses: boolean
+} = {withProgresses: false}) {
 	if (keys(updateCourse).length === 0)
 		throw new Error('Something went wrong! Please refresh!')
 
-	const res = await api.put(`${COURSE_URL}/${courseId}`, updateCourse)
+	const res = await api.put(`${COURSE_URL}/${courseId}`, updateCourse, {
+		params: {
+			withProgresses: options.withProgresses
+		}
+	})
 	const courseStore = useCourseStore()
 
-	if (!courseStore.replaceCourse(res.data))
-		throw new Error('Something went wrong! Please refresh!')
+	courseStore.currentCourse = res.data
 
 	return res.data
 }

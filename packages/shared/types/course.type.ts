@@ -62,7 +62,6 @@ export type UpdateCourse = Partial<
 		| 'isDue'
 		| 'progressCount'
 		| 'dueCount'
-		| 'intervals'
 	>
 >
 

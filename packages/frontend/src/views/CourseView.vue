@@ -7,8 +7,10 @@ import { onMounted, ref } from 'vue'
 import type { Progress } from 'shared'
 import { update } from '@/database/progress'
 import { errorMsg, successMsg } from '@/utils/useMessage'
+import CourseSetting from '@/components/Course/CourseSetting.vue'
 
 const courseStore = useCourseStore()
+const settingVisible = ref(false)
 const dragContainerEl = ref<HTMLDivElement>()
 
 async function  calcOrder(fromIndex: number, toIndex: number, items: Progress[]) {
@@ -52,9 +54,13 @@ onMounted(() => {
 </script>
 <template>
 	<AddButton />
+	<CourseSetting v-model="settingVisible"/>
 	<div data-testid="course-view">
 		<div v-if="courseStore.currentCourse">
-			<h2 text-center>{{courseStore.currentCourse.name}}</h2>
+			<div relative>
+				<h2 text-center>{{courseStore.currentCourse.name}}</h2>
+				<el-button absolute right-10 bottom-0 @click="settingVisible = true">Edit</el-button>
+			</div>
 			<ul list-none p-none v-if="courseStore.currentCourse.progresses.length">
 				<li
 				grid

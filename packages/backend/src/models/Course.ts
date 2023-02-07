@@ -1,4 +1,4 @@
-import { createProgressProjectStage, createSortStage } from './Progress.js'
+import { createProgressProjectStage, createSortStage, Progress } from './Progress.js'
 import {
 	courseStatusIndices,
 	NewCourse,
@@ -214,6 +214,7 @@ export async function update(
 	_id: Types.ObjectId,
 	updateCourse: UpdateCourse,
 	options?: {
+		withProgresses?: boolean,
 		userId?: Types.ObjectId
 	}
 ) {
@@ -223,9 +224,26 @@ export async function update(
 	if (options?.userId && !course.owner.equals(options?.userId))
 		throw new Error('Not authorized.')
 
+	// update stage in child progresses if the intervals of the course are being modified.
+	if (updateCourse.intervals) {
+		const oldIntervalLength = course.intervals.length
+		const newIntervalLength = updateCourse.intervals.length
+		
+		if (oldIntervalLength > newIntervalLength) {
+			const children = await Progress.find({course: course._id})
+			for (const child of children) {
+				if (child.stage > newIntervalLength) {
+					child.stage = newIntervalLength
+				}
+				await child.save()
+			}
+		}
+	}
+
 	for (const [key, value] of lodash.entries(updateCourse)) {
 		(course as any)[key] = value
 	}
 	await course.save()
-	return await fetch(_id)
+	
+	return await fetch(_id, options)
 }

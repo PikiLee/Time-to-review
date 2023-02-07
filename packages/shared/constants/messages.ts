@@ -75,6 +75,11 @@ export const messages = {
 					markArchived: 'Archive',
 					markUnarchived: 'Unarchive',
 				},
+				courseSetting: {
+					name: 'name',
+					interval: 'interval',
+					required: 'Please input {0}',
+				}
 			},
 		},
 	},
@@ -154,6 +159,11 @@ export const messages = {
 					markArchived: '归档',
 					markUnarchived: '撤销归档',
 				},
+				courseSetting: {
+					name: '名字',
+					interval: '间隔',
+					required: '请输入{0}',
+				}
 			},
 		},
 	},

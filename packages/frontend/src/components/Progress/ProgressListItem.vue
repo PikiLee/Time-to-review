@@ -48,7 +48,7 @@ const rules = reactive<FormRules>({
 		},
 		{
 			validator(_, value) {
-				return courseStore.currentCourse && value < courseStore.currentCourse?.intervals.length
+				return typeof value === 'number' && value >=0 && courseStore.currentCourse && value <= courseStore.currentCourse.intervals.length 
 			},
 			message: 'Please select a valid stage',
 			trigger: 'change'
@@ -80,6 +80,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		}
 	})
 }
+
 </script>
 
 <template>
@@ -109,7 +110,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		<time col-span-3 data-testid="progress-list-item-lastDate">
 			{{ dayjs(progress.lastDate).format('YYYY-MM-DD') }}
 		</time>
-		<time col-span-3>{{ dayjs(progress.nextDate).format('YYYY-MM-DD') }}</time>
+		<time col-span-3>{{ progress.nextDate ? dayjs(progress.nextDate).format('YYYY-MM-DD') : "" }}</time>
 
 		<el-form
 		ref="ruleFormRef"

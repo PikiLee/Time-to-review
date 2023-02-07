@@ -87,7 +87,7 @@ router.put('/:courseId', async (req, res) => {
 		const updatedCourse = await update(
 			toObjectId(req.params.courseId),
 			req.body,
-			{ userId: toObjectId((req.user as any)._id) }
+			{userId: toObjectId((req.user as any)._id), withProgresses: !!req.query.withProgresses}
 		)
 		if (updatedCourse) {
 			res.status(200).json(updatedCourse)

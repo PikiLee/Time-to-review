@@ -5,7 +5,7 @@ export function getStageString(stage: number, numIntervals: number) {
 	const {t} = useI18n()
 	if (stage === 0) {
 		return t('stages.learned')
-	} else if (stage === numIntervals + 1) {
+	} else if (stage === numIntervals) {
 		return t('stages.done')
 	} else {
 		return t('stages.review',  {count: stage})
