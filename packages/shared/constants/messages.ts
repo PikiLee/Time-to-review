@@ -7,11 +7,13 @@ export const messages = {
 			confirm: 'Confirm',
 			delete: 'Delete',
 			create: 'Create',
+			cancel: 'Cancel',
+			edit: 'Edit',
 		},
 		common: {
 			empty: 'Nothing here.',
 			course: 'course',
-			progress: 'progress'
+			progress: 'progress',
 		},
 		stages: {
 			learned: 'Learned',
@@ -77,8 +79,13 @@ export const messages = {
 				},
 				courseSetting: {
 					name: 'name',
-					interval: 'interval',
+					interval: 'interval | intervals',
 					required: 'Please input {0}',
+					title: 'Course Settings',
+					add: 'Add Interval',
+					remove: 'Remove Interval',
+					success: 'Edit succeeded.',
+					fail: 'Edit Failed.'
 				}
 			},
 		},
@@ -91,11 +98,13 @@ export const messages = {
 			confirm: '确认',
 			delete: '删除',
 			create: '创建',
+			cancel: '取消',
+			edit: '编辑',
 		},
 		common: {
 			empty: '这里什么也没有',
 			course: '课程',
-			progress: '进度'
+			progress: '进度',
 		},
 		stages: {
 			learned: '已学习',
@@ -161,8 +170,13 @@ export const messages = {
 				},
 				courseSetting: {
 					name: '名字',
-					interval: '间隔',
+					interval: '复习间隔',
 					required: '请输入{0}',
+					title: '课程设置',
+					add: '添加间隔',
+					remove: '移除间隔',
+					success: '编辑成功',
+					fail: '编辑失败'
 				}
 			},
 		},

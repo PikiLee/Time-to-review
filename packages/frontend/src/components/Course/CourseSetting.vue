@@ -10,8 +10,8 @@ import { useI18n } from 'vue-i18n'
 const props = defineProps<{
   modelValue: boolean;
 }>()
-
 const emit = defineEmits(['update:modelValue'])
+const {t} = useI18n()
 
 // dialog
 const visible = useVModel(props, 'modelValue', emit)
@@ -21,11 +21,10 @@ function handleClose() {
 
 //form
 const courseStore = useCourseStore()
-const {t} = useI18n()
 const ruleFormRef = ref<FormInstance>()
 
 function getPropertyName(index: number) {
-	return `Interval ${index + 1}`
+	return `${t('components.course.courseSetting.interval')} ${index + 1}`
 }
 
 const rules = reactive<FormRules>({
@@ -54,11 +53,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 			update(courseStore.currentCourse!._id, ruleForm, {withProgresses: true})
 				.then(() => {
 					visible.value = false
-					successMsg('Setting Succeeded.')
+					successMsg(t('components.course.courseSetting.success'))
 				})
 				.catch(() => {
 					visible.value = true
-					errorMsg('Setting Failed.')
+					errorMsg(t('components.course.courseSetting.fail'))
 				})
 		}
 	})
@@ -77,7 +76,7 @@ function removeInterval() {
     <div>
         <el-dialog
         v-model="visible"
-        title="Course Settings"
+        :title="$t('components.course.courseSetting.title')"
         width="30%"
         :before-close="handleClose"
       >
@@ -89,23 +88,23 @@ function removeInterval() {
     class="demo-ruleForm"
     status-icon
   >
-    <el-form-item label="Course Name" prop="name">
+    <el-form-item :label="$t('components.course.courseSetting.name')" prop="name">
       <el-input v-model="ruleForm.name" />
     </el-form-item>
     <div flex gap-6 my-6 items-center justify-between>
-      <h3 m-none>Intervals</h3>
+      <h3 m-none>{{$t('components.course.courseSetting.interval', 2)}}</h3>
       <div>
 
         <el-tooltip
         effect="dark"
-        content="Add Interval"
+        :content="$t('components.course.courseSetting.add')"
       placement="top"
     >
     <el-button @click="addInterval"><div i-mdi-add></div></el-button>
     </el-tooltip>
     <el-tooltip
       effect="dark"
-      content="Remove Interval"
+      :content="$t('components.course.courseSetting.remove')"
       placement="top"
     >
     <el-button @click="removeInterval
@@ -120,9 +119,9 @@ function removeInterval() {
       </el-form>
         <template #footer>
           <span class="dialog-footer">
-            <el-button @click="visible = false">Cancel</el-button>
+            <el-button @click="visible = false">{{$t('actions.cancel')}}</el-button>
             <el-button type="primary" @click="submitForm(ruleFormRef)">
-              Confirm
+              {{$t('actions.confirm')}}
             </el-button>
           </span>
         </template>

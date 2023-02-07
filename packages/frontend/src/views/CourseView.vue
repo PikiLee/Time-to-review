@@ -59,7 +59,7 @@ onMounted(() => {
 		<div v-if="courseStore.currentCourse">
 			<div relative>
 				<h2 text-center>{{courseStore.currentCourse.name}}</h2>
-				<el-button absolute right-10 bottom-0 @click="settingVisible = true">Edit</el-button>
+				<el-button absolute right-10 bottom-0 @click="settingVisible = true">{{$t('actions.edit')}}</el-button>
 			</div>
 			<ul list-none p-none v-if="courseStore.currentCourse.progresses.length">
 				<li
