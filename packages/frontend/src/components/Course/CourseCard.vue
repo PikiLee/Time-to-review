@@ -49,7 +49,6 @@ async function toggleStatus(courseId: string) {
 	<div data-testid="course-card">
 		<li grid grid-rows-2 grid-cols-5 gap-2 items-center>
 			<el-tooltip
-				class="box-item"
 				:content="isArchived ? $t('components.course.courseCard.markUnarchived') : $t('components.course.courseCard.markArchived')"
 				placement="top"
 			>
@@ -126,11 +125,13 @@ async function toggleStatus(courseId: string) {
 					data-testid="course-card-name"
 				>
 				<el-badge :value="course.dueCount" v-if="course.dueCount > 0">
-					{{ course.name }}
+					<div w-full text-ellipsis overflow-hidden whitespace-nowrap>
+						{{ course.name }}
+					</div>
 				</el-badge>
-				<span v-else>
+				<div v-else w-full text-ellipsis overflow-hidden whitespace-nowrap>
 					{{ course.name }}
-				</span>
+				</div>
 				</h3>
 			</RouterLink>
 			<time col-span-3 :datetime="dayjs(course.createdAt).toISOString()">{{
