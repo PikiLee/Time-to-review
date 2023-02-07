@@ -71,12 +71,12 @@ onMounted(() => {
 				p-2
 				gap-2
 				>
-				<span col-span-1></span>
-				<span col-span-2>{{$t('course.name')}}</span>
-				<span col-span-2>{{$t('course.stage')}}</span>
-				<span col-span-2>{{$t('course.lastReviewDate')}}</span>
-				<span col-span-2>{{$t('course.nextReviewDate')}}</span>
-				<span col-span-3></span>
+				<span col-span-1 sm-col-span-1></span>
+				<span col-span-2 sm-col-span-2>{{$t('course.name')}}</span>
+				<span col-span-3 sm-col-span-2>{{$t('course.stage')}}</span>
+				<span col-span-3 sm-col-span-2>{{$t('course.lastReviewDate')}}</span>
+				<span col-span-3 sm-col-span-2>{{$t('course.nextReviewDate')}}</span>
+				<span col-span-0 sm-col-span-3></span>
 			</li>
 			
 		</ul>

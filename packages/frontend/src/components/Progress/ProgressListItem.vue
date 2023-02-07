@@ -81,6 +81,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 	})
 }
 
+/**
+ * to next stage button
+ */
 async function toNextStage() {
 	try {
 		if (!courseStore.currentCourse) {
@@ -92,7 +95,6 @@ async function toNextStage() {
 		errorMsg(String(err))
 	}
 }
-
 </script>
 
 <template>
@@ -112,20 +114,30 @@ async function toNextStage() {
 		v-if="courseStore.currentCourse"
 		class="progress-list-item-draggable"
 	>
-	<div class="progress-list-item-draggable-handle" col-span-1 my-handle i-radix-icons-drag-handle-horizontal @click.prevent.stop text-xl></div>
-		<h3 m-0 col-span-2 data-testid="progress-list-item-name">
+	<div class="progress-list-item-draggable-handle" col-span-1 sm-col-span-1 my-handle i-radix-icons-drag-handle-horizontal @click.prevent.stop text-xl></div>
+		<h3 m-0  col-span-2 sm-col-span-2 data-testid="progress-list-item-name">
 			{{ progress.name }}
 		</h3>
-		<div col-span-2 data-testid="progress-list-item-stage">
+		<div col-span-3 sm-col-span-2 data-testid="progress-list-item-stage">
 			{{ getStageString(progress.stage, courseStore.currentCourse?.intervals.length) }}
 		</div>
-		<time col-span-2 data-testid="progress-list-item-lastDate">
+		<time col-span-3 sm-col-span-2 data-testid="progress-list-item-lastDate">
 			{{ dayjs(progress.lastDate).format('YYYY-MM-DD') }}
 		</time>
-		<time col-span-2>{{ progress.nextDate ? dayjs(progress.nextDate).format('YYYY-MM-DD') : "" }}</time>
-		<span col-span-3>
-			<el-button v-if="progress.stage < courseStore.currentCourse.intervals.length" @click.stop="toNextStage" type="primary">{{$t('course.nextStage')}}</el-button>
-		</span>
+		<time col-span-3 sm-col-span-2>{{ progress.nextDate ? dayjs(progress.nextDate).format('YYYY-MM-DD') : "" }}</time>
+		<div col-span-12 sm-col-span-3 grid
+		place-items-center>
+			<el-tooltip
+			class="box-item"
+			effect="dark"
+			:content="$t('course.nextStage')"
+			placement="top"
+			v-if="progress.stage < courseStore.currentCourse.intervals.length"
+			
+		>
+			<el-button  @click.stop="toNextStage" size="small"><span i-material-symbols-next-plan mr-2></span>{{$t('course.nextStage')}}</el-button>
+		</el-tooltip>
+		</div>
 
 
 		<el-form
@@ -167,18 +179,22 @@ async function toNextStage() {
 		</el-form-item>
 
 		<el-form-item>
-			<el-button
+			<div flex gap-2 flex-wrap> 
+				<el-button
 				type="primary"
 				@click="submitForm(ruleFormRef)"
 				data-testid="progress-list-item-confirm"
-			>
-			{{$t('actions.confirm')}}
+				size="small"
+				>
+				{{$t('actions.confirm')}}
 			</el-button>
 			<el-button
-				@click="del(progress._id)"
-				data-testid="progress-list-item-delete"
-				>{{$t('actions.delete')}}</el-button
+			@click="del(progress._id)"
+			data-testid="progress-list-item-delete"
+			size="small"
+			>{{$t('actions.delete')}}</el-button
 			>
+		</div>
 		</el-form-item>
 	</el-form>
 	</li>
