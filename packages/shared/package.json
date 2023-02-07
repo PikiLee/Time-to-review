@@ -7,7 +7,7 @@
 	"type": "module",
 	"packageManager": "pnpm@7.26.1",
 	"scripts": {
-		"lint": "prettier --write . && eslint --cache --fix .",
+		"lint": "eslint --cache --fix .",
 		"test": "vitest",
 		"coverage": "vitest run --coverage",
 		"build": "rimraf dist && tsc",
