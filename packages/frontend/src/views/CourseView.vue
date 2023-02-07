@@ -73,9 +73,10 @@ onMounted(() => {
 				>
 				<span col-span-1></span>
 				<span col-span-2>{{$t('course.name')}}</span>
-				<span col-span-3>{{$t('course.stage')}}</span>
-				<span col-span-3>{{$t('course.lastReviewDate')}}</span>
-				<span col-span-3>{{$t('course.nextReviewDate')}}</span>
+				<span col-span-2>{{$t('course.stage')}}</span>
+				<span col-span-2>{{$t('course.lastReviewDate')}}</span>
+				<span col-span-2>{{$t('course.nextReviewDate')}}</span>
+				<span col-span-3></span>
 			</li>
 			
 		</ul>

@@ -56,6 +56,7 @@ export const messages = {
 			stage: 'Stage',
 			lastReviewDate: 'Last Review Date',
 			nextReviewDate: 'Next Review Date',
+			nextStage: 'Update to Next Stage'
 		},
 		addButton: {
 			course: {
@@ -147,6 +148,7 @@ export const messages = {
 			stage: '阶段',
 			lastReviewDate: '上次复习时间',
 			nextReviewDate: '下次复习时间',
+			nextStage: '修改为下一阶段'
 		},
 		addButton: {
 			course: {

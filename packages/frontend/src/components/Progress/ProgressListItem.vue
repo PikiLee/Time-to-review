@@ -81,6 +81,18 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 	})
 }
 
+async function toNextStage() {
+	try {
+		if (!courseStore.currentCourse) {
+			throw new Error('Course not exists.')
+		}
+		const newStage = Math.min(props.progress.stage + 1, courseStore.currentCourse.intervals.length)
+		await update(props.progress._id, {stage:  newStage})
+	} catch(err) {
+		errorMsg(String(err))
+	}
+}
+
 </script>
 
 <template>
@@ -104,13 +116,17 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		<h3 m-0 col-span-2 data-testid="progress-list-item-name">
 			{{ progress.name }}
 		</h3>
-		<div col-span-3 data-testid="progress-list-item-stage">
+		<div col-span-2 data-testid="progress-list-item-stage">
 			{{ getStageString(progress.stage, courseStore.currentCourse?.intervals.length) }}
 		</div>
-		<time col-span-3 data-testid="progress-list-item-lastDate">
+		<time col-span-2 data-testid="progress-list-item-lastDate">
 			{{ dayjs(progress.lastDate).format('YYYY-MM-DD') }}
 		</time>
-		<time col-span-3>{{ progress.nextDate ? dayjs(progress.nextDate).format('YYYY-MM-DD') : "" }}</time>
+		<time col-span-2>{{ progress.nextDate ? dayjs(progress.nextDate).format('YYYY-MM-DD') : "" }}</time>
+		<span col-span-3>
+			<el-button v-if="progress.stage < courseStore.currentCourse.intervals.length" @click.stop="toNextStage" type="primary">{{$t('course.nextStage')}}</el-button>
+		</span>
+
 
 		<el-form
 		ref="ruleFormRef"
