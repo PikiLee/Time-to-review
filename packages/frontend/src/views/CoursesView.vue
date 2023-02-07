@@ -8,10 +8,10 @@ const courseStore = useCourseStore()
 <template>
 	<AddButton />
 	<div data-testid="courses-view">
-		<h2 text-center>{{$t('courses.title')}}</h2>
+		<h2 text-center>{{ $t('courses.title') }}</h2>
 		<ul list-none>
 			<li data-testid="courses-view-in-progress-courses">
-				<h2 text-center>{{$t('courses.inProgress')}}</h2>
+				<h2 text-center>{{ $t('courses.inProgress') }}</h2>
 				<ul
 					list-none
 					grid
@@ -29,7 +29,7 @@ const courseStore = useCourseStore()
 				<el-empty v-else :description="$t('common.empty')" />
 			</li>
 			<li data-testid="courses-view-done-courses">
-				<h2 text-center>{{$t('courses.done')}}</h2>
+				<h2 text-center>{{ $t('courses.done') }}</h2>
 				<ul
 					list-none
 					grid
@@ -47,7 +47,7 @@ const courseStore = useCourseStore()
 				<el-empty v-else :description="$t('common.empty')" />
 			</li>
 			<li data-testid="courses-view-archived-courses">
-				<h2 text-center>{{$t('courses.archived')}}</h2>
+				<h2 text-center>{{ $t('courses.archived') }}</h2>
 				<ul
 					list-none
 					grid

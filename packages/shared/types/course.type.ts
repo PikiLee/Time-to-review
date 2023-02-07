@@ -3,7 +3,7 @@ import type { Progress } from './progress.type.js'
 
 export enum CourseStatus {
 	'In Progress',
-	'Done',
+	'Done'
 }
 
 export const courseStatusIndices = [0, 1]

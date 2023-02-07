@@ -9,7 +9,9 @@ const props = defineProps<{
 }>()
 
 const courseStore = useCourseStore()
-const course = courseStore.dueCourses.find(course => course._id === props.courseId)
+const course = courseStore.dueCourses.find(
+	(course) => course._id === props.courseId
+)
 </script>
 
 <template>

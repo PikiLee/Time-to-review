@@ -1,10 +1,14 @@
-import { createProgressProjectStage, createSortStage, Progress } from './Progress.js'
+import {
+	createProgressProjectStage,
+	createSortStage,
+	Progress
+} from './Progress.js'
 import {
 	courseStatusIndices,
 	NewCourse,
 	UpdateCourse,
 	CourseSchema as CourseSchemaType,
-	CourseStatus,
+	CourseStatus
 } from 'shared'
 import mongoose, { Schema, Types } from 'mongoose'
 import lodash from 'lodash-es'
@@ -17,35 +21,35 @@ const courseSchema = new Schema<CourseSchemaType>(
 			type: String,
 			required: true,
 			minlength: 1,
-			maxlength: 20,
+			maxlength: 20
 		},
 		owner: {
 			type: mongoose.SchemaTypes.ObjectId,
 			ref: 'User',
 			required: true,
-			immutable: true,
+			immutable: true
 		},
 		status: {
 			type: Number,
 			enum: courseStatusIndices,
-			default: 0,
+			default: 0
 		},
 		archived: {
 			type: Boolean,
-			default: false,
+			default: false
 		},
 		intervals: {
 			type: [Number],
-			default: () => [1, 7, 14, 28],
+			default: () => [1, 7, 14, 28]
 		},
 		order: {
 			type: Number,
-			required: true,
-		},
+			required: true
+		}
 	},
 	{
 		id: false,
-		timestamps: true,
+		timestamps: true
 	}
 )
 
@@ -59,22 +63,22 @@ const lookupStage = {
 		let: { c: '$$CURRENT' },
 		pipeline: [
 			createProgressProjectStage('$$CURRENT', '$$c'),
-			createSortStage(),
+			createSortStage()
 		],
-		as: 'progresses',
-	},
+		as: 'progresses'
+	}
 }
 
 const progressIsDueFilter = {
 	$filter: {
 		input: '$progresses',
 		as: 'item',
-		cond: { $eq: ['$$item.isDue', true] },
-	},
+		cond: { $eq: ['$$item.isDue', true] }
+	}
 }
 
 const dueCountField = {
-	$size: progressIsDueFilter,
+	$size: progressIsDueFilter
 }
 
 const isDueField = {
@@ -82,14 +86,14 @@ const isDueField = {
 		{
 			$gt: [
 				{
-					$size: progressIsDueFilter,
+					$size: progressIsDueFilter
 				},
-				0,
-			],
+				0
+			]
 		},
 		{ $ne: ['$archived', true] },
-		{ $ne: ['$status', CourseStatus.Done] },
-	],
+		{ $ne: ['$status', CourseStatus.Done] }
+	]
 }
 
 const projectFields = {
@@ -103,7 +107,7 @@ const projectFields = {
 	updatedAt: 1,
 	dueCount: dueCountField,
 	isDue: isDueField,
-	progressCount: { $size: '$progresses' },
+	progressCount: { $size: '$progresses' }
 }
 
 function createProjectField(options?: {
@@ -121,7 +125,7 @@ function createProjectStage(options?: {
 	withDueProgresses?: boolean
 }) {
 	return {
-		$project: createProjectField(options),
+		$project: createProjectField(options)
 	}
 }
 
@@ -147,7 +151,7 @@ export async function fetch(
 		result = await Course.aggregate([
 			{ $match: filter },
 			lookupStage,
-			createProjectStage(),
+			createProjectStage()
 		])
 	} else {
 		const filter = { _id: courseId } as CourseSchemaType
@@ -155,7 +159,7 @@ export async function fetch(
 		result = await Course.aggregate([
 			{ $match: filter },
 			lookupStage,
-			createProjectStage({ withProgresses: true }),
+			createProjectStage({ withProgresses: true })
 		])
 	}
 
@@ -170,7 +174,7 @@ export async function fetchAll(rawUserId: string) {
 	const result = await Course.aggregate([
 		{ $match: { owner: toObjectId(rawUserId) } },
 		lookupStage,
-		createProjectStage(),
+		createProjectStage()
 	])
 	return result
 }
@@ -183,7 +187,7 @@ export async function fetchDue(userId: Types.ObjectId) {
 		{ $match: { owner: userId } },
 		lookupStage,
 		createProjectStage({ withDueProgresses: true }),
-		{ $match: { isDue: true } },
+		{ $match: { isDue: true } }
 	])
 }
 
@@ -214,7 +218,7 @@ export async function update(
 	_id: Types.ObjectId,
 	updateCourse: UpdateCourse,
 	options?: {
-		withProgresses?: boolean,
+		withProgresses?: boolean
 		userId?: Types.ObjectId
 	}
 ) {
@@ -228,9 +232,9 @@ export async function update(
 	if (updateCourse.intervals) {
 		const oldIntervalLength = course.intervals.length
 		const newIntervalLength = updateCourse.intervals.length
-		
+
 		if (oldIntervalLength > newIntervalLength) {
-			const children = await Progress.find({course: course._id})
+			const children = await Progress.find({ course: course._id })
 			for (const child of children) {
 				if (child.stage > newIntervalLength) {
 					child.stage = newIntervalLength
@@ -241,9 +245,9 @@ export async function update(
 	}
 
 	for (const [key, value] of lodash.entries(updateCourse)) {
-		(course as any)[key] = value
+		;(course as any)[key] = value
 	}
 	await course.save()
-	
+
 	return await fetch(_id, options)
 }

@@ -18,12 +18,7 @@ export interface Progress {
 
 export type NewProgress = Omit<
 	Progress,
-	| '_id'
-	| 'stage'
-	| 'createdAt'
-	| 'nextDate'
-	| 'isDue'
-	| 'updatedAt'
+	'_id' | 'stage' | 'createdAt' | 'nextDate' | 'isDue' | 'updatedAt'
 >
 
 export type UpdateProgress = Partial<

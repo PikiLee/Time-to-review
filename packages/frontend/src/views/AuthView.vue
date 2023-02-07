@@ -18,81 +18,95 @@ const isRegister = computed(() => route.name === 'register')
 const ruleFormRef = ref<FormInstance>()
 const form = reactive({
 	username: '',
-	password: '',
+	password: ''
 })
 
 const rules = computed<FormRules>(() => {
 	return isRegister.value
 		? {
-			username: [
-				{
-					required: true,
-					message: t('auth.errors.required', [t('auth.username')]),
-					trigger: 'blur',
-				},
-				{
-					min: 2,
-					max: 12,
-					message: t('auth.errors.length', [2, 12]),
-					trigger: 'change',
-				},
-				{
-					asyncValidator(_, username) {
-						return new Promise((resolve, reject) => {
-							api
-								.get(`${AUTH_URL}/${username}`)
-								.then(() => {
-									resolve()
-								})
-								.catch((error) => {
-									reject(error)
-								})
-						})
+				username: [
+					{
+						required: true,
+						message: t('auth.errors.required', [
+							t('auth.username')
+						]),
+						trigger: 'blur'
 					},
-					trigger: 'blur',
-				},
-			],
-			password: [
-				{
-					required: true,
-					message: t('auth.errors.required', [t('auth.password')]),
-					trigger: 'blur',
-				},
-				{
-					min: 12,
-					max: 24,
-					message: t('auth.errors.length', [12, 24]),
-					trigger: 'change',
-				},
-				{
-					validator(_, password) {
-						const { regex } = getPasswordValidationRegex()
-						if (!regex.test(password)) {
-							return [new Error(t('auth.errors.invalidPassword', [12, 24]))]
-						} else {
-							return true
-						}
+					{
+						min: 2,
+						max: 12,
+						message: t('auth.errors.length', [2, 12]),
+						trigger: 'change'
 					},
-					trigger: 'change',
-				},
-			],
-		}
+					{
+						asyncValidator(_, username) {
+							return new Promise((resolve, reject) => {
+								api.get(`${AUTH_URL}/${username}`)
+									.then(() => {
+										resolve()
+									})
+									.catch((error) => {
+										reject(error)
+									})
+							})
+						},
+						trigger: 'blur'
+					}
+				],
+				password: [
+					{
+						required: true,
+						message: t('auth.errors.required', [
+							t('auth.password')
+						]),
+						trigger: 'blur'
+					},
+					{
+						min: 12,
+						max: 24,
+						message: t('auth.errors.length', [12, 24]),
+						trigger: 'change'
+					},
+					{
+						validator(_, password) {
+							const { regex } = getPasswordValidationRegex()
+							if (!regex.test(password)) {
+								return [
+									new Error(
+										t(
+											'auth.errors.invalidPassword',
+											[12, 24]
+										)
+									)
+								]
+							} else {
+								return true
+							}
+						},
+						trigger: 'change'
+					}
+				]
+		  }
 		: {
-			username: [
-				{
-					required: true,
-					message: t('auth.errors.required', [t('auth.username')]),
-					trigger: 'blur',
-				},
-			],
-			password: [
-				{
-					required: true,
-					message: t('auth.errors.required', [t('auth.password')]),
-					trigger: 'blur',
-				},
-			],
-		}
+				username: [
+					{
+						required: true,
+						message: t('auth.errors.required', [
+							t('auth.username')
+						]),
+						trigger: 'blur'
+					}
+				],
+				password: [
+					{
+						required: true,
+						message: t('auth.errors.required', [
+							t('auth.password')
+						]),
+						trigger: 'blur'
+					}
+				]
+		  }
 })
 
 async function onSubmit(formEl: FormInstance | undefined) {
@@ -100,27 +114,29 @@ async function onSubmit(formEl: FormInstance | undefined) {
 	await formEl.validate((valid) => {
 		if (valid) {
 			if (isRegister.value) {
-				api
-					.post(`${AUTH_URL}/register`, {
-						data: form,
-					})
+				api.post(`${AUTH_URL}/register`, {
+					data: form
+				})
 					.then((res) => {
 						userStore.user = res.data
 						successMsg(t('auth.success', [t('auth.register')]))
 						router.push({ name: 'home' })
 					})
-					.catch(() => errorMsg(t('auth.errors.fail', [t('auth.register')])))
+					.catch(() =>
+						errorMsg(t('auth.errors.fail', [t('auth.register')]))
+					)
 			} else {
-				api
-					.post(`${AUTH_URL}/login`, {
-						data: form,
-					})
+				api.post(`${AUTH_URL}/login`, {
+					data: form
+				})
 					.then((res) => {
 						userStore.user = res.data
 						successMsg(t('auth.success', [t('auth.login')]))
 						router.push({ name: 'home' })
 					})
-					.catch(() => errorMsg(t('auth.errors.fail', [t('auth.login')])))
+					.catch(() =>
+						errorMsg(t('auth.errors.fail', [t('auth.login')]))
+					)
 			}
 		}
 	})
@@ -129,7 +145,15 @@ async function onSubmit(formEl: FormInstance | undefined) {
 
 <template>
 	<div grid place-items-center class="min-h-[50vh]">
-		<div border border-color-warmgray-500 p-10 pt-18 rounded w-100 max-w-full>
+		<div
+			border
+			border-color-warmgray-500
+			p-10
+			pt-18
+			rounded
+			w-100
+			max-w-full
+		>
 			<el-form
 				:model="form"
 				:rules="rules"
@@ -157,7 +181,9 @@ async function onSubmit(formEl: FormInstance | undefined) {
 							@click="onSubmit(ruleFormRef)"
 							data-testid="register-form-submit"
 							>{{
-								isRegister ? $t("auth.register") : $t("auth.login")
+								isRegister
+									? $t('auth.register')
+									: $t('auth.login')
 							}}</el-button
 						>
 						<RouterLink
@@ -168,7 +194,9 @@ async function onSubmit(formEl: FormInstance | undefined) {
 							place-items-center
 							:to="{ name: isRegister ? 'login' : 'register' }"
 							>{{
-								isRegister ? $t("auth.toLogin") : $t("auth.toRegister")
+								isRegister
+									? $t('auth.toLogin')
+									: $t('auth.toRegister')
 							}}</RouterLink
 						>
 					</div>

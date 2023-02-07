@@ -5,7 +5,7 @@ import {
 	del,
 	update,
 	fetchDue,
-	fetchAll,
+	fetchAll
 } from '../models/Course.js'
 import { printDebugInfo } from '../utils/debug.js'
 import { toObjectId } from '../utils/id.js'
@@ -58,7 +58,7 @@ router.get('/:courseId', async (req, res) => {
 	try {
 		const course = await fetch(toObjectId(req.params.courseId), {
 			withProgresses: !!req.query.withProgresses,
-			userId: toObjectId((req.user as any)._id),
+			userId: toObjectId((req.user as any)._id)
 		})
 		res.status(200).json(course)
 	} catch (err) {
@@ -70,7 +70,7 @@ router.delete('/:courseId', async (req, res) => {
 	try {
 		if (
 			await del(toObjectId(req.params.courseId), {
-				userId: toObjectId((req.user as any)._id),
+				userId: toObjectId((req.user as any)._id)
 			})
 		) {
 			res.sendStatus(200)
@@ -87,7 +87,10 @@ router.put('/:courseId', async (req, res) => {
 		const updatedCourse = await update(
 			toObjectId(req.params.courseId),
 			req.body,
-			{userId: toObjectId((req.user as any)._id), withProgresses: !!req.query.withProgresses}
+			{
+				userId: toObjectId((req.user as any)._id),
+				withProgresses: !!req.query.withProgresses
+			}
 		)
 		if (updatedCourse) {
 			res.status(200).json(updatedCourse)

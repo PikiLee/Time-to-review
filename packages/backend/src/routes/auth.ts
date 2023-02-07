@@ -4,7 +4,7 @@ import User from '../models/User.js'
 
 export const router = express.Router()
 
-router.get('/:username', async function(req, res) {
+router.get('/:username', async function (req, res) {
 	try {
 		const user = await User.findByUsername(req.params.username, false)
 		if (!user) {
@@ -12,28 +12,34 @@ router.get('/:username', async function(req, res) {
 		} else {
 			res.sendStatus(400)
 		}
-	} catch(err) {
+	} catch (err) {
 		res.status(500).send(err)
 	}
 })
 
-router.post('/register', function(req, res) {
-	User.register(new User({ username : req.body.username }), req.body.password, function(err) {
-		if (err) {
-			return res.status(400).send({error: err})
-		}
+router.post('/register', function (req, res) {
+	User.register(
+		new User({ username: req.body.username }),
+		req.body.password,
+		function (err) {
+			if (err) {
+				return res.status(400).send({ error: err })
+			}
 
-		passport.authenticate('local')(req, res, function () {
-			loginHandler(req, res)
-		})
-	})
+			passport.authenticate('local')(req, res, function () {
+				loginHandler(req, res)
+			})
+		}
+	)
 })
 
 router.post('/login', passport.authenticate('local'), loginHandler)
 
-router.post('/logout', function(req, res) {
-	req.logout(function(err) {
-		if (err) {  res.status(400).send('Please login first.') }
+router.post('/logout', function (req, res) {
+	req.logout(function (err) {
+		if (err) {
+			res.status(400).send('Please login first.')
+		}
 		res.sendStatus(200)
 	})
 })

@@ -26,9 +26,13 @@ export async function create(name: string) {
 	const courseStore = useCourseStore()
 	courseStore.courses.push(res.data)
 }
-export async function update(courseId: string, updateCourse: UpdateCourse, options: {
-	withProgresses: boolean
-} = {withProgresses: false}) {
+export async function update(
+	courseId: string,
+	updateCourse: UpdateCourse,
+	options: {
+		withProgresses: boolean
+	} = { withProgresses: false }
+) {
 	if (keys(updateCourse).length === 0)
 		throw new Error('Something went wrong! Please refresh!')
 

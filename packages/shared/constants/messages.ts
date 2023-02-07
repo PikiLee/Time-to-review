@@ -1,19 +1,19 @@
 export const messages = {
 	en: {
 		message: {
-			hello: 'hello world',
+			hello: 'hello world'
 		},
 		actions: {
 			confirm: 'Confirm',
 			delete: 'Delete',
 			create: 'Create',
 			cancel: 'Cancel',
-			edit: 'Edit',
+			edit: 'Edit'
 		},
 		common: {
 			empty: 'Nothing here.',
 			course: 'course',
-			progress: 'progress',
+			progress: 'progress'
 		},
 		stages: {
 			learned: 'Learned',
@@ -22,7 +22,7 @@ export const messages = {
 		},
 		header: {
 			home: 'Home',
-			course: 'Course',
+			course: 'Course'
 		},
 		auth: {
 			username: 'Username',
@@ -39,17 +39,17 @@ export const messages = {
 				existUsername: 'The username has existed.',
 				invalidPassword:
 					'Should be 12 to 24 long and contain at least one of !@#$%^&*, one number',
-				fail: '{0} failed.',
-			},
+				fail: '{0} failed.'
+			}
 		},
 		home: {
-			title: 'Review Courses',
+			title: 'Review Courses'
 		},
 		courses: {
 			title: 'All Courses',
 			inProgress: 'In Progress',
 			done: 'Done',
-			archived: 'Archived',
+			archived: 'Archived'
 		},
 		course: {
 			name: 'Progress',
@@ -68,7 +68,7 @@ export const messages = {
 				create: 'Create Progress',
 				success: 'Progress {0} Have been Created.',
 				fail: 'Created failed.'
-			},
+			}
 		},
 		components: {
 			course: {
@@ -76,7 +76,7 @@ export const messages = {
 					markDone: 'Mark as Done',
 					markInProgress: 'Mark as In Progress',
 					markArchived: 'Archive',
-					markUnarchived: 'Unarchive',
+					markUnarchived: 'Unarchive'
 				},
 				courseSetting: {
 					name: 'name',
@@ -88,24 +88,24 @@ export const messages = {
 					success: 'Edit succeeded.',
 					fail: 'Edit Failed.'
 				}
-			},
-		},
+			}
+		}
 	},
 	'zh-Hans': {
 		message: {
-			hello: '你好，世界',
+			hello: '你好，世界'
 		},
 		actions: {
 			confirm: '确认',
 			delete: '删除',
 			create: '创建',
 			cancel: '取消',
-			edit: '编辑',
+			edit: '编辑'
 		},
 		common: {
 			empty: '这里什么也没有',
 			course: '课程',
-			progress: '进度',
+			progress: '进度'
 		},
 		stages: {
 			learned: '已学习',
@@ -114,7 +114,7 @@ export const messages = {
 		},
 		header: {
 			home: '主页',
-			course: '课程',
+			course: '课程'
 		},
 		auth: {
 			username: '用户名',
@@ -131,17 +131,17 @@ export const messages = {
 				existUsername: '用户名已存在',
 				invalidPassword:
 					'长度应在{0}至{1}之间, 并至少包含!@#$%^&*的其中一个和一个数字',
-				fail: '{0}失败',
-			},
+				fail: '{0}失败'
+			}
 		},
 		home: {
-			title: '待复习课程',
+			title: '待复习课程'
 		},
 		courses: {
 			title: '所有课程',
 			inProgress: '进行中',
 			done: '已完成',
-			archived: '已归档',
+			archived: '已归档'
 		},
 		course: {
 			name: '进度',
@@ -160,7 +160,7 @@ export const messages = {
 				create: '创建进度',
 				success: '进度{0}创建成功',
 				fail: '进度创建失败'
-			},
+			}
 		},
 		components: {
 			course: {
@@ -168,7 +168,7 @@ export const messages = {
 					markDone: '标记为完成',
 					markInProgress: '标记为进行中',
 					markArchived: '归档',
-					markUnarchived: '撤销归档',
+					markUnarchived: '撤销归档'
 				},
 				courseSetting: {
 					name: '名字',
@@ -180,7 +180,7 @@ export const messages = {
 					success: '编辑成功',
 					fail: '编辑失败'
 				}
-			},
-		},
-	},
+			}
+		}
+	}
 }

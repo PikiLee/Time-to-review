@@ -5,7 +5,7 @@ import { createApp } from '../src/app.js'
 import { generateAuthInfo, User } from 'shared'
 import { AUTH_URL } from 'shared'
 
-const app = createApp({port: 3001})
+const app = createApp({ port: 3001 })
 
 function expectTypeOfUser(user: User) {
 	expect(user).toHaveProperty('username')
@@ -14,59 +14,50 @@ function expectTypeOfUser(user: User) {
 }
 
 describe('register', () => {
-	const {username, password} = generateAuthInfo()
+	const { username, password } = generateAuthInfo()
 	const client = request.agent(app)
 
 	test('register', async () => {
-		const res = await client
-			.post(AUTH_URL + '/register')
-			.send({
-				username,
-				password
-			})
+		const res = await client.post(AUTH_URL + '/register').send({
+			username,
+			password
+		})
 		expect(res.status).toBe(200)
 		expectTypeOfUser(res.body)
 	})
 
 	test('check a username has been used', async () => {
-		const registerRes = await client
-			.get(`${AUTH_URL}/${username}`)
+		const registerRes = await client.get(`${AUTH_URL}/${username}`)
 		expect(registerRes.status).toBe(400)
 	})
 
 	test('register with the same username', async () => {
-		const registerRes = await client
-			.post(AUTH_URL + '/register')
-			.send({
-				username,
-				password
-			})
+		const registerRes = await client.post(AUTH_URL + '/register').send({
+			username,
+			password
+		})
 		expect(registerRes.status).toBe(400)
 	})
-	
+
 	test('login', async () => {
-		const res = await client
-			.post(AUTH_URL + '/login')
-			.send({
-				username,
-				password
-			})
-    
+		const res = await client.post(AUTH_URL + '/login').send({
+			username,
+			password
+		})
+
 		expect(res.status).toBe(200)
 		expectTypeOfUser(res.body)
 	})
 
-	test('logout', async () => {        
-		const logoutRes = await client
-			.post(AUTH_URL + '/logout')
+	test('logout', async () => {
+		const logoutRes = await client.post(AUTH_URL + '/logout')
 
 		expect(logoutRes.status).toBe(200)
 	})
-
 })
 
 test('login fail', async () => {
-	const {username, password} = generateAuthInfo()
+	const { username, password } = generateAuthInfo()
 
 	const loginRes = await request(app)
 		.post(AUTH_URL + '/login')
@@ -74,7 +65,7 @@ test('login fail', async () => {
 			username,
 			password
 		})
-    
+
 	expect(loginRes.status).toBe(401)
 })
 
@@ -87,6 +78,3 @@ test('register with less than 12-character password', async () => {
 		})
 	expect(registerRes.status).toBe(400)
 })
-
-
-

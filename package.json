@@ -5,13 +5,16 @@
   "main": "index.js",
   "scripts": {
     "lint:backend": "cd ./packages/backend && pnpm run lint",
+    "lint:frontend": "cd ./packages/frontend && pnpm run lint",
+    "lint:shared": "cd ./packages/shared && pnpm run lint",
     "test:backend": "cd ./packages/backend && pnpm run test",
     "build:backend": "cd ./packages/backend && pnpm run build",
     "watch:backend": "cd ./packages/backend && pnpm run watch",
     "dev:backend": "cd ./packages/backend && pnpm run dev",
     "dev:frontend": "cd ./packages/frontend && pnpm run dev",
     "build:shared": "cd ./packages/shared && pnpm run build",
-    "dev": "run-p dev:*"
+    "dev": "run-p dev:*",
+    "lint": "run-p lint:*"
   },
   "keywords": [],
   "author": "",

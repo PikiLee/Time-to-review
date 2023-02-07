@@ -58,7 +58,9 @@ Cypress.Commands.addAll({
 		cy.get('[data-testid="course-creator"]').find('input').type(name)
 		cy.get('[data-testid="course-creator"]').find('button').click()
 
-		cy.get('[data-testid="course-card-name"]').last().should('have.text', name)
+		cy.get('[data-testid="course-card-name"]')
+			.last()
+			.should('have.text', name)
 	},
 	createProgress(name: string) {
 		cy.get('[data-testid="course-card"]')

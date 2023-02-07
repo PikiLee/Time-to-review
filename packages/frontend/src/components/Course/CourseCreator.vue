@@ -11,10 +11,12 @@ const emit = defineEmits(['ok'])
 
 const router = useRouter()
 const { isCoursePage } = useCustomRouter()
-const {t} = useI18n()
+const { t } = useI18n()
 const input = ref('')
 const defaultPlaceholder = computed(() => {
-	return isCoursePage.value ? t('addButton.progress.create') : t('addButton.course.create')
+	return isCoursePage.value
+		? t('addButton.progress.create')
+		: t('addButton.course.create')
 })
 const placeholder = ref(defaultPlaceholder.value)
 watch(
@@ -32,10 +34,18 @@ async function handleCreate() {
 			router.push({ name: 'courses' })
 		}
 		emit('ok')
-		successMsg(isCoursePage.value ? t('addButton.progress.success', [input.value]) : t('addButton.course.success', [input.value]))
+		successMsg(
+			isCoursePage.value
+				? t('addButton.progress.success', [input.value])
+				: t('addButton.course.success', [input.value])
+		)
 	} catch (err) {
 		errorMsg(String(err))
-		errorMsg(isCoursePage.value ? t('addButton.progress.success', [input.value]) : t('addButton.course.success', [input.value]))
+		errorMsg(
+			isCoursePage.value
+				? t('addButton.progress.success', [input.value])
+				: t('addButton.course.success', [input.value])
+		)
 	} finally {
 		input.value = ''
 	}
@@ -66,7 +76,7 @@ const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
 			bg-lime-500
 			@click="handleCreate"
 			data-test="add-course"
-			>{{$t('actions.create')}}</el-button
+			>{{ $t('actions.create') }}</el-button
 		>
 	</div>
 </template>

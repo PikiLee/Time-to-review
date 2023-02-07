@@ -5,7 +5,7 @@ import {
 	Course,
 	NewCourse,
 	UpdateCourse,
-	User,
+	User
 } from 'shared'
 import { test, expect, beforeAll, describe } from 'vitest'
 import request from 'supertest'
@@ -25,7 +25,7 @@ let retrievedCourse: Course
 const updateCourse: UpdateCourse = {
 	name: 'updatedCool',
 	status: 0,
-	archived: true,
+	archived: true
 }
 let updatedCourse: Course
 
@@ -34,21 +34,21 @@ let retrievedProgress: Progress
 const updateProgress: UpdateProgress = {
 	name: 'pool',
 	stage: 1,
-	lastDate: new Date(23123123).toISOString(),
+	lastDate: new Date(23123123).toISOString()
 }
 let updatedProgress: Progress
 
 beforeAll(async () => {
 	const registerRes = await client.post('/auth' + '/register').send({
 		username,
-		password,
+		password
 	})
 	expect(registerRes.status).toBe(200)
 	user = registerRes.body
 	newCourse = {
 		name: 'cool',
 		owner: user._id,
-		order: 0.2,
+		order: 0.2
 	}
 })
 
@@ -56,7 +56,7 @@ function expectToBeTypeOfCourse(
 	course: Course,
 	options = {
 		withDueProgresses: false,
-		withProgresses: false,
+		withProgresses: false
 	}
 ) {
 	expect(course).toHaveProperty('_id')
@@ -107,7 +107,7 @@ describe('course', () => {
 			owner: user._id,
 			course: retrievedCourse._id,
 			order: 0.3,
-			lastDate: (new Date()).toISOString()
+			lastDate: new Date().toISOString()
 		}
 		console.log(res.body)
 		expect(res.status).toBe(200)
@@ -210,15 +210,17 @@ describe('course', () => {
 	})
 
 	test('get a course with progresses field ', async () => {
-		const res = await client.get(courseUrl + '/' + retrievedCourse._id).query({
-			withProgresses: true,
-		})
+		const res = await client
+			.get(courseUrl + '/' + retrievedCourse._id)
+			.query({
+				withProgresses: true
+			})
 
 		console.log({ body: res.body, progresses: res.body.progresses })
 		expect(res.status).toBe(200)
 		expectToBeTypeOfCourse(res.body, {
 			withProgresses: true,
-			withDueProgresses: false,
+			withDueProgresses: false
 		})
 	})
 
@@ -228,12 +230,12 @@ describe('course', () => {
 		console.log({
 			body: res.body,
 			dueProgresses: res.body[0].dueProgresses,
-			updatedCourse,
+			updatedCourse
 		})
 		expect(res.status).toBe(200)
 		expectToBeTypeOfCourse(res.body[0], {
 			withDueProgresses: true,
-			withProgresses: false,
+			withProgresses: false
 		})
 		updatedCourse.updatedAt = res.body[0].updatedAt
 	})

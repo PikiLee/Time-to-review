@@ -17,7 +17,7 @@ router.get('/:progressId', async (req, res) => {
 	try {
 		res.status(200).json(
 			await fetch(toObjectId(req.params.progressId), {
-				userId: (req.user as any)._id,
+				userId: (req.user as any)._id
 			})
 		)
 	} catch (err) {
@@ -29,7 +29,7 @@ router.delete('/:progressId', async (req, res) => {
 	try {
 		if (
 			await del(toObjectId(req.params.progressId), {
-				userId: (req.user as any)._id,
+				userId: (req.user as any)._id
 			})
 		) {
 			res.status(200).send()

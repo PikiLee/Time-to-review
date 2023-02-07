@@ -37,6 +37,7 @@ importers:
       passport: ^0.6.0
       passport-local: ^1.0.0
       passport-local-mongoose: ^7.1.2
+      prettier: ^2.8.3
       rimraf: ^4.1.2
       shared: workspace:*
       supertest: ^6.3.3
@@ -73,6 +74,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.49.0_rsaczafy73x3xqauzesvzbsgzy
       '@typescript-eslint/parser': 5.49.0_zkdaqh7it7uc4cvz2haft7rc6u
       eslint: 8.33.0
+      prettier: 2.8.3
       rimraf: 4.1.2
       supertest: 6.3.3
       typescript: 4.9.4
@@ -106,12 +108,14 @@ importers:
       dayjs: ^1.11.7
       element-plus: ^2.2.28
       eslint: ^8.22.0
+      eslint-config-prettier: ^8.6.0
       eslint-plugin-cypress: ^2.12.1
       eslint-plugin-vue: ^9.3.0
       jsdom: ^20.0.3
       lodash-es: ^4.17.21
       npm-run-all: ^4.1.5
       pinia: ^2.0.29
+      prettier: ^2.8.3
       sass: ^1.57.1
       shared: workspace:*
       sortablejs: ^1.15.0
@@ -154,16 +158,18 @@ importers:
       '@unocss/preset-typography': 0.48.5
       '@unocss/preset-uno': 0.48.5
       '@vitejs/plugin-vue': 4.0.0_vite@4.0.4+vue@3.2.45
-      '@vue/eslint-config-prettier': 7.0.0_eslint@8.33.0
+      '@vue/eslint-config-prettier': 7.0.0_6xprzernlpxwjedpj2snzq4bpq
       '@vue/eslint-config-typescript': 11.0.2_2yczvdazwsanxcjasbwukfyw6e
       '@vue/test-utils': 2.2.8_vue@3.2.45
       '@vue/tsconfig': 0.1.3_@types+node@18.11.18
       cypress: 12.4.1
       eslint: 8.33.0
+      eslint-config-prettier: 8.6.0_eslint@8.33.0
       eslint-plugin-cypress: 2.12.1_eslint@8.33.0
       eslint-plugin-vue: 9.9.0_eslint@8.33.0
       jsdom: 20.0.3
       npm-run-all: 4.1.5
+      prettier: 2.8.3
       sass: 1.57.1
       start-server-and-test: 1.15.3
       typescript: 4.7.4
@@ -184,6 +190,7 @@ importers:
       eslint: ^8.32.0
       lodash-es: ^4.17.21
       mongoose: ^6.9.0
+      prettier: ^2.8.3
       rimraf: ^4.1.2
       typescript: ^4.9.4
       vite: ^4.0.4
@@ -198,6 +205,7 @@ importers:
       '@typescript-eslint/eslint-plugin': 5.49.0_rsaczafy73x3xqauzesvzbsgzy
       '@typescript-eslint/parser': 5.49.0_zkdaqh7it7uc4cvz2haft7rc6u
       eslint: 8.33.0
+      prettier: 2.8.3
       rimraf: 4.1.2
       typescript: 4.9.4
       vite: 4.0.4
@@ -2267,7 +2275,7 @@ packages:
   /@vue/devtools-api/6.5.0:
     resolution: {integrity: sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==}
 
-  /@vue/eslint-config-prettier/7.0.0_eslint@8.33.0:
+  /@vue/eslint-config-prettier/7.0.0_6xprzernlpxwjedpj2snzq4bpq:
     resolution: {integrity: sha512-/CTc6ML3Wta1tCe1gUeO0EYnVXfo3nJXsIhZ8WJr3sov+cGASr6yuiibJTL6lmIBm7GobopToOuB3B6AWyV0Iw==}
     peerDependencies:
       eslint: '>= 7.28.0'
@@ -2275,7 +2283,8 @@ packages:
     dependencies:
       eslint: 8.33.0
       eslint-config-prettier: 8.6.0_eslint@8.33.0
-      eslint-plugin-prettier: 4.2.1_bjf66ukn2mtbhpjwivgrwq3fsy
+      eslint-plugin-prettier: 4.2.1_jqplj6qf3uqpxpu4gdyhwwasnq
+      prettier: 2.8.3
     dev: true
 
   /@vue/eslint-config-typescript/11.0.2_2yczvdazwsanxcjasbwukfyw6e:
@@ -3427,7 +3436,7 @@ packages:
       globals: 11.12.0
     dev: true
 
-  /eslint-plugin-prettier/4.2.1_bjf66ukn2mtbhpjwivgrwq3fsy:
+  /eslint-plugin-prettier/4.2.1_jqplj6qf3uqpxpu4gdyhwwasnq:
     resolution: {integrity: sha512-f/0rXLXUt0oFYs8ra4w49wYZBG5GKZpAYsJSm6rnYL5uVDjd+zowwMwVZHnAjf4edNrKpCDYfXDgmRE/Ak7QyQ==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -3440,6 +3449,7 @@ packages:
     dependencies:
       eslint: 8.33.0
       eslint-config-prettier: 8.6.0_eslint@8.33.0
+      prettier: 2.8.3
       prettier-linter-helpers: 1.0.0
     dev: true
 
@@ -5354,6 +5364,12 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       fast-diff: 1.2.0
+    dev: true
+
+  /prettier/2.8.3:
+    resolution: {integrity: sha512-tJ/oJ4amDihPoufT5sM0Z1SKEuKay8LfVAMlbbhnnkvt6BUserZylqo2PN+p9KeljLr0OHa2rXHU1T8reeoTrw==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: true
 
   /pretty-bytes/5.6.0:

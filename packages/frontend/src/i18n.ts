@@ -21,4 +21,3 @@ export const i18n = createI18n({
 watchEffect(() => {
 	lang.value = i18n.global.locale.value
 })
-

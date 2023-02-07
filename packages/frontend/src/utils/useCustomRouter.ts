@@ -7,7 +7,9 @@ export function useCustomRouter() {
 		return route.name === 'course'
 	})
 	const id = computed(() =>
-		typeof route.params.id === 'string' ? route.params.id : route.params.id[0]
+		typeof route.params.id === 'string'
+			? route.params.id
+			: route.params.id[0]
 	)
 
 	return { isCoursePage, id }

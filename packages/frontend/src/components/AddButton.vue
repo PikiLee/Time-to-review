@@ -14,7 +14,9 @@ const { t } = useI18n()
 
 const { isCoursePage } = useCustomRouter()
 const toolTip = computed(() =>
-	isCoursePage.value ? t('addButton.progress.create') : t('addButton.course.create')
+	isCoursePage.value
+		? t('addButton.progress.create')
+		: t('addButton.course.create')
 )
 const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
 </script>

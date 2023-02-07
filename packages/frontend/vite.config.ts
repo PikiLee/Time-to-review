@@ -31,7 +31,7 @@ export default defineConfig({
 			include: resolve(
 				dirname(fileURLToPath(import.meta.url)),
 				'./path/to/src/locales/**'
-			),
+			)
 		}),
 		Unocss({
 			presets: [
@@ -42,21 +42,21 @@ export default defineConfig({
 				UnocssIcons({
 					prefix: 'i-',
 					extraProperties: {
-						display: 'inline-block',
-					},
-				}),
-			],
+						display: 'inline-block'
+					}
+				})
+			]
 		}),
 		AutoImport({
-			resolvers: [ElementPlusResolver()],
+			resolvers: [ElementPlusResolver()]
 		}),
 		Components({
-			resolvers: [ElementPlusResolver()],
-		}),
+			resolvers: [ElementPlusResolver()]
+		})
 	],
 	resolve: {
 		alias: {
-			'@': fileURLToPath(new URL('./src', import.meta.url)),
-		},
-	},
+			'@': fileURLToPath(new URL('./src', import.meta.url))
+		}
+	}
 })

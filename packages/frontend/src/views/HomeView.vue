@@ -10,7 +10,7 @@ const courseStore = useCourseStore()
 <template>
 	<AddButton />
 	<main>
-		<h2 text-center>{{$t('home.title')}}</h2>
+		<h2 text-center>{{ $t('home.title') }}</h2>
 		<DueCourseSection
 			v-for="course in courseStore.dueCourses"
 			:key="course._id"

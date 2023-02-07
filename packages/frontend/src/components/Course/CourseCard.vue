@@ -23,7 +23,7 @@ const isInProgress = computed(
 
 const isArchived = computed(() => props.course.archived)
 
-const {createdTime} = useCreatedTime(props.course.createdAt)
+const { createdTime } = useCreatedTime(props.course.createdAt)
 
 async function toggleArchive(courseId: string) {
 	try {
@@ -45,11 +45,14 @@ async function toggleStatus(courseId: string) {
 </script>
 
 <template>
-	
 	<div data-testid="course-card">
 		<li grid grid-rows-2 grid-cols-5 gap-2 items-center>
 			<el-tooltip
-				:content="isArchived ? $t('components.course.courseCard.markUnarchived') : $t('components.course.courseCard.markArchived')"
+				:content="
+					isArchived
+						? $t('components.course.courseCard.markUnarchived')
+						: $t('components.course.courseCard.markArchived')
+				"
 				placement="top"
 			>
 				<button
@@ -58,7 +61,11 @@ async function toggleStatus(courseId: string) {
 					justify-self-center
 					cursor-pointer
 					hover:text-lime-500
-					:aria-label="isArchived ? $t('components.course.courseCard.markUnarchived') : $t('components.course.courseCard.markArchived')"
+					:aria-label="
+						isArchived
+							? $t('components.course.courseCard.markUnarchived')
+							: $t('components.course.courseCard.markArchived')
+					"
 					data-testid="course-card-toggle-archive"
 				>
 					<div
@@ -77,7 +84,11 @@ async function toggleStatus(courseId: string) {
 			<el-tooltip
 				v-if="!isArchived"
 				class="box-item"
-				:content="isInProgress ? $t('components.course.courseCard.markDone') : $t('components.course.courseCard.markInProgress')"
+				:content="
+					isInProgress
+						? $t('components.course.courseCard.markDone')
+						: $t('components.course.courseCard.markInProgress')
+				"
 				placement="top"
 			>
 				<button
@@ -86,7 +97,11 @@ async function toggleStatus(courseId: string) {
 					justify-self-center
 					cursor-pointer
 					hover:text-lime-500
-					:aria-label="isInProgress ? $t('components.course.courseCard.markDone') : $t('components.course.courseCard.markInProgress')"
+					:aria-label="
+						isInProgress
+							? $t('components.course.courseCard.markDone')
+							: $t('components.course.courseCard.markInProgress')
+					"
 					data-testid="course-card-toggle-status"
 				>
 					<div
@@ -94,10 +109,19 @@ async function toggleStatus(courseId: string) {
 						i-ic-round-done
 						@click="toggleStatus(course._id)"
 					></div>
-					<div v-else i-mdi-undo @click="toggleStatus(course._id)"></div>
+					<div
+						v-else
+						i-mdi-undo
+						@click="toggleStatus(course._id)"
+					></div>
 				</button>
 			</el-tooltip>
-			<el-tooltip v-else class="box-item" :content="$t('actions.delete')" placement="top">
+			<el-tooltip
+				v-else
+				class="box-item"
+				:content="$t('actions.delete')"
+				placement="top"
+			>
 				<button
 					row-span-2
 					text-3xl
@@ -109,8 +133,8 @@ async function toggleStatus(courseId: string) {
 					:aria-label="$t('actions.delete')"
 					data-testid="course-card-delete"
 				>
-				<div i-ic-round-delete-forever></div>
-			</button>
+					<div i-ic-round-delete-forever></div>
+				</button>
 			</el-tooltip>
 			<RouterLink
 				link-decoration-none
@@ -124,20 +148,35 @@ async function toggleStatus(courseId: string) {
 					hover:text-lime-500
 					data-testid="course-card-name"
 				>
-				<el-badge :value="course.dueCount" v-if="course.dueCount > 0">
-					<div w-full text-ellipsis overflow-hidden whitespace-nowrap>
+					<el-badge
+						:value="course.dueCount"
+						v-if="course.dueCount > 0"
+					>
+						<div
+							w-full
+							text-ellipsis
+							overflow-hidden
+							whitespace-nowrap
+						>
+							{{ course.name }}
+						</div>
+					</el-badge>
+					<div
+						v-else
+						w-full
+						text-ellipsis
+						overflow-hidden
+						whitespace-nowrap
+					>
 						{{ course.name }}
 					</div>
-				</el-badge>
-				<div v-else w-full text-ellipsis overflow-hidden whitespace-nowrap>
-					{{ course.name }}
-				</div>
 				</h3>
 			</RouterLink>
-			<time col-span-3 :datetime="dayjs(course.createdAt).toISOString()">{{
-				createdTime
-			}}</time>
+			<time
+				col-span-3
+				:datetime="dayjs(course.createdAt).toISOString()"
+				>{{ createdTime }}</time
+			>
 		</li>
 	</div>
-
 </template>

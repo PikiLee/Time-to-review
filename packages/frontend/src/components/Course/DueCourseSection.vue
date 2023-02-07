@@ -12,13 +12,13 @@ defineProps<{
 		<div grid place-items-center>
 			<el-badge :value="course.dueCount">
 				<RouterLink
-				link-decoration-none
-				:to="{ name: 'course', params: { id: course._id } }"
+					link-decoration-none
+					:to="{ name: 'course', params: { id: course._id } }"
 				>
-				<h2 m-none hover:text-lime-500>{{ course.name }}</h2>
-			</RouterLink>
-		</el-badge>
-	</div>
+					<h2 m-none hover:text-lime-500>{{ course.name }}</h2>
+				</RouterLink>
+			</el-badge>
+		</div>
 		<section grid grid-cols-2 gap-6 p-4>
 			<ProgressCard
 				v-for="progress in course.dueProgresses"

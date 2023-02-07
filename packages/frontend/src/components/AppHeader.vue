@@ -52,7 +52,7 @@ function logout() {
 				link-decoration-none
 				hover:text-lime-500
 				:to="{ name: 'home' }"
-				>{{$t('header.home')}}</RouterLink
+				>{{ $t('header.home') }}</RouterLink
 			>
 			<RouterLink
 				font-600
@@ -60,73 +60,82 @@ function logout() {
 				link-decoration-none
 				hover:text-lime-500
 				:to="{ name: 'courses' }"
-				>{{$t('header.course')}}</RouterLink
+				>{{ $t('header.course') }}</RouterLink
 			>
-			<div
-			flex
-			flex-row
-			items-center
-			gap-4
-			justify-start
-			self-center
-		>
-			<div @click="toggleDark()" cursor-pointer mb="0.125rem">
-				<span
-					text-xl
-					text-warmgray-100
-					i-material-symbols-dark-mode
-					v-if="isDark"
-				/>
-				<span text-xl text-warmgray-700 i-material-symbols-light-mode v-else />
-			</div>
-			<el-popover placement="bottom" trigger="hover">
-				<ul>
-					<li>
-						<el-button text w-full @click="$i18n.locale = 'en'"
-							>English</el-button
+			<div flex flex-row items-center gap-4 justify-start self-center>
+				<div @click="toggleDark()" cursor-pointer mb="0.125rem">
+					<span
+						text-xl
+						text-warmgray-100
+						i-material-symbols-dark-mode
+						v-if="isDark"
+					/>
+					<span
+						text-xl
+						text-warmgray-700
+						i-material-symbols-light-mode
+						v-else
+					/>
+				</div>
+				<el-popover placement="bottom" trigger="hover">
+					<ul>
+						<li>
+							<el-button text w-full @click="$i18n.locale = 'en'"
+								>English</el-button
+							>
+						</li>
+						<li>
+							<el-button
+								text
+								w-full
+								@click="$i18n.locale = 'zh-Hans'"
+								>中文</el-button
+							>
+						</li>
+					</ul>
+					<template #reference>
+						<div i-mdi-spoken-language text-xl></div>
+					</template>
+				</el-popover>
+				<el-popover
+					placement="bottom"
+					trigger="hover"
+					v-if="userStore.user"
+				>
+					<div>
+						<el-button
+							text
+							w-full
+							data-testid="app-header-logout"
+							@click="logout"
+							>{{ $t('auth.logout') }}</el-button
 						>
-					</li>
-					<li>
-						<el-button text w-full @click="$i18n.locale = 'zh-Hans'"
-							>中文</el-button
-						>
-					</li>
-				</ul>
-				<template #reference>
-					<div i-mdi-spoken-language text-xl></div>
-				</template>
-			</el-popover>
-			<el-popover placement="bottom" trigger="hover" v-if="userStore.user">
-				<div>
-					<el-button text w-full data-testid="app-header-logout" @click="logout"
-						>{{$t('auth.logout')}}</el-button
+					</div>
+					<template #reference>
+						<div data-testid="app-header-username">
+							{{ userStore.user.username }}
+						</div>
+					</template>
+				</el-popover>
+				<div v-else text-xl flex gap-2>
+					<RouterLink
+						font-600
+						text-lg
+						link-decoration-none
+						hover:text-lime-500
+						:to="{ name: 'register' }"
+						>{{ $t('auth.register') }}</RouterLink
+					>
+					<RouterLink
+						font-600
+						text-lg
+						link-decoration-none
+						hover:text-lime-500
+						:to="{ name: 'login' }"
+						>{{ $t('auth.login') }}</RouterLink
 					>
 				</div>
-				<template #reference>
-					<div data-testid="app-header-username">
-						{{ userStore.user.username }}
-					</div>
-				</template>
-			</el-popover>
-			<div v-else text-xl flex gap-2>
-				<RouterLink
-					font-600
-					text-lg
-					link-decoration-none
-					hover:text-lime-500
-					:to="{ name: 'register' }"
-					>{{ $t('auth.register') }}</RouterLink
-				>
-				<RouterLink
-					font-600
-					text-lg
-					link-decoration-none
-					hover:text-lime-500
-					:to="{ name: 'login' }"
-					>{{ $t('auth.login') }}</RouterLink
-				>
 			</div>
-		</div>
 		</div>
 		<div flex-grow-1></div>
 	</div>

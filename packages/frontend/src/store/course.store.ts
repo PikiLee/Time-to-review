@@ -17,12 +17,14 @@ export const useCourseStore = defineStore('course', () => {
 	const coursesInProgress = useArrayFilter(
 		courses,
 		(course) =>
-			course.status === CourseStatus['In Progress'] && course.archived === false
+			course.status === CourseStatus['In Progress'] &&
+			course.archived === false
 	)
 
 	const coursesDone = useArrayFilter(
 		courses,
-		(course) => course.status === CourseStatus.Done && course.archived === false
+		(course) =>
+			course.status === CourseStatus.Done && course.archived === false
 	)
 
 	const coursesArchived = useArrayFilter(courses, (course) => course.archived)

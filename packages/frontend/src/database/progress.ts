@@ -16,7 +16,8 @@ export async function create(name: string) {
 		owner: userStore.user._id,
 		course: courseStore.currentCourse._id,
 		name,
-		order: (courseStore.currentCourse.progresses.at(-1)?.order ?? 2000) + 100,
+		order:
+			(courseStore.currentCourse.progresses.at(-1)?.order ?? 2000) + 100,
 		lastDate: getStartOfDay(Date.now())
 	}
 
@@ -31,7 +32,8 @@ export async function update(
 	progressId: string,
 	updateProgress: UpdateProgress
 ) {
-	if (updateProgress.lastDate) updateProgress.lastDate = getStartOfDay(updateProgress.lastDate)
+	if (updateProgress.lastDate)
+		updateProgress.lastDate = getStartOfDay(updateProgress.lastDate)
 
 	const res = await api.put(`${PROGRESS_URL}/${progressId}`, {
 		data: updateProgress

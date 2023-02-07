@@ -63,7 +63,9 @@ describe('course', () => {
 			'not.contain',
 			courseName
 		)
-		cy.get('[data-testid="courses-view-archived-courses"]').contains(courseName)
+		cy.get('[data-testid="courses-view-archived-courses"]').contains(
+			courseName
+		)
 
 		//reverse
 		cy.get('[data-testid="course-card-toggle-archive"]').click()
@@ -109,7 +111,9 @@ describe('course', () => {
 			'not.contain',
 			courseName
 		)
-		cy.get('[data-testid="courses-view-archived-courses"]').contains(courseName)
+		cy.get('[data-testid="courses-view-archived-courses"]').contains(
+			courseName
+		)
 
 		cy.get('[data-testid="course-card-delete"]').click()
 		cy.get('[data-testid="courses-view"]').should('not.contain', courseName)
