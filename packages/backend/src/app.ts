@@ -67,6 +67,8 @@ export function createApp(
 	}
 	app.use(bodyParser.urlencoded({ extended: false }))
 	app.use(bodyParser.json())
+
+	const ONE_DAY = 1000 * 60 * 60 * 24
 	app.use(
 		expressSession({
 			secret: IS_DEV
@@ -74,7 +76,7 @@ export function createApp(
 				: process.env.SESSION_SECRET_PRODUCITON!,
 			resave: false,
 			saveUninitialized: false,
-			cookie: { httpOnly: false, secure: !IS_DEV }
+			cookie: { httpOnly: false, secure: !IS_DEV, maxAge: ONE_DAY }
 		})
 	)
 

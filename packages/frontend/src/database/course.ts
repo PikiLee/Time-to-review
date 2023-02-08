@@ -48,27 +48,31 @@ export async function update(
 	return res.data
 }
 
-export function toggleArchive(_id: string) {
+export async function toggleArchive(_id: string) {
 	const courseStore = useCourseStore()
 	const course = courseStore.find(_id)
 	if (!course) throw new Error('Something went wrong! Please refresh!')
 
-	return update(_id, {
+	const res = await update(_id, {
 		archived: !course.archived
 	})
+
+	course.archived = res.archived
 }
 
-export function toggleStatus(_id: string) {
+export async function toggleStatus(_id: string) {
 	const courseStore = useCourseStore()
 	const course = courseStore.find(_id)
 	if (!course) throw new Error('Something went wrong! Please refresh!')
 
-	return update(_id, {
+	const res = await update(_id, {
 		status:
 			course.status === CourseStatus['In Progress']
 				? CourseStatus.Done
 				: CourseStatus['In Progress']
 	})
+
+	course.status = res.status
 }
 
 export async function del(_id: string) {

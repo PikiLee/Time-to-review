@@ -143,7 +143,6 @@ async function toggleStatus(courseId: string) {
 			>
 				<h3
 					m-0
-					data-test="course-name"
 					cursor-pointer
 					hover:text-lime-500
 					data-testid="course-card-name"

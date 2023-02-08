@@ -67,55 +67,80 @@ describe('register', () => {
 	})
 })
 
-describe('login', () => {
-	it('Username should appear when logined, vice versa', () => {
-		cy.visit('/auth/register')
-
-		cy.get('[data-testid="app-header-username"').should('not.exist')
-
-		const { username, password } = generateAuthInfo()
+describe('others', () => {
+	const { username, password } = generateAuthInfo()
+	before(() => {
 		cy.register(username, password)
-
-		cy.get('[data-testid="app-header-username"')
-			.should('exist')
-			.should('have.text', username)
-		cy.get('[data-testid="app-header-logout"]').click({ force: true })
-		cy.url().should('contain', '/login')
 	})
 
-	it('logout', () => {
-		const { username, password } = generateAuthInfo()
-		cy.register(username, password)
+	describe('login', () => {
+		it('Username should appear and go to home page when logined', () => {
+			cy.visit('/auth/login')
 
-		cy.get('[data-testid="app-header-logout"]').click({ force: true })
-		cy.url().should('contain', '/login')
+			cy.get('[data-testid="register-form-username"]').type(username)
+			cy.get('[data-testid="register-form-password"]').type(password)
+			cy.get('[data-testid="register-form-submit"]').click()
+
+			cy.get('[data-testid="app-header-username"]')
+				.should('exist')
+				.should('have.text', username)
+
+			cy.url().should('contain', '/home')
+		})
+
+		it('Should error if the username does not exist.', () => {
+			cy.visit('/auth/login')
+
+			cy.get('[data-testid="register-form-username"]').type(
+				'a23243243224q'
+			)
+			cy.get('[data-testid="register-form-password"]').type('213124124')
+			cy.get('[data-testid="register-form-submit"]').click()
+
+			cy.url().should('contain', '/login')
+		})
 	})
 
-	it('Should go to home page if login succeeds', () => {
-		const { username, password } = generateAuthInfo()
-		cy.register(username, password)
+	describe('logout', () => {
+		beforeEach(() => {
+			cy.login(username, password)
+		})
 
-		cy.visit('/auth/login')
+		it('logout', () => {
+			cy.get('[data-testid="app-header-logout"]')
+				.click({ force: true })
+				.should('not.exist')
 
-		cy.get('[data-testid="register-form-username"]').type(username)
-		cy.get('[data-testid="register-form-password"]').type(password)
-		cy.get('[data-testid="register-form-submit"]').click()
-
-		cy.url().should('contain', '/home')
+			cy.get('[data-testid="app-header-username"').should('not.exist')
+			cy.url().should('contain', '/login')
+		})
 	})
 
-	it('Should error if the username does not exist.', () => {
-		cy.visit('/auth/login')
+	describe('auth guard after login', () => {
+		const { username, password } = generateAuthInfo()
+		before(() => {
+			cy.register(username, password)
+		})
 
-		cy.get('[data-testid="register-form-username"]').type('a23243243224q')
-		cy.get('[data-testid="register-form-password"]').type('213124124')
-		cy.get('[data-testid="register-form-submit"]').click()
+		beforeEach(() => {
+			cy.login(username, password)
+		})
 
-		cy.url().should('contain', '/login')
+		it('home', () => {
+			cy.getBySelector('app-header-home').click()
+
+			cy.getBySelector('home-view-title').should('exist')
+		})
+
+		it('courses', () => {
+			cy.getBySelector('app-header-courses').click()
+
+			cy.getBySelector('courses-view').should('exist')
+		})
 	})
 })
 
-describe.only('auth guard', () => {
+describe('auth guard when not login', () => {
 	it('home', () => {
 		cy.visit('/home')
 

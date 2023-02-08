@@ -52,6 +52,7 @@ function logout() {
 				link-decoration-none
 				hover:text-lime-500
 				:to="{ name: 'home' }"
+				data-testid="app-header-home"
 				>{{ $t('header.home') }}</RouterLink
 			>
 			<RouterLink
@@ -60,6 +61,7 @@ function logout() {
 				link-decoration-none
 				hover:text-lime-500
 				:to="{ name: 'courses' }"
+				data-testid="app-header-courses"
 				>{{ $t('header.course') }}</RouterLink
 			>
 			<div flex flex-row items-center gap-4 justify-start self-center>

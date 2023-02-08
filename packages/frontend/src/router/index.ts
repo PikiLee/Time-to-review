@@ -1,4 +1,3 @@
-import { useUserStore } from './../store/user.store'
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CoursesView from '../views/CoursesView.vue'
@@ -6,6 +5,7 @@ import CourseView from '../views/CourseView.vue'
 import RegisterView from '../views/AuthView.vue'
 import { errorMsg } from '@/utils/useMessage'
 import { fetchAll, fetchDue, fetchWithProgresses } from '@/database/course'
+import { useUserStore } from '@/store/user.store'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,5 +68,4 @@ router.beforeEach((to) => {
 	}
 	return true
 })
-
 export default router

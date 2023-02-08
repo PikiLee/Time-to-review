@@ -1,13 +1,6 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
-import { useUserStore } from './store/user.store'
-
-const user = JSON.parse(localStorage.getItem('user') ?? 'null')
-if (user) {
-	const userStore = useUserStore()
-	userStore.user = user
-}
 </script>
 
 <template>

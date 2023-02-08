@@ -28,7 +28,9 @@
 declare global {
 	namespace Cypress {
 		interface Chainable {
+			getBySelector(selector: string, ...args: any[]): Chainable<void>
 			register(username: string, password: string): Chainable<void>
+			login(username: string, password: string): Chainable<void>
 			createCourse(name: string): Chainable<void>
 			createProgress(name: string): Chainable<void>
 			//   login(email: string, password: string): Chainable<void>
@@ -40,7 +42,15 @@ declare global {
 }
 
 Cypress.Commands.addAll({
+	getBySelector(selector: string, ...args: any[]) {
+		return cy.get(`[data-testid="${selector}"]`, ...args)
+	},
 	register(username: string, password: string) {
+		Cypress.log({
+			name: 'registerByForm',
+			message: `${username} | ${password}`
+		})
+
 		cy.visit('/auth/register')
 
 		cy.get('[data-testid="register-form-username"]').type(username)
@@ -49,8 +59,25 @@ Cypress.Commands.addAll({
 
 		cy.url().should('contain', '/home')
 	},
+	login(username: string, password: string) {
+		Cypress.log({
+			name: 'loginByForm',
+			message: `${username} | ${password}`
+		})
+
+		cy.visit('/auth/login')
+
+		cy.get('[data-testid="register-form-username"]').type(username)
+		cy.get('[data-testid="register-form-password"]').type(password)
+		cy.get('[data-testid="register-form-submit"]').click()
+
+		cy.get('[data-testid="app-header-username"]')
+			.should('exist')
+			.should('have.text', username)
+
+		cy.url().should('contain', '/home')
+	},
 	createCourse(name: string) {
-		// create course
 		cy.visit('/courses')
 		cy.get('[data-testid="add-button"]').click()
 		cy.get('[data-testid="course-creator"]').should('exist')
@@ -63,9 +90,11 @@ Cypress.Commands.addAll({
 			.should('have.text', name)
 	},
 	createProgress(name: string) {
+		cy.visit('/courses')
 		cy.get('[data-testid="course-card"]')
 			.last()
 			.find('[data-testid="course-card-name"]')
+			.last()
 			.click()
 
 		cy.url().should('contain', '/course')

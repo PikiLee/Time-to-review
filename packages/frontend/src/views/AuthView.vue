@@ -119,6 +119,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 				})
 					.then((res) => {
 						userStore.user = res.data
+						localStorage.setItem('user', res.data)
 						successMsg(t('auth.success', [t('auth.register')]))
 						router.push({ name: 'home' })
 					})
@@ -131,6 +132,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 				})
 					.then((res) => {
 						userStore.user = res.data
+						localStorage.setItem('user', res.data)
 						successMsg(t('auth.success', [t('auth.login')]))
 						router.push({ name: 'home' })
 					})
