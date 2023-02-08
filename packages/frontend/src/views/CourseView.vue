@@ -63,7 +63,7 @@ onMounted(() => {
 })
 </script>
 <template>
-	<AddButton />
+	<AddButton type="progress" />
 	<CourseSetting v-model="settingVisible" />
 	<div data-testid="course-view">
 		<div v-if="courseStore.currentCourse">

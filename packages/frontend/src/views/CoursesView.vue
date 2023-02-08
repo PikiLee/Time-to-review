@@ -6,7 +6,8 @@ import AddButton from '../components/AddButton.vue'
 const courseStore = useCourseStore()
 </script>
 <template>
-	<AddButton />
+	<AddButton type="course" />
+	dsf
 	<div data-testid="courses-view">
 		<h2 text-center>{{ $t('courses.title') }}</h2>
 		<ul list-none>

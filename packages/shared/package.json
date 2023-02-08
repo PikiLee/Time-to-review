@@ -10,6 +10,7 @@
 		"lint": "eslint --cache --fix .",
 		"test": "vitest",
 		"coverage": "vitest run --coverage",
+		"type-check": "tsc --noEmit",
 		"build": "rimraf dist && tsc",
 		"prepack": "pnpm run build"
 	},

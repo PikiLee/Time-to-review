@@ -13,17 +13,19 @@
 		"dev:backend": "cd ./packages/backend && pnpm run dev",
 		"dev:frontend": "cd ./packages/frontend && pnpm run dev",
 		"build:shared": "cd ./packages/shared && pnpm run build",
+		"type-check:frontend": "cd ./packages/frontend && pnpm run type-check",
+		"type-check:backend": "cd ./packages/backend && pnpm run type-check",
+		"type-check:shared": "cd ./packages/shared && pnpm run type-check",
 		"dev": "run-p dev:*",
-		"lint": "run-p lint:*"
+		"lint": "run-p lint:*",
+		"type-check": "run-p type-check:*"
 	},
 	"lint-staged": {
 		"*.ts": [
-			"prettier --write",
-			"eslint --fix"
+			"eslint --exit-on-fatal-error --fix"
 		],
 		"*.vue": [
-			"prettier --write",
-			"eslint --fix"
+			"eslint --exit-on-fatal-error --fix"
 		],
 		"*.json": [
 			"prettier --write"

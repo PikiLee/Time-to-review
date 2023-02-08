@@ -8,7 +8,7 @@ const courseStore = useCourseStore()
 </script>
 
 <template>
-	<AddButton />
+	<AddButton type="course" />
 	<main>
 		<h2 text-center data-testid="home-view-title">
 			{{ $t('home.title') }}

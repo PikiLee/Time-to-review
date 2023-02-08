@@ -12,6 +12,7 @@
 		"build": "rimraf dist && tsc",
 		"watch": "tsc -w",
 		"prepack": "pnpm run build",
+		"type-check": "tsc --noEmit",
 		"run": "cross-env NODE_ENV=production node ./dist/src/index.js",
 		"dev": "pnpm run build && cross-env NODE_ENV=development node ./dist/src/index.js"
 	},
