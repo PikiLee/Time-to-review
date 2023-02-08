@@ -1,29 +1,31 @@
 <script setup lang="ts">
-import router from '@/router'
-import { useUserStore } from '@/store/user.store'
-import { useCustomRouter } from '@/utils/useCustomRouter'
+import { useRouter } from 'vue-router'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import CourseCreator from './CreatorDialog.vue'
+import CreatorDialog from '@/components/CreatorDialog.vue'
 
-const userStore = useUserStore()
+const props = defineProps<{
+	type: 'course' | 'progress'
+}>()
+
+const router = useRouter()
 const dialogVisible = ref(false)
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const largerThanMd = breakpoints.greater('md')
 const { t } = useI18n()
 
-const { isCoursePage } = useCustomRouter()
+const isCreatingCourse = computed(() => props.type === 'course')
 const toolTip = computed(() =>
-	isCoursePage.value
+	isCreatingCourse.value
 		? t('addButton.progress.create')
 		: t('addButton.course.create')
 )
-const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
+const buttonType = computed(() => (isCreatingCourse.value ? 'info' : 'primary'))
 
 function handleOk() {
 	dialogVisible.value = false
-	if (isCoursePage) {
+	if (isCreatingCourse.value) {
 		router.push({ name: 'course' })
 	}
 }
@@ -34,7 +36,6 @@ function handleOk() {
 		effect="dark"
 		:content="toolTip"
 		placement="left"
-		v-if="userStore.isLogin"
 		data-testid="add-button"
 	>
 		<el-button
@@ -45,7 +46,7 @@ function handleOk() {
 			bottom-10
 			size="large"
 			@click="dialogVisible = true"
-			data-testid="add-button"
+			data-testid="add-button-button"
 		>
 			<template #icon>
 				<div i-mdi-add></div>
@@ -58,8 +59,8 @@ function handleOk() {
 		:title="toolTip"
 		:width="largerThanMd ? '40%' : '90%'"
 	>
-		<CourseCreator
-			:type="isCoursePage ? 'course' : 'progress'"
+		<CreatorDialog
+			:type="isCreatingCourse ? 'course' : 'progress'"
 			@ok="handleOk"
 		/>
 	</el-dialog>
