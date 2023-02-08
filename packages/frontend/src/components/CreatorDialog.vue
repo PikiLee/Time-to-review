@@ -2,19 +2,19 @@
 import { ref, computed, watch } from 'vue'
 import { create as createCourse } from '@/database/course'
 import { create as createProgress } from '@/database/progress'
-import { useRouter } from 'vue-router'
-import { useCustomRouter } from '@/utils/useCustomRouter'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
 
+const props = defineProps<{
+	type: 'course' | 'progress'
+}>()
 const emit = defineEmits(['ok'])
 
-const router = useRouter()
-const { isCoursePage } = useCustomRouter()
+const isCreatingCourse = computed(() => props.type === 'course')
 const { t } = useI18n()
 const input = ref('')
 const defaultPlaceholder = computed(() => {
-	return isCoursePage.value
+	return isCreatingCourse.value
 		? t('addButton.progress.create')
 		: t('addButton.course.create')
 })
@@ -27,31 +27,26 @@ watch(
 
 async function handleCreate() {
 	try {
-		if (isCoursePage.value) {
+		if (!input.value) throw new Error(t('errors.required'))
+		if (!isCreatingCourse.value) {
 			await createProgress(input.value)
 		} else {
 			await createCourse(input.value)
-			router.push({ name: 'courses' })
 		}
 		emit('ok')
 		successMsg(
-			isCoursePage.value
+			isCreatingCourse.value
 				? t('addButton.progress.success', [input.value])
 				: t('addButton.course.success', [input.value])
 		)
 	} catch (err) {
 		errorMsg(String(err))
-		errorMsg(
-			isCoursePage.value
-				? t('addButton.progress.success', [input.value])
-				: t('addButton.course.success', [input.value])
-		)
 	} finally {
 		input.value = ''
 	}
 }
 
-const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
+const buttonType = computed(() => (isCreatingCourse.value ? 'info' : 'primary'))
 </script>
 
 <template>
@@ -62,20 +57,20 @@ const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
 		gap-2
 		auto-rows-min
 		justify-items-center
-		data-testid="course-creator"
+		data-testid="creator-dialog"
 	>
 		<el-input
 			v-model.trim="input"
 			:placeholder="placeholder"
 			@keyup.enter="handleCreate"
-			data-test="add-course-input"
+			data-testid="creator-dialog-input"
 		/>
 		<el-button
 			:type="buttonType"
 			round
 			bg-lime-500
 			@click="handleCreate"
-			data-test="add-course"
+			data-testid="creator-dialog-button"
 			>{{ $t('actions.create') }}</el-button
 		>
 	</div>

@@ -15,6 +15,9 @@ export const messages = {
 			course: 'course',
 			progress: 'progress'
 		},
+		errors: {
+			required: 'Please input a value.'
+		},
 		stages: {
 			learned: 'Learned',
 			done: 'Done',
@@ -106,6 +109,9 @@ export const messages = {
 			empty: '这里什么也没有',
 			course: '课程',
 			progress: '进度'
+		},
+		errors: {
+			required: '请输入一个值'
 		},
 		stages: {
 			learned: '已学习',

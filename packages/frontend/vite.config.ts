@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { fileURLToPath, URL } from 'node:url'
 import { resolve, dirname } from 'node:path'
 
@@ -57,6 +58,16 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@': fileURLToPath(new URL('./src', import.meta.url))
+		}
+	},
+	test: {
+		// css: {
+		// 	modules: {
+		// 		classNameStrategy: 'non-scoped'
+		// 	}
+		// }
+		deps: {
+			inline: ['element-plus']
 		}
 	}
 })

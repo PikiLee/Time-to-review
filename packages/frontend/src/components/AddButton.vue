@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import router from '@/router'
 import { useUserStore } from '@/store/user.store'
 import { useCustomRouter } from '@/utils/useCustomRouter'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import CourseCreator from './Course/CourseCreator.vue'
+import CourseCreator from './CreatorDialog.vue'
 
 const userStore = useUserStore()
 const dialogVisible = ref(false)
@@ -19,6 +20,13 @@ const toolTip = computed(() =>
 		: t('addButton.course.create')
 )
 const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
+
+function handleOk() {
+	dialogVisible.value = false
+	if (isCoursePage) {
+		router.push({ name: 'course' })
+	}
+}
 </script>
 
 <template>
@@ -27,6 +35,7 @@ const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
 		:content="toolTip"
 		placement="left"
 		v-if="userStore.isLogin"
+		data-testid="add-button"
 	>
 		<el-button
 			:type="buttonType"
@@ -49,7 +58,10 @@ const buttonType = computed(() => (isCoursePage.value ? 'info' : 'primary'))
 		:title="toolTip"
 		:width="largerThanMd ? '40%' : '90%'"
 	>
-		<CourseCreator @ok="dialogVisible = false" />
+		<CourseCreator
+			:type="isCoursePage ? 'course' : 'progress'"
+			@ok="handleOk"
+		/>
 	</el-dialog>
 </template>
 
