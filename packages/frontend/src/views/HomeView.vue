@@ -10,7 +10,7 @@ const courseStore = useCourseStore()
 <template>
 	<AddButton type="course" />
 	<main>
-		<h2 text-center data-testid="home-view-title">
+		<h2 text-center text-3xl data-testid="home-view-title">
 			{{ $t('home.title') }}
 		</h2>
 		<DueCourseSection

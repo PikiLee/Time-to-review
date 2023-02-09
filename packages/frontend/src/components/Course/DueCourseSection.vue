@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import ProgressCard from '@/components/Progress/ProgressCard.vue'
 import type { CourseWithDueProgresses } from 'shared'
+import ProgressItem from '../Progress/ProgressItem.vue'
 
 defineProps<{
 	course: CourseWithDueProgresses
@@ -20,12 +20,11 @@ defineProps<{
 			</el-badge>
 		</div>
 		<section grid grid-cols-2 gap-6 p-4>
-			<ProgressCard
+			<ProgressItem
 				v-for="progress in course.dueProgresses"
 				:key="progress._id"
-				:courseId="course._id"
-				:name="progress.name"
-				:stage="progress.stage"
+				:progress="progress"
+				:intervals="course.intervals"
 			/>
 		</section>
 	</div>

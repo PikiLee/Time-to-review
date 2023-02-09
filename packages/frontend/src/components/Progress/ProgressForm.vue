@@ -55,7 +55,6 @@ const rules = reactive<FormRules>({
 	],
 	lastDate: [
 		{
-			type: 'string',
 			required: true,
 			message: 'Please select last review date',
 			trigger: 'change'
