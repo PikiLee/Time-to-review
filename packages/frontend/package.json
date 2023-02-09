@@ -9,6 +9,7 @@
 		"test:unit": "vitest --environment jsdom --root src/",
 		"test:e2e": "start-server-and-test preview :4173 'cypress run --e2e'",
 		"test:e2e:dev": "start-server-and-test 'vite dev --port 4173' :4173 'cypress open --e2e'",
+		"coverage": "vitest run --coverage --environment jsdom",
 		"build-only": "vite build",
 		"type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
 		"lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
@@ -42,6 +43,7 @@
 		"@unocss/preset-typography": "^0.48.0",
 		"@unocss/preset-uno": "^0.48.0",
 		"@vitejs/plugin-vue": "^4.0.0",
+		"@vitest/coverage-c8": "^0.28.4",
 		"@vue/eslint-config-prettier": "^7.0.0",
 		"@vue/eslint-config-typescript": "^11.0.0",
 		"@vue/test-utils": "^2.2.6",

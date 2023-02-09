@@ -45,7 +45,7 @@ async function toggleStatus(courseId: string) {
 </script>
 
 <template>
-	<div data-testid="course-card">
+	<el-card data-testid="course-card">
 		<li grid grid-rows-2 grid-cols-5 gap-2 items-center>
 			<el-tooltip
 				:content="
@@ -177,5 +177,5 @@ async function toggleStatus(courseId: string) {
 				>{{ createdTime }}</time
 			>
 		</li>
-	</div>
+	</el-card>
 </template>

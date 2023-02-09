@@ -18,10 +18,10 @@ const { t } = useI18n()
 const isCreatingCourse = computed(() => props.type === 'course')
 const toolTip = computed(() =>
 	isCreatingCourse.value
-		? t('addButton.progress.create')
-		: t('addButton.course.create')
+		? t('addButton.course.create')
+		: t('addButton.progress.create')
 )
-const buttonType = computed(() => (isCreatingCourse.value ? 'info' : 'primary'))
+const buttonType = computed(() => (isCreatingCourse.value ? 'primary' : 'info'))
 
 function handleOk() {
 	dialogVisible.value = false
@@ -54,10 +54,7 @@ function handleOk() {
 		:title="toolTip"
 		:width="largerThanMd ? '40%' : '90%'"
 	>
-		<CreatorDialog
-			:type="isCreatingCourse ? 'course' : 'progress'"
-			@ok="handleOk"
-		/>
+		<CreatorDialog :type="type" @ok="handleOk" />
 	</el-dialog>
 </template>
 

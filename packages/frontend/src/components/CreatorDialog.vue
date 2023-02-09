@@ -15,8 +15,8 @@ const { t } = useI18n()
 const input = ref('')
 const defaultPlaceholder = computed(() => {
 	return isCreatingCourse.value
-		? t('addButton.progress.create')
-		: t('addButton.course.create')
+		? t('addButton.course.create')
+		: t('addButton.progress.create')
 })
 const placeholder = ref(defaultPlaceholder.value)
 watch(
@@ -48,7 +48,7 @@ async function handleCreate() {
 	}
 }
 
-const buttonType = computed(() => (isCreatingCourse.value ? 'info' : 'primary'))
+const buttonType = computed(() => (isCreatingCourse.value ? 'primary' : 'info'))
 </script>
 
 <template>
@@ -62,7 +62,7 @@ const buttonType = computed(() => (isCreatingCourse.value ? 'info' : 'primary'))
 		data-testid="creator-dialog"
 	>
 		<el-input
-			v-model.trim="input"
+			v-model="input"
 			:placeholder="placeholder"
 			@keyup.enter="handleCreate"
 			data-testid="creator-dialog-input"
