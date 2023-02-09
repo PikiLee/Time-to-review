@@ -43,13 +43,14 @@ async function toNextStage() {
 	<el-card
 		shadow="always"
 		v-bind="$attrs"
+		class="card"
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
 		<div flex items-center justify-between>
 			<h3 m-0 text-lg data-testid="progress-list-item-name">
 				{{ progress.name }}
 			</h3>
-			<div>
+			<div hidden class="actions">
 				<el-tooltip
 					effect="dark"
 					:content="$t('course.nextStage')"
@@ -112,3 +113,18 @@ async function toNextStage() {
 		/>
 	</el-dialog>
 </template>
+
+<style lang="scss" scope>
+.card {
+	&:hover,
+	&:focus-within,
+	&:focus,
+	&:focus-visible {
+		border: 1px solid rgba(#84cc16, 0.7);
+
+		.actions {
+			display: block;
+		}
+	}
+}
+</style>
