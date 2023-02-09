@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AddButton from '../components/AddButton.vue'
-import ProgressListItem from '@/components/Progress/ProgressListItem.vue'
+import ProgressListItem from '@/components/Progress/ProgressItem.vue'
 import { useCourseStore } from '@/store/course.store'
 import Sortable from 'sortablejs'
 import { onMounted, ref } from 'vue'
@@ -77,45 +77,23 @@ onMounted(() => {
 					>{{ $t('actions.edit') }}</el-button
 				>
 			</div>
-			<ul
-				list-none
-				p-none
-				v-if="courseStore.currentCourse.progresses.length"
+			<div
+				ref="dragContainerEl"
+				p-2
+				grid
+				sm-grid-cols-2
+				md-grid-cols-3
+				gap-4
 			>
-				<li
-					grid
-					grid-cols-12
-					items-center
-					border-b
-					border-b-warmgray-300
-					p-2
-					gap-2
-				>
-					<span col-span-1 sm-col-span-1></span>
-					<span col-span-2 sm-col-span-2>{{
-						$t('course.name')
-					}}</span>
-					<span col-span-3 sm-col-span-2>{{
-						$t('course.stage')
-					}}</span>
-					<span col-span-3 sm-col-span-2>{{
-						$t('course.lastReviewDate')
-					}}</span>
-					<span col-span-3 sm-col-span-2>{{
-						$t('course.nextReviewDate')
-					}}</span>
-					<span col-span-0 sm-col-span-3></span>
-				</li>
-			</ul>
-			<el-empty v-else :description="$t('common.empty')" />
-			<div ref="dragContainerEl">
 				<ProgressListItem
 					v-for="progress in courseStore.currentCourse?.progresses"
 					:key="progress._id"
 					:progress="progress"
+					:intervals="courseStore.currentCourse.intervals"
 				/>
 			</div>
 		</div>
+		<el-empty v-else :description="$t('common.empty')" />
 	</div>
 </template>
 

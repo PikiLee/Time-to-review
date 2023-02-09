@@ -84,7 +84,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		ref="ruleFormRef"
 		:model="ruleForm"
 		:rules="rules"
-		label-width="200px"
+		label-width="20%"
 		label-position="left"
 		status-icon
 		mt-6
@@ -134,14 +134,12 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 					@click="submitForm(ruleFormRef)"
 					data-testid="progress-list-item-confirm"
 					data-test-unit="progress-form-confirm"
-					size="small"
 				>
 					{{ $t('actions.confirm') }}
 				</el-button>
 				<el-button
 					@click="del(progress._id)"
 					data-testid="progress-list-item-delete"
-					size="small"
 					>{{ $t('actions.delete') }}</el-button
 				>
 			</div>
