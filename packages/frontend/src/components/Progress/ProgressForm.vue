@@ -84,7 +84,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		ref="ruleFormRef"
 		:model="ruleForm"
 		:rules="rules"
-		label-width="20%"
+		label-width="120px"
 		label-position="left"
 		status-icon
 		mt-6

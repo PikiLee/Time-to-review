@@ -67,7 +67,9 @@ onMounted(() => {
 	<div data-testid="course-view">
 		<div v-if="courseStore.currentCourse">
 			<div relative>
-				<h2 text-center>{{ courseStore.currentCourse.name }}</h2>
+				<h2 mb-8 text-center text-3xl text-extrabold>
+					{{ courseStore.currentCourse.name }}
+				</h2>
 				<el-button
 					absolute
 					right-10

@@ -28,7 +28,10 @@ async function toNextStage() {
 			props.progress.stage + 1,
 			props.intervals.length
 		)
-		await update(props.progress._id, { stage: newStage })
+		await update(props.progress._id, {
+			stage: newStage,
+			lastDate: new Date().toISOString()
+		})
 		successMsg('Succeeded proceeding to next stage.')
 	} catch (err) {
 		errorMsg(String(err))
