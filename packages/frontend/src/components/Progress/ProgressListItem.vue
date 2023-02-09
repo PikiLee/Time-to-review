@@ -1,87 +1,20 @@
 <script setup lang="ts">
-import type { Progress, UpdateProgress } from 'shared'
-import { del } from '@/database/progress'
-import { ref, reactive, watchEffect } from 'vue'
+import type { Progress } from 'shared'
+import { ref } from 'vue'
 import dayjs from 'dayjs/esm'
-import type { FormInstance, FormRules } from 'element-plus'
 import { update } from '@/database/progress'
-import { errorMsg, successMsg } from '@/utils/useMessage'
+import { errorMsg } from '@/utils/useMessage'
 import { useCourseStore } from '@/store/course.store'
+
 import { getStageString } from '../../utils/progress.utils'
+import ProgressForm from './ProgressForm.vue'
 
 const props = defineProps<{
 	progress: Progress
 }>()
 
 const showEditor = ref(false)
-const ruleFormRef = ref<FormInstance>()
 const courseStore = useCourseStore()
-let ruleForm: UpdateProgress
-watchEffect(() => {
-	const copy = {
-		name: props.progress.name,
-		stage: props.progress.stage,
-		lastDate: props.progress.lastDate,
-		order: props.progress.order
-	}
-	ruleForm = reactive(copy)
-})
-
-const rules = reactive<FormRules>({
-	name: [
-		{ required: true, message: 'Please input name', trigger: 'blur' },
-		{
-			min: 1,
-			max: 20,
-			message: 'Length should be 1 to 20',
-			trigger: 'blur'
-		}
-	],
-	stage: [
-		{
-			required: true,
-			message: 'Please select a stage',
-			trigger: 'change'
-		},
-		{
-			validator(_, value) {
-				return (
-					typeof value === 'number' &&
-					value >= 0 &&
-					courseStore.currentCourse &&
-					value <= courseStore.currentCourse.intervals.length
-				)
-			},
-			message: 'Please select a valid stage',
-			trigger: 'change'
-		}
-	],
-	lastDate: [
-		{
-			required: true,
-			message: 'Please select last review date',
-			trigger: 'change'
-		}
-	]
-})
-
-const submitForm = async (formEl: FormInstance | undefined) => {
-	if (!formEl) return
-	await formEl.validate((valid) => {
-		if (valid) {
-			update(props.progress._id, ruleForm)
-				.then(() => {
-					successMsg('Updation succeeded.')
-					showEditor.value = false
-				})
-				.catch((err) => {
-					errorMsg(`Updation failed. ${err}`)
-				})
-		} else {
-			errorMsg('Updation failed.')
-		}
-	})
-}
 
 /**
  * to next stage button
@@ -168,68 +101,9 @@ async function toNextStage() {
 			</el-tooltip>
 		</div>
 
-		<el-form
-			ref="ruleFormRef"
-			:model="ruleForm"
-			:rules="rules"
-			label-width="200px"
-			label-position="left"
-			status-icon
-			v-if="showEditor && courseStore.currentCourse"
-			mt-6
-			col-span-12
-			@click.stop
-		>
-			<el-form-item :label="$t('course.name')" prop="name">
-				<el-input
-					v-model="ruleForm.name"
-					data-testid="progress-list-item-name-input"
-				/>
-			</el-form-item>
-			<el-form-item :label="$t('course.stage')" prop="stage">
-				<el-select v-model="ruleForm.stage">
-					<el-option
-						v-for="value in courseStore.currentCourse?.intervals
-							.length + 1"
-						:key="value"
-						:label="
-							getStageString(
-								value - 1,
-								courseStore.currentCourse.intervals.length
-							)
-						"
-						:value="value - 1"
-					/>
-				</el-select>
-			</el-form-item>
-			<el-form-item :label="$t('course.lastReviewDate')" prop="lastDate">
-				<el-date-picker
-					v-model="ruleForm.lastDate"
-					type="date"
-					placeholder="Pick a day"
-					:style="{ width: '100%' }"
-					:clearable="false"
-				/>
-			</el-form-item>
-
-			<el-form-item>
-				<div flex gap-2 flex-wrap>
-					<el-button
-						type="primary"
-						@click="submitForm(ruleFormRef)"
-						data-testid="progress-list-item-confirm"
-						size="small"
-					>
-						{{ $t('actions.confirm') }}
-					</el-button>
-					<el-button
-						@click="del(progress._id)"
-						data-testid="progress-list-item-delete"
-						size="small"
-						>{{ $t('actions.delete') }}</el-button
-					>
-				</div>
-			</el-form-item>
-		</el-form>
+		<ProgressForm
+			:progress="progress"
+			:intervals="courseStore.currentCourse.intervals"
+		/>
 	</li>
 </template>

@@ -23,7 +23,7 @@ vi.mock('vue-router', () => {
 })
 
 describe('AddButton', () => {
-	test('not exist if ok', async () => {
+	test('Rendered', () => {
 		const wrapper = mount(AddButton, {
 			props: {
 				type: 'course'
@@ -36,9 +36,26 @@ describe('AddButton', () => {
 			components: { CreatorDialog }
 		})
 
-		await wrapper.get(`[data-testid="add-button-button"]`).trigger('click')
+		expect(wrapper.find(`[data-testid="add-button"]`).exists()).toBe(true)
+	})
+
+	test('Go to course page if ok', async () => {
+		const wrapper = mount(AddButton, {
+			props: {
+				type: 'course'
+			},
+			global: {
+				mocks: {
+					$t
+				}
+			},
+			components: { CreatorDialog }
+		})
+
+		await wrapper.get(`[data-testid="add-button"]`).trigger('click')
 		await wrapper.getComponent(CreatorDialog).vm.$emit('ok')
 
 		expect(push).toHaveBeenCalledOnce()
+		expect(push).toHaveBeenCalledWith({ name: 'course' })
 	})
 })

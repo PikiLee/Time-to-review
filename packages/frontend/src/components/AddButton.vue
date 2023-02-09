@@ -32,12 +32,7 @@ function handleOk() {
 </script>
 
 <template>
-	<el-tooltip
-		effect="dark"
-		:content="toolTip"
-		placement="left"
-		data-testid="add-button"
-	>
+	<el-tooltip effect="dark" :content="toolTip" placement="left">
 		<el-button
 			:type="buttonType"
 			circle
@@ -46,7 +41,7 @@ function handleOk() {
 			bottom-10
 			size="large"
 			@click="dialogVisible = true"
-			data-testid="add-button-button"
+			data-testid="add-button"
 		>
 			<template #icon>
 				<div i-mdi-add></div>

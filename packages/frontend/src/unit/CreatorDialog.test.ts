@@ -46,7 +46,9 @@ describe('Rendered', () => {
 			}
 		})
 
-		wrapper.find(`[data-testid="creator-dialog"]`).exists()
+		expect(wrapper.find(`[data-testid="creator-dialog"]`).exists()).toBe(
+			true
+		)
 	})
 
 	test('Call createCourse() when type is course and press button.', async () => {
