@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { update } from '@/database/course'
+import { update, del } from '@/database/course'
 import { useCourseStore } from '@/store/course.store'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useVModel } from '@vueuse/core'
 import type { FormInstance, FormRules } from 'element-plus'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import DeleteButton from '../Others/DeleteButton.vue'
 
 const props = defineProps<{
 	modelValue: boolean
@@ -91,7 +92,8 @@ function removeInterval() {
 		<el-dialog
 			v-model="visible"
 			:title="$t('components.course.courseSetting.title')"
-			width="30%"
+			width="90%"
+			max-w-screen-sm
 			:before-close="handleClose"
 		>
 			<el-form
@@ -152,6 +154,10 @@ function removeInterval() {
 					<el-button @click="visible = false">{{
 						$t('actions.cancel')
 					}}</el-button>
+					<DeleteButton
+						:name="courseStore.currentCourse!.name"
+						@delete="del(courseStore.currentCourse!._id)"
+					/>
 					<el-button type="primary" @click="submitForm(ruleFormRef)">
 						{{ $t('actions.confirm') }}
 					</el-button>
