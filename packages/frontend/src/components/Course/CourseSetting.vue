@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { update, del } from '@/database/course'
-import { useCourseStore } from '@/store/course.store'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useVModel } from '@vueuse/core'
 import type { FormInstance, FormRules } from 'element-plus'
+import type { Course } from 'shared'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import DeleteButton from '../Others/DeleteButton.vue'
 
 const props = defineProps<{
 	modelValue: boolean
+	course: Course
 }>()
 const emit = defineEmits(['update:modelValue'])
 const { t } = useI18n()
@@ -21,7 +22,6 @@ function handleClose() {
 }
 
 //form
-const courseStore = useCourseStore()
 const ruleFormRef = ref<FormInstance>()
 
 function getPropertyName(index: number) {
@@ -55,15 +55,15 @@ const rules = reactive<FormRules>({
 })
 
 const ruleForm = reactive({
-	name: courseStore.currentCourse!.name,
-	intervals: courseStore.currentCourse!.intervals
+	name: props.course.name,
+	intervals: props.course.intervals
 })
 
 const submitForm = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return
 	await formEl.validate((valid) => {
 		if (valid) {
-			update(courseStore.currentCourse!._id, ruleForm, {
+			update(props.course._id, ruleForm, {
 				withProgresses: true
 			})
 				.then(() => {
@@ -84,6 +84,11 @@ function addInterval() {
 
 function removeInterval() {
 	ruleForm.intervals.splice(-1, 1)
+}
+
+function handleDelete() {
+	del(props.course._id)
+	visible.value = false
 }
 </script>
 
@@ -155,8 +160,8 @@ function removeInterval() {
 						$t('actions.cancel')
 					}}</el-button>
 					<DeleteButton
-						:name="courseStore.currentCourse!.name"
-						@delete="del(courseStore.currentCourse!._id)"
+						:name="props.course.name"
+						@delete="handleDelete"
 					/>
 					<el-button type="primary" @click="submitForm(ruleFormRef)">
 						{{ $t('actions.confirm') }}

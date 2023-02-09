@@ -63,20 +63,26 @@ onMounted(() => {
 </script>
 <template>
 	<AddButton type="progress" />
-	<CourseSetting v-model="settingVisible" />
+	<CourseSetting
+		v-model="settingVisible"
+		:course="courseStore.currentCourse!"
+	/>
 	<div data-testid="course-view">
 		<div v-if="courseStore.currentCourse">
-			<div relative>
-				<h2 mb-8 text-center text-3xl text-extrabold>
+			<div flex items-center justify-between my-8 px-4>
+				<h2 flex-grow-1 m-0 text-3xl text-extrabold>
 					{{ courseStore.currentCourse.name }}
 				</h2>
-				<el-button
-					absolute
-					right-10
-					bottom-0
-					@click="settingVisible = true"
-					>{{ $t('actions.edit') }}</el-button
+				<el-tooltip
+					class="box-item"
+					effect="dark"
+					:content="$t('actions.edit')"
+					placement="top-start"
 				>
+					<el-button plain @click="settingVisible = true"
+						><span i-mdi-edit text-lg></span
+					></el-button>
+				</el-tooltip>
 			</div>
 			<div
 				ref="dragContainerEl"

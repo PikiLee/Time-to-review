@@ -6,6 +6,7 @@ import RegisterView from '../views/AuthView.vue'
 import { errorMsg } from '@/utils/useMessage'
 import { fetchAll, fetchDue, fetchWithProgresses } from '@/database/course'
 import { useUserStore } from '@/store/user.store'
+import NotFound from '@/views/NotFound.vue'
 
 const router = createRouter({
 	history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,9 +35,14 @@ const router = createRouter({
 			component: CourseView,
 			meta: { requiresAuth: true },
 			async beforeEnter(to) {
-				const rawId = to.params.id
-				const courseId = typeof rawId === 'string' ? rawId : rawId[0]
-				await fetchWithProgresses(courseId)
+				try {
+					const rawId = to.params.id
+					const courseId =
+						typeof rawId === 'string' ? rawId : rawId[0]
+					return await fetchWithProgresses(courseId)
+				} catch {
+					return { name: '404', params: { catchAll: 'course' } }
+				}
 			}
 		},
 		{
@@ -54,6 +60,11 @@ const router = createRouter({
 					component: RegisterView
 				}
 			]
+		},
+		{
+			path: '/:catchAll(.*)',
+			name: '404',
+			component: NotFound
 		}
 	]
 })
