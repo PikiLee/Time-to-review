@@ -41,7 +41,6 @@ async function calcOrder(
 
 onMounted(() => {
 	const sortable = Sortable.create(dragContainerEl.value!, {
-		handle: '.progress-list-item-draggable-handle',
 		draggable: '.progress-list-item-draggable',
 		onEnd: async function (/**Event*/ evt) {
 			try {
@@ -86,6 +85,7 @@ onMounted(() => {
 				gap-4
 			>
 				<ProgressListItem
+					class="progress-list-item-draggable"
 					v-for="progress in courseStore.currentCourse?.progresses"
 					:key="progress._id"
 					:progress="progress"

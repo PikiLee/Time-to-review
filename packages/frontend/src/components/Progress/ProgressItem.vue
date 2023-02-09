@@ -37,7 +37,11 @@ async function toNextStage() {
 </script>
 
 <template>
-	<el-card shadow="always" :data-test-unit="getUnitTestId('wrapper')">
+	<el-card
+		shadow="always"
+		v-bind="$attrs"
+		:data-test-unit="getUnitTestId('wrapper')"
+	>
 		<div flex items-center justify-between>
 			<h3 m-0 text-lg data-testid="progress-list-item-name">
 				{{ progress.name }}
@@ -73,17 +77,21 @@ async function toNextStage() {
 		<h4 m-0 text-xs font-thin text-warmgray-400>
 			{{ $t('course.stage') }}
 		</h4>
-		<p m-0 text-2xl font-bold flex items-center justify-between>
+		<p m-0 text-2xl font-bold>
 			{{ getStageString(progress.stage, intervals.length) }}
-			<el-tag v-if="progress.isDue" effect="dark" type="danger">
-				Due
-			</el-tag>
 		</p>
-		<div m-0 flex items-center justify-start gap-2 v-if="!isDone">
-			<h4 m-0 text-xs font-thin text-warmgray-400>Due Date</h4>
-			<time m-0 text-xsfont-thin block>{{
-				dayjs(progress.nextDate).format('YYYY-MM-DD')
-			}}</time>
+		<div m-0 flex items-center justify-between v-if="!isDone">
+			<div flex items-center gap-2>
+				<h4 m-0 text-xs font-thin text-warmgray-400>Due Date</h4>
+				<time m-0 text-xs font-normal block class="translate-y-[1px]">{{
+					dayjs(progress.nextDate).format('YYYY-MM-DD')
+				}}</time>
+			</div>
+			<div flex-grow-1 flex items-center justify-end>
+				<el-tag v-if="progress.isDue" effect="dark" type="danger">
+					Due
+				</el-tag>
+			</div>
 		</div>
 	</el-card>
 
