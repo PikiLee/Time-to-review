@@ -46,10 +46,77 @@ async function toNextStage() {
 		class="card"
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
+		<!-- Stage -->
+		<div flex items-center gap-2>
+			<h4 m-0 text-xs font-thin text-warmgray-400>
+				{{ $t('course.stage') }}
+			</h4>
+			<p m-0 font-bold>
+				{{ getStageString(progress.stage, intervals.length) }}
+			</p>
+		</div>
+
+		<!-- Name -->
 		<div flex items-center justify-between>
-			<h3 m-0 text-lg data-testid="progress-list-item-name">
+			<h3 m-0 text-2xl data-testid="progress-list-item-name">
 				{{ progress.name }}
 			</h3>
+
+			<div flex-grow-1 flex items-center justify-end>
+				<div
+					v-if="progress.isDue"
+					rounded-full
+					w-8
+					h-8
+					grid
+					place-items-center
+					bg-red-500
+					text-xl
+					text-bold
+				>
+					<div i-mdi-exclamation></div>
+				</div>
+				<div
+					v-else-if="progress.stage === intervals.length"
+					rounded-full
+					w-8
+					h-8
+					grid
+					place-items-center
+					bg-lime-500
+					text-xl
+					text-bold
+				>
+					<div i-mdi-success></div>
+				</div>
+				<div
+					v-else
+					rounded-full
+					w-8
+					h-8
+					grid
+					place-items-center
+					bg-sky-500
+					text-xl
+					text-bold
+				>
+					<div i-mdi-progress-clock></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Due Date -->
+		<div m-0 flex items-center justify-between>
+			<div flex items-center gap-2 v-if="!isDone">
+				<h4 m-0 text-xs font-thin text-warmgray-400>Due Date</h4>
+				<time m-0 text-xs font-normal block class="translate-y-[1px]">{{
+					dayjs(progress.nextDate).format('YYYY-MM-DD')
+				}}</time>
+			</div>
+		</div>
+
+		<!-- Actions -->
+		<div flex items-center justify-center mt-4>
 			<div hidden class="actions">
 				<el-tooltip
 					effect="dark"
@@ -76,25 +143,6 @@ async function toNextStage() {
 						><span i-material-symbols-edit text-lg></span
 					></el-button>
 				</el-tooltip>
-			</div>
-		</div>
-		<h4 m-0 text-xs font-thin text-warmgray-400>
-			{{ $t('course.stage') }}
-		</h4>
-		<p m-0 text-2xl font-bold>
-			{{ getStageString(progress.stage, intervals.length) }}
-		</p>
-		<div m-0 flex items-center justify-between v-if="!isDone">
-			<div flex items-center gap-2>
-				<h4 m-0 text-xs font-thin text-warmgray-400>Due Date</h4>
-				<time m-0 text-xs font-normal block class="translate-y-[1px]">{{
-					dayjs(progress.nextDate).format('YYYY-MM-DD')
-				}}</time>
-			</div>
-			<div flex-grow-1 flex items-center justify-end>
-				<el-tag v-if="progress.isDue" effect="dark" type="danger">
-					Due
-				</el-tag>
 			</div>
 		</div>
 	</el-card>
