@@ -1,9 +1,12 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, test, vi, beforeEach } from 'vitest'
-import { update } from '@/database/progress'
+import { update, del } from '@/database/progress'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import ProgressForm from '@/components/Progress/ProgressForm.vue'
-import { get, find } from './utils'
+import { createGetter } from './utils'
+
+const NAME_SPACE = 'progress-form'
+const { get, find } = createGetter(NAME_SPACE)
 
 vi.mock('vue-i18n', () => {
 	return {
@@ -13,7 +16,8 @@ vi.mock('vue-i18n', () => {
 
 vi.mock('@/database/progress', () => {
 	return {
-		update: vi.fn(async () => 'hello')
+		update: vi.fn(async () => 'hello'),
+		del: vi.fn(async () => {})
 	}
 })
 vi.mock('@/utils/useMessage', () => {
@@ -59,7 +63,7 @@ describe('ProgressForm', () => {
 			}
 		})
 
-		expect(await find(wrapper, 'progress-form').exists()).toBe(true)
+		expect(await find(wrapper, 'wrapper').exists()).toBe(true)
 	})
 
 	test('call update(), successMsg(), emit "ok" if update', async () => {
@@ -75,8 +79,8 @@ describe('ProgressForm', () => {
 			}
 		})
 
-		await get(wrapper, 'progress-form-input').setValue('good')
-		await get(wrapper, 'progress-form-confirm').trigger('click')
+		await get(wrapper, 'input').setValue('good')
+		await get(wrapper, 'confirm').trigger('click')
 
 		await flushPromises()
 		expect(update).toHaveBeenCalledOnce()
@@ -97,10 +101,29 @@ describe('ProgressForm', () => {
 			}
 		})
 
-		await get(wrapper, 'progress-form-input').setValue('')
-		await get(wrapper, 'progress-form-confirm').trigger('click')
+		await get(wrapper, 'input').setValue('')
+		await get(wrapper, 'confirm').trigger('click')
 
 		await flushPromises()
 		expect(errorMsg).toHaveBeenCalledOnce()
+	})
+
+	test('call del() when delete', async () => {
+		const wrapper = mount(ProgressForm, {
+			props: {
+				progress,
+				intervals
+			},
+			global: {
+				mocks: {
+					$t
+				}
+			}
+		})
+
+		await get(wrapper, 'delete').trigger('click')
+
+		await flushPromises()
+		expect(del).toHaveBeenCalledOnce()
 	})
 })

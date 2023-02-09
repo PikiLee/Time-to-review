@@ -11,8 +11,8 @@ const props = defineProps<{
 	progress: Progress
 	intervals: number[]
 }>()
-
 const emit = defineEmits(['ok'])
+const NAME_SPACE = 'progress-form'
 
 const ruleFormRef = ref<FormInstance>()
 const copy = {
@@ -91,20 +91,17 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		col-span-12
 		@click.stop
 		data-testid="progress-form"
-		data-test-unit="progress-form"
+		:data-test-unit="`${NAME_SPACE}-wrapper`"
 	>
 		<el-form-item :label="$t('course.name')" prop="name">
 			<el-input
 				v-model="ruleForm.name"
 				data-testid="progress-list-item-name-input"
-				data-test-unit="progress-form-input"
+				:data-test-unit="`${NAME_SPACE}-input`"
 			/>
 		</el-form-item>
 		<el-form-item :label="$t('course.stage')" prop="stage">
-			<el-select
-				v-model="ruleForm.stage"
-				data-test-unit="progress-form-select"
-			>
+			<el-select v-model="ruleForm.stage">
 				<el-option
 					v-for="value in intervals.length + 1"
 					:key="value"
@@ -113,11 +110,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 				/>
 			</el-select>
 		</el-form-item>
-		<el-form-item
-			:label="$t('course.lastReviewDate')"
-			prop="lastDate"
-			data-test-unit="progress-form-date"
-		>
+		<el-form-item :label="$t('course.lastReviewDate')" prop="lastDate">
 			<el-date-picker
 				v-model="ruleForm.lastDate"
 				type="date"
@@ -133,13 +126,14 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 					type="primary"
 					@click="submitForm(ruleFormRef)"
 					data-testid="progress-list-item-confirm"
-					data-test-unit="progress-form-confirm"
+					:data-test-unit="`${NAME_SPACE}-confirm`"
 				>
 					{{ $t('actions.confirm') }}
 				</el-button>
 				<el-button
 					@click="del(progress._id)"
 					data-testid="progress-list-item-delete"
+					:data-test-unit="`${NAME_SPACE}-delete`"
 					>{{ $t('actions.delete') }}</el-button
 				>
 			</div>
