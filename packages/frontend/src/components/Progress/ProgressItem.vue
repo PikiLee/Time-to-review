@@ -44,105 +44,115 @@ async function toNextStage() {
 		shadow="always"
 		v-bind="$attrs"
 		class="card"
+		:body-style="{ height: '100%' }"
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
-		<!-- Stage -->
-		<div flex items-center gap-2>
-			<h4 m-0 text-xs font-thin text-warmgray-400>
-				{{ $t('course.stage') }}
-			</h4>
-			<p m-0 font-bold>
-				{{ getStageString(progress.stage, intervals.length) }}
-			</p>
-		</div>
+		<div flex flex-col justify-between h-full>
+			<!-- Stage -->
+			<div flex items-center gap-2>
+				<h4 m-0 text-xs font-thin text-warmgray-400>
+					{{ $t('course.stage') }}
+				</h4>
+				<p m-0 font-bold>
+					{{ getStageString(progress.stage, intervals.length) }}
+				</p>
+			</div>
 
-		<!-- Name -->
-		<div flex items-center justify-between>
-			<h3 m-0 text-2xl data-testid="progress-list-item-name">
-				{{ progress.name }}
-			</h3>
+			<!-- Name -->
+			<div flex items-center justify-between>
+				<h3 m-0 text-2xl data-testid="progress-list-item-name">
+					{{ progress.name }}
+				</h3>
 
-			<div flex-grow-1 flex items-center justify-end>
-				<div
-					v-if="progress.isDue"
-					rounded-full
-					w-8
-					h-8
-					grid
-					place-items-center
-					bg-red-500
-					text-xl
-					text-bold
-				>
-					<div i-mdi-exclamation></div>
-				</div>
-				<div
-					v-else-if="progress.stage === intervals.length"
-					rounded-full
-					w-8
-					h-8
-					grid
-					place-items-center
-					bg-lime-500
-					text-xl
-					text-bold
-				>
-					<div i-mdi-success></div>
-				</div>
-				<div
-					v-else
-					rounded-full
-					w-8
-					h-8
-					grid
-					place-items-center
-					bg-sky-500
-					text-xl
-					text-bold
-				>
-					<div i-mdi-progress-clock></div>
+				<div flex-grow-1 flex items-center justify-end>
+					<div
+						v-if="progress.isDue"
+						rounded-full
+						w-8
+						h-8
+						grid
+						place-items-center
+						bg-red-500
+						text-xl
+						text-bold
+					>
+						<div i-mdi-exclamation></div>
+					</div>
+					<div
+						v-else-if="progress.stage === intervals.length"
+						rounded-full
+						w-8
+						h-8
+						grid
+						place-items-center
+						bg-lime-500
+						text-xl
+						text-bold
+					>
+						<div i-mdi-success></div>
+					</div>
+					<div
+						v-else
+						rounded-full
+						w-8
+						h-8
+						grid
+						place-items-center
+						bg-sky-500
+						text-xl
+						text-bold
+					>
+						<div i-mdi-progress-clock></div>
+					</div>
 				</div>
 			</div>
-		</div>
 
-		<!-- Due Date -->
-		<div m-0 flex items-center justify-between>
-			<div flex items-center gap-2 v-if="!isDone">
-				<h4 m-0 text-xs font-thin text-warmgray-400>Due Date</h4>
-				<time m-0 text-xs font-normal block class="translate-y-[1px]">{{
-					dayjs(progress.nextDate).format('YYYY-MM-DD')
-				}}</time>
+			<!-- Due Date -->
+			<div m-0 flex items-center justify-between>
+				<div flex items-center gap-2 v-if="!isDone">
+					<h4 m-0 text-xs font-thin text-warmgray-400>Due Date</h4>
+					<time
+						m-0
+						text-xs
+						font-normal
+						block
+						class="translate-y-[1px]"
+						>{{
+							dayjs(progress.nextDate).format('YYYY-MM-DD')
+						}}</time
+					>
+				</div>
 			</div>
-		</div>
 
-		<!-- Actions -->
-		<div flex items-center justify-center mt-4>
-			<div hidden class="actions">
-				<el-tooltip
-					effect="dark"
-					:content="$t('course.nextStage')"
-					placement="top"
-					v-if="!isDone"
-				>
-					<el-button
-						@click="toNextStage"
-						size="small"
-						:data-test-unit="getUnitTestId('next-stage')"
-						><span i-material-symbols-next-plan text-lg></span
-					></el-button>
-				</el-tooltip>
-				<el-tooltip
-					effect="dark"
-					:content="$t('actions.edit')"
-					placement="top"
-				>
-					<el-button
-						@click="showEditor = true"
-						size="small"
-						:data-test-unit="getUnitTestId('edit')"
-						><span i-material-symbols-edit text-lg></span
-					></el-button>
-				</el-tooltip>
+			<!-- Actions -->
+			<div hidden class="actions" flex items-center justify-center mt-4>
+				<div w-max>
+					<el-tooltip
+						effect="dark"
+						:content="$t('course.nextStage')"
+						placement="top"
+						v-if="!isDone"
+					>
+						<el-button
+							@click="toNextStage"
+							size="small"
+							:data-test-unit="getUnitTestId('next-stage')"
+							><span i-material-symbols-next-plan text-lg></span
+						></el-button>
+					</el-tooltip>
+					<el-tooltip
+						effect="dark"
+						:content="$t('actions.edit')"
+						placement="top"
+					>
+						<el-button
+							@click="showEditor = true"
+							size="small"
+							:data-test-unit="getUnitTestId('edit')"
+							><span i-material-symbols-edit text-lg></span
+						></el-button>
+					</el-tooltip>
+				</div>
 			</div>
 		</div>
 	</el-card>
@@ -171,7 +181,7 @@ async function toNextStage() {
 		border: 1px solid rgba(#84cc16, 0.7);
 
 		.actions {
-			display: block;
+			display: flex;
 		}
 	}
 }
