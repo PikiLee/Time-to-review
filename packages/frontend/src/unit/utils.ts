@@ -1,14 +1,18 @@
 import type { VueWrapper } from '@vue/test-utils'
 
-export function createGetter(nameSpace: string) {
-	const prefix = 'data-test-unit'
+const prefix = 'data-test-unit'
+export function createUnitTestIdGetter(nameSpace: string) {
+	return (element: string) => `${nameSpace}-${element}`
+}
 
+export function createGetter(nameSpace: string) {
+	const getUnitTestId = createUnitTestIdGetter(nameSpace)
 	return {
-		get<T extends VueWrapper<any>>(wrapper: T, selector: string) {
-			return wrapper.get(`[${prefix}="${nameSpace}-${selector}"]`)
+		get<T extends VueWrapper<any>>(wrapper: T, element: string) {
+			return wrapper.get(`[${prefix}="${getUnitTestId(element)}"]`)
 		},
-		find<T extends VueWrapper<any>>(wrapper: T, selector: string) {
-			return wrapper.find(`[${prefix}="${nameSpace}-${selector}"]`)
+		find<T extends VueWrapper<any>>(wrapper: T, element: string) {
+			return wrapper.find(`[${prefix}="${getUnitTestId(element)}"]`)
 		}
 	}
 }

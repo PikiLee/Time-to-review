@@ -3,15 +3,18 @@ import type { Progress } from 'shared'
 import { computed, ref } from 'vue'
 import dayjs from 'dayjs/esm'
 import { update } from '@/database/progress'
-import { errorMsg } from '@/utils/useMessage'
+import { errorMsg, successMsg } from '@/utils/useMessage'
 import { getStageString } from '../../utils/progress.utils'
 import ProgressForm from './ProgressForm.vue'
+import { createUnitTestIdGetter } from '@/unit/utils'
 
 const props = defineProps<{
 	progress: Progress
 	intervals: number[]
 }>()
 
+const NAME_SPACE = 'progress-item'
+const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
 const showEditor = ref(false)
 
 const isDone = computed(() => props.progress.stage >= props.intervals.length)
@@ -26,6 +29,7 @@ async function toNextStage() {
 			props.intervals.length
 		)
 		await update(props.progress._id, { stage: newStage })
+		successMsg('Succeeded proceeding to next stage.')
 	} catch (err) {
 		errorMsg(String(err))
 	}
@@ -33,7 +37,7 @@ async function toNextStage() {
 </script>
 
 <template>
-	<el-card shadow="always">
+	<el-card shadow="always" :data-test-unit="getUnitTestId('wrapper')">
 		<div flex items-center justify-between>
 			<h3 m-0 text-lg data-testid="progress-list-item-name">
 				{{ progress.name }}
@@ -45,7 +49,10 @@ async function toNextStage() {
 					placement="top"
 					v-if="!isDone"
 				>
-					<el-button @click="toNextStage" size="small"
+					<el-button
+						@click="toNextStage"
+						size="small"
+						:data-test-unit="getUnitTestId('next-stage')"
 						><span i-material-symbols-next-plan text-lg></span
 					></el-button>
 				</el-tooltip>
@@ -54,7 +61,10 @@ async function toNextStage() {
 					:content="$t('actions.edit')"
 					placement="top"
 				>
-					<el-button @click="showEditor = true" size="small"
+					<el-button
+						@click="showEditor = true"
+						size="small"
+						:data-test-unit="getUnitTestId('edit')"
 						><span i-material-symbols-edit text-lg></span
 					></el-button>
 				</el-tooltip>
@@ -82,6 +92,7 @@ async function toNextStage() {
 		title="Edit Progress"
 		width="90%"
 		max-w-screen-sm
+		:data-test-unit="getUnitTestId('dialog')"
 	>
 		<ProgressForm
 			:progress="progress"
