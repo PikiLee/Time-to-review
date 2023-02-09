@@ -1,8 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, expect, test, vi, beforeEach } from 'vitest'
-import { update, del } from '@/database/progress'
-import { errorMsg, successMsg } from '@/utils/useMessage'
-import ProgressForm from '@/components/Progress/ProgressForm.vue'
+import { update } from '@/database/progress'
+import { successMsg } from '@/utils/useMessage'
 import { createGetter } from './utils'
 import ProgressItem from '@/components/Progress/ProgressItem.vue'
 
@@ -12,6 +11,13 @@ const { get, find } = createGetter(NAME_SPACE)
 vi.mock('vue-i18n', () => {
 	return {
 		useI18n: () => ({ t: () => '' })
+	}
+})
+
+vi.mock('@/database/progress', () => {
+	return {
+		update: vi.fn(async () => 'hello'),
+		del: vi.fn(async () => {})
 	}
 })
 
