@@ -4,6 +4,7 @@ import { update, del } from '@/database/progress'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import ProgressForm from '@/components/Progress/ProgressForm.vue'
 import { createGetter } from './utils'
+import DeleteButton from '@/components/Others/DeleteButton.vue'
 
 const NAME_SPACE = 'progress-form'
 const { get, find } = createGetter(NAME_SPACE)
@@ -118,10 +119,13 @@ describe('ProgressForm', () => {
 				mocks: {
 					$t
 				}
+			},
+			components: {
+				DeleteButton
 			}
 		})
 
-		await get(wrapper, 'delete').trigger('click')
+		await wrapper.getComponent(DeleteButton).vm.$emit('delete')
 
 		await flushPromises()
 		expect(del).toHaveBeenCalledOnce()

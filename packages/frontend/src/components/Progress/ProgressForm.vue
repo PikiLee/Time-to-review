@@ -133,12 +133,13 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 				>
 					{{ $t('actions.confirm') }}
 				</el-button>
-				<el-button
-					@click="del(progress._id)"
-					data-testid="progress-list-item-delete"
+
+				<DeleteButton
+					:name="props.progress.name"
 					:data-test-unit="`${NAME_SPACE}-delete`"
-					>{{ $t('actions.delete') }}</el-button
-				>
+					data-testid="progress-list-item-delete"
+					@delete="del(progress._id)"
+				/>
 			</div>
 		</el-form-item>
 	</el-form>
