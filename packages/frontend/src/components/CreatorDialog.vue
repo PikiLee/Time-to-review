@@ -28,6 +28,8 @@ watch(
 async function handleCreate() {
 	try {
 		if (!input.value) throw new Error(t('errors.required'))
+		if (input.value.length > 60)
+			throw new Error('At most 60 characters long.')
 		if (!isCreatingCourse.value) {
 			await createProgress(input.value)
 		} else {

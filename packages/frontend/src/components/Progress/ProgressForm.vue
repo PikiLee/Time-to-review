@@ -27,9 +27,10 @@ const rules = reactive<FormRules>({
 	name: [
 		{ required: true, message: 'Please input name', trigger: 'blur' },
 		{
+			type: 'string',
 			min: 1,
-			max: 20,
-			message: 'Length should be 1 to 20',
+			max: 60,
+			message: 'Length should be 1 to 60',
 			trigger: 'blur'
 		}
 	],
@@ -40,6 +41,7 @@ const rules = reactive<FormRules>({
 			trigger: 'change'
 		},
 		{
+			type: 'number',
 			validator(_, value) {
 				return (
 					typeof value === 'number' &&
@@ -53,6 +55,7 @@ const rules = reactive<FormRules>({
 	],
 	lastDate: [
 		{
+			type: 'string',
 			required: true,
 			message: 'Please select last review date',
 			trigger: 'change'

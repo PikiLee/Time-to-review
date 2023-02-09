@@ -36,6 +36,13 @@ const rules = reactive<FormRules>({
 				t('components.course.courseSetting.name')
 			]),
 			trigger: 'blur'
+		},
+		{
+			type: 'string',
+			min: 1,
+			max: 60,
+			message: 'Length should be 1 to 60',
+			trigger: 'blur'
 		}
 	],
 	intervals: [
@@ -47,9 +54,11 @@ const rules = reactive<FormRules>({
 			trigger: 'blur'
 		},
 		{
+			type: 'array',
 			validator(_, value: number[]) {
 				return value.length >= 1 && value.every((v) => v >= 1)
-			}
+			},
+			message: 'All intervals should larger than 0.'
 		}
 	]
 })

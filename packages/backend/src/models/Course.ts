@@ -21,7 +21,7 @@ const courseSchema = new Schema<CourseSchemaType>(
 			type: String,
 			required: true,
 			minlength: 1,
-			maxlength: 20
+			maxlength: 60
 		},
 		owner: {
 			type: mongoose.SchemaTypes.ObjectId,
