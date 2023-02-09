@@ -6,28 +6,37 @@ import { computed } from 'vue'
 import {
 	toggleArchive as rawToggleArchive,
 	toggleStatus as rawToggleStatus,
-	del
+	del as rawDel
 } from '@/database/course'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useCreatedTime } from '@/utils/useDayjs'
+import { createUnitTestIdGetter } from '@/unit/utils'
+import { useVModel } from '@vueuse/core'
+import { useCourseStore } from '@/store/course.store'
 
 dayjs.extend(relativeTime)
 
 const props = defineProps<{
 	course: Course
 }>()
+const emit = defineEmits(['update:course'])
 
+const NAME_SPACE = 'course-card'
+const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
+
+const course = useVModel(props, 'course', emit)
 const isInProgress = computed(
-	() => props.course.status === CourseStatus['In Progress']
+	() => course.value.status === CourseStatus['In Progress']
 )
 
-const isArchived = computed(() => props.course.archived)
+const isArchived = computed(() => course.value.archived)
 
-const { createdTime } = useCreatedTime(props.course.createdAt)
+const { createdTime } = useCreatedTime(course.value.createdAt)
 
 async function toggleArchive(courseId: string) {
 	try {
-		await rawToggleArchive(courseId)
+		await rawToggleArchive(courseId, !course.value.archived)
+		course.value.archived = !course.value.archived
 		successMsg('Action succeeded.')
 	} catch (err) {
 		errorMsg(`Action Failed. ${err}`)
@@ -36,8 +45,24 @@ async function toggleArchive(courseId: string) {
 
 async function toggleStatus(courseId: string) {
 	try {
-		await rawToggleStatus(courseId)
+		const newStatus =
+			course.value.status === CourseStatus['In Progress']
+				? CourseStatus.Done
+				: CourseStatus['In Progress']
+		await rawToggleStatus(courseId, newStatus)
+		course.value.status = newStatus
 		successMsg('Action succeeded.')
+	} catch (err) {
+		errorMsg(`Action Failed. ${err}`)
+	}
+}
+
+async function handleDelete() {
+	try {
+		await rawDel(course.value._id)
+		const courseStore = useCourseStore()
+		courseStore.del(course.value._id)
+		successMsg('Delete Succeeded.')
 	} catch (err) {
 		errorMsg(`Action Failed. ${err}`)
 	}
@@ -45,7 +70,10 @@ async function toggleStatus(courseId: string) {
 </script>
 
 <template>
-	<el-card data-testid="course-card">
+	<el-card
+		data-testid="course-card"
+		:data-test-unit="getUnitTestId('wrapper')"
+	>
 		<li grid grid-rows-2 grid-cols-5 gap-2 items-center>
 			<el-tooltip
 				:content="
@@ -55,6 +83,7 @@ async function toggleStatus(courseId: string) {
 				"
 				placement="top"
 			>
+				<!-- Archive Button -->
 				<button
 					row-span-2
 					text-size-3xl
@@ -72,12 +101,14 @@ async function toggleStatus(courseId: string) {
 						v-if="!isArchived"
 						i-mdi-archive
 						@click="toggleArchive(course._id)"
+						:data-test-unit="getUnitTestId('archive')"
 					></div>
 					<div
 						v-else
 						i-mdi-archive-cancel
 						class="translate-y-0.25"
 						@click="toggleArchive(course._id)"
+						:data-test-unit="getUnitTestId('unarchive')"
 					></div>
 				</button>
 			</el-tooltip>
@@ -91,6 +122,7 @@ async function toggleStatus(courseId: string) {
 				"
 				placement="top"
 			>
+				<!-- Toggle Status Button -->
 				<button
 					row-span-2
 					text-size-3xl
@@ -108,11 +140,13 @@ async function toggleStatus(courseId: string) {
 						v-if="isInProgress"
 						i-ic-round-done
 						@click="toggleStatus(course._id)"
+						:data-test-unit="getUnitTestId('done')"
 					></div>
 					<div
 						v-else
 						i-mdi-undo
 						@click="toggleStatus(course._id)"
+						:data-test-unit="getUnitTestId('undone')"
 					></div>
 				</button>
 			</el-tooltip>
@@ -122,6 +156,7 @@ async function toggleStatus(courseId: string) {
 				:content="$t('actions.delete')"
 				placement="top"
 			>
+				<!-- Delete Button -->
 				<button
 					row-span-2
 					text-3xl
@@ -129,13 +164,16 @@ async function toggleStatus(courseId: string) {
 					cursor-pointer
 					align-middle
 					hover:text-lime-500
-					@click="del(course._id)"
+					@click="handleDelete"
 					:aria-label="$t('actions.delete')"
 					data-testid="course-card-delete"
+					:data-test-unit="getUnitTestId('delete')"
 				>
 					<div i-ic-round-delete-forever></div>
 				</button>
 			</el-tooltip>
+
+			<!-- Name -->
 			<RouterLink
 				link-decoration-none
 				:to="{ name: 'course', params: { id: course._id } }"
@@ -150,6 +188,7 @@ async function toggleStatus(courseId: string) {
 					<el-badge
 						:value="course.dueCount"
 						v-if="course.dueCount > 0"
+						:data-test-unit="getUnitTestId('badge')"
 					>
 						<div
 							w-full
