@@ -69,6 +69,7 @@ async function handleDelete() {
 	<el-card
 		data-testid="course-card"
 		:data-test-unit="getUnitTestId('wrapper')"
+		select-none
 	>
 		<li grid grid-rows-2 grid-cols-5 gap-2 items-center>
 			<el-tooltip

@@ -4,7 +4,8 @@ import {
 	type NewCourse,
 	type UpdateCourse,
 	type Options,
-	buildOptions
+	buildOptions,
+	type Course
 } from 'shared'
 import { api } from './api'
 
@@ -47,7 +48,7 @@ export async function fetch(courseId: string, options?: Options) {
 	return res.data
 }
 
-export async function fetchAll(options?: Options) {
+export async function fetchAll(options?: Options): Promise<Course[]> {
 	const { withProgresses, withDueProgresses } = buildOptions(options)
 
 	const res = await api.get(`${COURSE_URL}/`, {

@@ -37,8 +37,6 @@ export interface NewCourse
 		Course,
 		| '_id'
 		| 'owner'
-		| 'status'
-		| 'archived'
 		| 'createdAt'
 		| 'progresses'
 		| 'updatedAt'

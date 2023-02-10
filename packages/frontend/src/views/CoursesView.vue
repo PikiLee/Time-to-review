@@ -1,70 +1,77 @@
 <script setup lang="ts">
 import CourseCard from '@/components/Course/CourseCard.vue'
-import { useCourseStore } from '@/store/course.store'
+import FetchComponent from '@/components/Others/FetchComponent.vue'
+import Items from '@/components/Others/ListItems.vue'
+import { fetchAll, update } from '@/database/course'
+import { CourseStatus, type Course } from 'shared'
+import type { SortableEvent } from 'sortablejs'
 import AddButton from '../components/AddButton.vue'
+import { handleSort as rawHandleSort } from '../composables/useSort'
 
-const courseStore = useCourseStore()
+async function handleSort(courses: Course[], evt: SortableEvent) {
+	const course = rawHandleSort(courses, evt)
+	if (course) {
+		await update(course._id, {
+			order: course.order
+		})
+	}
+}
 </script>
 <template>
 	<AddButton type="course" />
 	<div data-testid="courses-view">
-		<h2 text-center>{{ $t('courses.title') }}</h2>
-		<ul list-none>
-			<li data-testid="courses-view-in-progress-courses">
-				<h2 text-center>{{ $t('courses.inProgress') }}</h2>
-				<ul
-					list-none
-					grid
-					grid-cols-2
-					gap-6
-					p-4
-					v-if="courseStore.coursesInProgress.length"
+		<FetchComponent :fetch-func="fetchAll">
+			<template #data="{ data: courses }">
+				<Items
+					:items="
+						courses.filter(
+							(course: Course) =>
+								course.status === CourseStatus['In Progress'] && course.archived !== true
+						)
+					"
+					item-key="_id"
+					title="In Progress"
+					sortable
+					@dragend="(evt) => handleSort(courses, evt)"
 				>
-					<CourseCard
-						:course="course"
-						v-for="course in courseStore.coursesInProgress"
-						:key="course._id"
-					/>
-				</ul>
-				<el-empty v-else :description="$t('common.empty')" />
-			</li>
-			<li data-testid="courses-view-done-courses">
-				<h2 text-center>{{ $t('courses.done') }}</h2>
-				<ul
-					list-none
-					grid
-					grid-cols-2
-					gap-6
-					p-4
-					v-if="courseStore.coursesDone.length"
+					<template #item="course">
+						<CourseCard :course="course" />
+					</template>
+				</Items>
+				<Items
+					:items="
+						courses.filter(
+							(course: Course) =>
+								course.status === CourseStatus['Done'] && course.archived !== true
+						)
+					"
+					item-key="_id"
+					title="Done"
+					sortable
+					@dragend="(evt) => handleSort(courses, evt)"
 				>
-					<CourseCard
-						:course="course"
-						v-for="course in courseStore.coursesDone"
-						:key="course._id"
-					/>
-				</ul>
-				<el-empty v-else :description="$t('common.empty')" />
-			</li>
-			<li data-testid="courses-view-archived-courses">
-				<h2 text-center>{{ $t('courses.archived') }}</h2>
-				<ul
-					list-none
-					grid
-					grid-cols-2
-					gap-6
-					p-4
-					v-if="courseStore.coursesArchived.length"
+					<template #item="course">
+						<CourseCard :course="course" />
+					</template>
+				</Items>
+				<Items
+					:items="
+						courses.filter(
+							(course: Course) =>
+								course.archived === true
+						)
+					"
+					item-key="_id"
+					title="Archived"
+					sortable
+					@dragend="(evt) => handleSort(courses, evt)"
 				>
-					<CourseCard
-						:course="course"
-						v-for="course in courseStore.coursesArchived"
-						:key="course._id"
-					/>
-				</ul>
-				<el-empty v-else :description="$t('common.empty')" />
-			</li>
-		</ul>
+					<template #item="course">
+						<CourseCard :course="course" />
+					</template>
+				</Items>
+			</template>
+		</FetchComponent>
 	</div>
 </template>
 

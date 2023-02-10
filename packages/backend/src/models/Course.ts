@@ -129,6 +129,10 @@ function createProjectStage(options?: {
 	}
 }
 
+const sortStage = {
+	$sort: { order: 1, name: 1 }
+} as const
+
 export async function create(newCourse: NewCourse) {
 	const user = await User.findById(newCourse.owner)
 
@@ -211,7 +215,8 @@ export async function fetch(
 	const result = await Course.aggregate([
 		{ $match: filter },
 		lookupStage,
-		createProjectStage({ withProgresses, withDueProgresses })
+		createProjectStage({ withProgresses, withDueProgresses }),
+		sortStage
 	])
 
 	return result

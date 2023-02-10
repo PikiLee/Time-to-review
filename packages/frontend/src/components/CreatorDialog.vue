@@ -4,6 +4,9 @@ import { create as createCourse } from '@/database/course'
 import { create as createProgress } from '@/database/progress'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
+import { useUserStore } from '@/store/user.store'
+import { useCourseStore } from '@/store/course.store'
+import { getStartOfDay } from '@/utils/progress.utils'
 
 const props = defineProps<{
 	type: 'course' | 'progress'
@@ -31,9 +34,25 @@ async function handleCreate() {
 		if (input.value.length > 60)
 			throw new Error('At most 60 characters long.')
 		if (!isCreatingCourse.value) {
-			await createProgress(input.value)
+			const userStore = useUserStore()
+			const courseStore = useCourseStore()
+			await createProgress({
+				name: input.value,
+				owner: userStore.user?._id ?? 'sdfsd',
+				course: courseStore.currentCourse?._id ?? '2312',
+				order: 1,
+				lastDate: getStartOfDay(Date.now())
+			})
 		} else {
-			await createCourse(input.value)
+			const userStore = useUserStore()
+			await createCourse({
+				name: input.value,
+				owner: userStore.user?._id ?? 'sdfsd',
+				status: 0,
+				archived: false,
+				intervals: [1, 7, 14, 28],
+				order: 1
+			})
 		}
 		emit('ok')
 		successMsg(

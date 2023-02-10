@@ -81,7 +81,9 @@ describe('', () => {
 		const newCourse: NewCourse = {
 			name: 'test',
 			owner: userId,
-			order: 3
+			order: 3,
+			status: 0,
+			archived: false
 		}
 		const res = await client.post(`${COURSE_URL}`).send(newCourse)
 

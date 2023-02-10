@@ -47,7 +47,7 @@ async function toNextStage() {
 		:body-style="{ height: '100%' }"
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
-		<div flex flex-col justify-between h-full>
+		<div flex flex-col justify-start h-full>
 			<!-- Stage -->
 			<div flex items-center gap-2>
 				<h4 m-0 text-xs font-thin text-warmgray-400>
