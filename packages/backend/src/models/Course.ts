@@ -13,7 +13,7 @@ import {
 import mongoose, { Schema, Types } from 'mongoose'
 import lodash from 'lodash-es'
 import User from './User.js'
-import { toObjectId } from '../utils/id'
+import { toObjectId } from '../utils/id.js'
 
 const courseSchema = new Schema<CourseSchemaType>(
 	{
