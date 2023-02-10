@@ -13,7 +13,7 @@ import {
 import mongoose, { Schema, Types } from 'mongoose'
 import lodash from 'lodash-es'
 import User from './User.js'
-import { toObjectId } from '../utils/id.js'
+import { toObjectId } from '../utils/id'
 
 const courseSchema = new Schema<CourseSchemaType>(
 	{
@@ -129,99 +129,28 @@ function createProjectStage(options?: {
 	}
 }
 
-/**
- * fetch a course by id
- */
-export async function fetch(
-	courseId: Types.ObjectId,
-	options?: {
-		withProgresses?: boolean
-		userId?: Types.ObjectId
-	}
-) {
-	const { withProgresses, userId } = lodash.assign(
-		{},
-		{ withProgresses: false, userId: null },
-		options
-	)
-	let result
-	if (!withProgresses) {
-		const filter = { _id: courseId } as CourseSchemaType
-		if (userId) filter.owner = userId
-		result = await Course.aggregate([
-			{ $match: filter },
-			lookupStage,
-			createProjectStage()
-		])
-	} else {
-		const filter = { _id: courseId } as CourseSchemaType
-		if (userId) filter.owner = userId
-		result = await Course.aggregate([
-			{ $match: filter },
-			lookupStage,
-			createProjectStage({ withProgresses: true })
-		])
-	}
-
-	if (result.length > 0) {
-		return result[0]
-	} else {
-		throw Error('Course Not Found')
-	}
-}
-
-export async function fetchAll(rawUserId: string) {
-	const result = await Course.aggregate([
-		{ $match: { owner: toObjectId(rawUserId) } },
-		lookupStage,
-		createProjectStage()
-	])
-	return result
-}
-
-/**
- * fetch due course for a user
- */
-export async function fetchDue(userId: Types.ObjectId) {
-	return await Course.aggregate([
-		{ $match: { owner: userId } },
-		lookupStage,
-		createProjectStage({ withDueProgresses: true }),
-		{ $match: { isDue: true } }
-	])
-}
-
 export async function create(newCourse: NewCourse) {
 	const user = await User.findById(newCourse.owner)
 
 	if (user) {
 		const course = new Course(newCourse)
 		await course.save()
-		return await fetch(course._id)
+		return (await fetch({ _id: course._id }))[0]
 	} else {
 		throw Error('User not found.')
 	}
 }
 
-export async function del(
-	_id: Types.ObjectId,
-	options?: {
-		userId?: Types.ObjectId
-	}
-) {
-	const filter: any = { _id }
-	if (options?.userId) filter.owner = options.userId
-	return !!(await Course.findOneAndDelete({ _id }))
-}
-
 export async function update(
-	_id: Types.ObjectId,
+	_id: Types.ObjectId | string,
 	updateCourse: UpdateCourse,
 	options?: {
 		withProgresses?: boolean
+		withDueProgresses?: boolean
 		userId?: Types.ObjectId
 	}
 ) {
+	_id = toObjectId(_id)
 	const course = await Course.findById(_id)
 	if (!course) throw new Error('Course not found.')
 
@@ -249,5 +178,41 @@ export async function update(
 	}
 	await course.save()
 
-	return await fetch(_id, options)
+	return (await fetch({ _id: course._id }, options))[0]
+}
+
+export async function del(
+	_id: Types.ObjectId,
+	options?: {
+		userId?: Types.ObjectId
+	}
+) {
+	const filter: any = { _id }
+	if (options?.userId) filter.owner = options.userId
+	return !!(await Course.findOneAndDelete({ _id }))
+}
+
+/**
+ * fetch a course by id
+ */
+export async function fetch(
+	filter: Partial<CourseSchemaType>,
+	options?: {
+		withProgresses?: boolean
+		withDueProgresses?: boolean
+	}
+) {
+	const { withProgresses, withDueProgresses } = lodash.assign(
+		{},
+		{ withProgresses: false, withDueProgresses: false },
+		options
+	)
+
+	const result = await Course.aggregate([
+		{ $match: filter },
+		lookupStage,
+		createProjectStage({ withProgresses, withDueProgresses })
+	])
+
+	return result
 }

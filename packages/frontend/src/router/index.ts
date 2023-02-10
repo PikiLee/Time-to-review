@@ -4,7 +4,7 @@ import CoursesView from '../views/CoursesView.vue'
 import CourseView from '../views/CourseView.vue'
 import RegisterView from '../views/AuthView.vue'
 import { errorMsg } from '@/utils/useMessage'
-import { fetchAll, fetchDue, fetchWithProgresses } from '@/database/course'
+import { fetchAll } from '@/database/course'
 import { useUserStore } from '@/store/user.store'
 import NotFound from '@/views/NotFound.vue'
 
@@ -15,10 +15,7 @@ const router = createRouter({
 			path: '/home',
 			name: 'home',
 			component: HomeView,
-			meta: { requiresAuth: true },
-			beforeEnter() {
-				return fetchDue()
-			}
+			meta: { requiresAuth: true }
 		},
 		{
 			path: '/courses',
@@ -33,17 +30,7 @@ const router = createRouter({
 			path: '/course/:id',
 			name: 'course',
 			component: CourseView,
-			meta: { requiresAuth: true },
-			async beforeEnter(to) {
-				try {
-					const rawId = to.params.id
-					const courseId =
-						typeof rawId === 'string' ? rawId : rawId[0]
-					return await fetchWithProgresses(courseId)
-				} catch {
-					return { name: '404', params: { catchAll: 'course' } }
-				}
-			}
+			meta: { requiresAuth: true }
 		},
 		{
 			path: '/auth',

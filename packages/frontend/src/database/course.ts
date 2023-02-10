@@ -1,62 +1,44 @@
-import { keys } from 'lodash-es'
-import { useCourseStore } from './../store/course.store'
+import lodash from 'lodash-es'
 import { useUserStore } from './../store/user.store'
 import {
-	CourseStatus,
 	COURSE_URL,
 	type NewCourse,
-	type UpdateCourse
+	type UpdateCourse,
+	type Options,
+	buildOptions
 } from 'shared'
 import { api } from './api'
 
-export async function create(name: string) {
-	if (!name) throw 'Must not empty!'
-	const userStore = useUserStore()
-	if (!userStore.user) throw 'Must login first!'
-	const newCourse: NewCourse = {
-		owner: userStore.user._id,
-		name,
-		order: 0
+export async function create(newCourse: string | NewCourse) {
+	if (typeof newCourse === 'string') {
+		const userStore = useUserStore()
+		if (!userStore.user) throw 'Must login first!'
+		newCourse = {
+			owner: userStore.user._id,
+			name: newCourse,
+			order: 0
+		}
+
+		if (!newCourse.name) throw 'Must not empty!'
+
+		return await api.post(COURSE_URL, newCourse)
 	}
-
-	const res = await api.post(COURSE_URL, {
-		data: newCourse
-	})
-
-	const courseStore = useCourseStore()
-	courseStore.courses.push(res.data)
 }
+
 export async function update(
 	courseId: string,
 	updateCourse: UpdateCourse,
-	options: {
-		withProgresses: boolean
-	} = { withProgresses: false }
+	options?: Options
 ) {
-	if (keys(updateCourse).length === 0)
-		throw new Error('Something went wrong! Please refresh!')
+	if (lodash.keys(updateCourse).length === 0) return
 
-	const res = await api.put(`${COURSE_URL}/${courseId}`, updateCourse, {
+	const { withProgresses, withDueProgresses } = buildOptions(options)
+
+	return await api.put(`${COURSE_URL}/${courseId}`, updateCourse, {
 		params: {
-			withProgresses: options.withProgresses
+			withProgresses,
+			withDueProgresses
 		}
-	})
-	const courseStore = useCourseStore()
-
-	courseStore.currentCourse = res.data
-
-	return res.data
-}
-
-export async function toggleArchive(_id: string, archived: boolean) {
-	return await update(_id, {
-		archived
-	})
-}
-
-export async function toggleStatus(_id: string, status: CourseStatus) {
-	return await update(_id, {
-		status
 	})
 }
 
@@ -64,27 +46,24 @@ export async function del(_id: string) {
 	return await api.delete(`${COURSE_URL}/${_id}`)
 }
 
-export async function fetchDue() {
-	const res = await api.get(`${COURSE_URL}/due`)
+export async function fetch(courseId: string, options?: Options) {
+	const { withProgresses, withDueProgresses } = buildOptions(options)
 
-	const courseStore = useCourseStore()
-	courseStore.dueCourses = res.data
-}
-
-export async function fetchWithProgresses(courseId: string) {
-	const res = await api.get(`${COURSE_URL}/${courseId}`, {
+	return await api.get(`${COURSE_URL}/${courseId}`, {
 		params: {
-			withProgresses: true
+			withProgresses,
+			withDueProgresses
 		}
 	})
-
-	const courseStore = useCourseStore()
-	courseStore.currentCourse = res.data
 }
 
-export async function fetchAll() {
-	const res = await api.get(`${COURSE_URL}/`)
+export async function fetchAll(options?: Options) {
+	const { withProgresses, withDueProgresses } = buildOptions(options)
 
-	const courseStore = useCourseStore()
-	courseStore.courses = res.data
+	return await api.get(`${COURSE_URL}/`, {
+		params: {
+			withProgresses,
+			withDueProgresses
+		}
+	})
 }

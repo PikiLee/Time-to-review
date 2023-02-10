@@ -1,6 +1,6 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, test, vi, beforeEach, expect } from 'vitest'
-import { toggleArchive, toggleStatus, del as rawDel } from '@/database/course'
+import { update, del as rawDel } from '@/database/course'
 import { successMsg } from '@/utils/useMessage'
 import { createGetter } from './utils'
 import type { Course } from 'shared'
@@ -89,13 +89,13 @@ describe('Rendered', () => {
 		await get(wrapper, 'archive').trigger('click')
 		await flushPromises()
 
-		expect(toggleArchive).toHaveBeenCalledOnce()
+		expect(update).toHaveBeenCalledOnce()
 		expect(successMsg).toHaveBeenCalledOnce()
 
 		await get(wrapper, 'unarchive').trigger('click')
 		await flushPromises()
 
-		expect(toggleArchive).toHaveBeenCalledTimes(2)
+		expect(update).toHaveBeenCalledTimes(2)
 		expect(successMsg).toHaveBeenCalledTimes(2)
 	})
 
@@ -116,13 +116,13 @@ describe('Rendered', () => {
 		await get(wrapper, 'done').trigger('click')
 		await flushPromises()
 
-		expect(toggleStatus).toHaveBeenCalledOnce()
+		expect(update).toHaveBeenCalledOnce()
 		expect(successMsg).toHaveBeenCalledOnce()
 
 		await get(wrapper, 'undone').trigger('click')
 		await flushPromises()
 
-		expect(toggleStatus).toHaveBeenCalledTimes(2)
+		expect(update).toHaveBeenCalledTimes(2)
 		expect(successMsg).toHaveBeenCalledTimes(2)
 	})
 

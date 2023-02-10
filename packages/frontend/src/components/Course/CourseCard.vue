@@ -3,11 +3,7 @@ import { type Course, CourseStatus } from 'shared'
 import dayjs from 'dayjs/esm'
 import relativeTime from 'dayjs/esm/plugin/relativeTime'
 import { computed } from 'vue'
-import {
-	toggleArchive as rawToggleArchive,
-	toggleStatus as rawToggleStatus,
-	del as rawDel
-} from '@/database/course'
+import { update, del as rawDel } from '@/database/course'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useCreatedTime } from '@/utils/useDayjs'
 import { createUnitTestIdGetter } from '@/unit/utils'
@@ -35,7 +31,7 @@ const { createdTime } = useCreatedTime(course.value.createdAt)
 
 async function toggleArchive(courseId: string) {
 	try {
-		await rawToggleArchive(courseId, !course.value.archived)
+		await update(courseId, { archived: !course.value.archived })
 		course.value.archived = !course.value.archived
 		successMsg('Action succeeded.')
 	} catch (err) {
@@ -49,7 +45,7 @@ async function toggleStatus(courseId: string) {
 			course.value.status === CourseStatus['In Progress']
 				? CourseStatus.Done
 				: CourseStatus['In Progress']
-		await rawToggleStatus(courseId, newStatus)
+		await update(courseId, { status: newStatus })
 		course.value.status = newStatus
 		successMsg('Action succeeded.')
 	} catch (err) {
