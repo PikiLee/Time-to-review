@@ -125,7 +125,7 @@ export function createProgressProjectStage(
 
 export function createSortStage() {
 	return {
-		$sort: { order: 1 }
+		$sort: { order: 1, name: 1 }
 	} as const
 }
 
