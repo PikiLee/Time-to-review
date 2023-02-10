@@ -1,5 +1,4 @@
-import lodash from 'lodash-es'
-import { useUserStore } from './../store/user.store'
+import { keys } from 'lodash-es'
 import {
 	COURSE_URL,
 	type NewCourse,
@@ -9,20 +8,9 @@ import {
 } from 'shared'
 import { api } from './api'
 
-export async function create(newCourse: string | NewCourse) {
-	if (typeof newCourse === 'string') {
-		const userStore = useUserStore()
-		if (!userStore.user) throw 'Must login first!'
-		newCourse = {
-			owner: userStore.user._id,
-			name: newCourse,
-			order: 0
-		}
-
-		if (!newCourse.name) throw 'Must not empty!'
-
-		return await api.post(COURSE_URL, newCourse)
-	}
+export async function create(newCourse: NewCourse) {
+	const res = await api.post(COURSE_URL, newCourse)
+	return res.data
 }
 
 export async function update(
@@ -30,16 +18,17 @@ export async function update(
 	updateCourse: UpdateCourse,
 	options?: Options
 ) {
-	if (lodash.keys(updateCourse).length === 0) return
+	if (keys(updateCourse).length === 0) return
 
 	const { withProgresses, withDueProgresses } = buildOptions(options)
 
-	return await api.put(`${COURSE_URL}/${courseId}`, updateCourse, {
+	const res = await api.put(`${COURSE_URL}/${courseId}`, updateCourse, {
 		params: {
 			withProgresses,
 			withDueProgresses
 		}
 	})
+	return res.data
 }
 
 export async function del(_id: string) {
@@ -49,21 +38,23 @@ export async function del(_id: string) {
 export async function fetch(courseId: string, options?: Options) {
 	const { withProgresses, withDueProgresses } = buildOptions(options)
 
-	return await api.get(`${COURSE_URL}/${courseId}`, {
+	const res = await api.get(`${COURSE_URL}/${courseId}`, {
 		params: {
 			withProgresses,
 			withDueProgresses
 		}
 	})
+	return res.data
 }
 
 export async function fetchAll(options?: Options) {
 	const { withProgresses, withDueProgresses } = buildOptions(options)
 
-	return await api.get(`${COURSE_URL}/`, {
+	const res = await api.get(`${COURSE_URL}/`, {
 		params: {
 			withProgresses,
 			withDueProgresses
 		}
 	})
+	return res.data
 }
