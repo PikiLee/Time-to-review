@@ -38,6 +38,7 @@ async function handleSort(progresses: Progress[], evt: SortableEvent) {
 					:items="course.progresses"
 					item-key="_id"
 					:title="course.name"
+					:badge="course.progresses.length"
 					sortable
 					@dragend="(evt) => handleSort(course.progresses, evt)"
 				>

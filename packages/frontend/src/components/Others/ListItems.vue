@@ -8,6 +8,7 @@ const props = defineProps<{
 	title?: string
 	group?: string
 	sortable?: boolean
+	badge?: string
 }>()
 
 const emit = defineEmits(['dragend'])
@@ -43,11 +44,13 @@ onMounted(() => {
 </script>
 
 <template>
-	<div p-2 m-4>
-		<div text-3xl flex items-center>
+	<div p-2>
+		<div text-3xl flex items-center mb-2>
 			<div text-2xl flex-grow-1 items-center>
-				<h3 v-if="title" m-0>{{ title }}</h3>
-				<slot v-else name="title" />
+				<el-badge v-if="title" :value="badge" type="primary">
+					<h3 m-0>{{ title }}</h3>
+				</el-badge>
+				<slot v-else name="header" />
 			</div>
 			<div flex items-center text-3xl>
 				<slot name="actions" />
@@ -67,6 +70,8 @@ onMounted(() => {
 		</div>
 		<ul
 			list-none
+			m-none
+			p-0
 			:class="listClasses"
 			v-show="!hidden && !isEmpty"
 			ref="wrapper"

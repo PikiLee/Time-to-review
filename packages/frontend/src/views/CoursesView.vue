@@ -22,54 +22,56 @@ async function handleSort(courses: Course[], evt: SortableEvent) {
 	<div data-testid="courses-view">
 		<FetchComponent :fetch-func="fetchAll">
 			<template #data="{ data: courses }">
-				<Items
-					:items="
+				<div grid gap-8>
+					<Items
+						:items="
 						courses.filter(
 							(course: Course) =>
 								course.status === CourseStatus['In Progress'] && course.archived !== true
 						)
 					"
-					item-key="_id"
-					title="In Progress"
-					sortable
-					@dragend="(evt) => handleSort(courses, evt)"
-				>
-					<template #item="course">
-						<CourseCard :course="course" />
-					</template>
-				</Items>
-				<Items
-					:items="
+						item-key="_id"
+						title="In Progress"
+						sortable
+						@dragend="(evt) => handleSort(courses, evt)"
+					>
+						<template #item="course">
+							<CourseCard :course="course" />
+						</template>
+					</Items>
+					<Items
+						:items="
 						courses.filter(
 							(course: Course) =>
 								course.status === CourseStatus['Done'] && course.archived !== true
 						)
 					"
-					item-key="_id"
-					title="Done"
-					sortable
-					@dragend="(evt) => handleSort(courses, evt)"
-				>
-					<template #item="course">
-						<CourseCard :course="course" />
-					</template>
-				</Items>
-				<Items
-					:items="
+						item-key="_id"
+						title="Done"
+						sortable
+						@dragend="(evt) => handleSort(courses, evt)"
+					>
+						<template #item="course">
+							<CourseCard :course="course" />
+						</template>
+					</Items>
+					<Items
+						:items="
 						courses.filter(
 							(course: Course) =>
 								course.archived === true
 						)
 					"
-					item-key="_id"
-					title="Archived"
-					sortable
-					@dragend="(evt) => handleSort(courses, evt)"
-				>
-					<template #item="course">
-						<CourseCard :course="course" />
-					</template>
-				</Items>
+						item-key="_id"
+						title="Archived"
+						sortable
+						@dragend="(evt) => handleSort(courses, evt)"
+					>
+						<template #item="course">
+							<CourseCard :course="course" />
+						</template>
+					</Items>
+				</div>
 			</template>
 		</FetchComponent>
 	</div>
