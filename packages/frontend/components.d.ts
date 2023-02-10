@@ -50,4 +50,7 @@ declare module '@vue/runtime-core' {
 		Sortable: typeof import('./src/components/Others/Sortable.vue')['default']
 		WatchComponent: typeof import('./src/components/Others/WatchComponent.vue')['default']
 	}
+	export interface ComponentCustomProperties {
+		vLoading: typeof import('element-plus/es')['ElLoadingDirective']
+	}
 }

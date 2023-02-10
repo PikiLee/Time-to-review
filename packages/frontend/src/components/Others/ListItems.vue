@@ -8,7 +8,7 @@ const props = defineProps<{
 	title?: string
 	group?: string
 	sortable?: boolean
-	badge?: string
+	badge?: string | number
 }>()
 
 const emit = defineEmits(['dragend'])
