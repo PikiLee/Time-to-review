@@ -1,12 +1,17 @@
 import type { MaybeRef } from '@vueuse/shared'
-import { CourseStatus, type Course } from 'shared'
-import { computed, ref } from 'vue'
-import { useApi } from './useApi'
+import { CourseStatus, type Course, type UpdateCourse } from 'shared'
+import type { SortableEvent } from 'sortablejs'
+import { computed, ref, watch } from 'vue'
+import type { Options } from './shared'
+import { createCourse, delCourse, updateCourse } from './useCourse'
+import { rawHandleSort } from './useSort'
 
 export function useCourses(rawItems: MaybeRef<Course[]>) {
 	const items = ref(rawItems)
 
-	const { create, update, del, find, handleSort } = useApi(items)
+	watch(items, () => items.value.sort((a, b) => a.order - b.order), {
+		deep: true
+	})
 
 	const itemsInprogress = computed(() => ({
 		title: 'In Progress',
@@ -27,6 +32,46 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 		title: 'Archived',
 		items: items.value.filter((item) => item.archived)
 	}))
+
+	function find(_id: string) {
+		return items.value.find((item) => item._id === _id)
+	}
+
+	async function create(name: string, options?: Options) {
+		const res = await createCourse(
+			{
+				name,
+				order:
+					items.value.length === 0
+						? 2000
+						: items.value.slice(-1)[0].order + 50
+			},
+			options
+		)
+		items.value.push(res)
+	}
+
+	async function update(
+		courseId: string,
+		updateItem: UpdateCourse,
+		options?: Options
+	) {
+		const res = await updateCourse(courseId, updateItem, options)
+		if (res) {
+			items.value = items.value.map((item) => {
+				if (item._id === res._id) {
+					return res
+				} else {
+					return item
+				}
+			})
+		}
+	}
+
+	async function del(courseId: string, options?: Options) {
+		await delCourse(courseId, options)
+		items.value = items.value.filter((item) => item._id !== courseId)
+	}
 
 	async function toggleArchive(_id: string) {
 		const item = find(_id)
@@ -70,6 +115,16 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 				? CourseStatus.Done
 				: CourseStatus['In Progress']
 		await update(item._id, { status: newStatus, order })
+	}
+
+	function handleSort(items: Course[], evt: SortableEvent) {
+		const updatedItems = rawHandleSort(items, evt)
+		if (updatedItems)
+			updatedItems.forEach((item) =>
+				update(item._id, {
+					order: item.order
+				})
+			)
 	}
 
 	return {

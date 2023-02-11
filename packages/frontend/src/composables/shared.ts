@@ -11,3 +11,13 @@ export function createWithDefaults<T>(defautls: T) {
 		return assign({}, defautls, options)
 	}
 }
+
+export interface Options {
+	successMsg?: boolean
+	errorMsg?: boolean
+}
+
+export const withDefaults = createWithDefaults({
+	successMsg: false,
+	errorMsg: true
+})

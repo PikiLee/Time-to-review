@@ -130,14 +130,7 @@ export function createSortStage() {
 	} as const
 }
 
-export async function fetch(
-	_id: Types.ObjectId,
-	options?: {
-		userId?: Types.ObjectId
-	}
-) {
-	const filter = { _id } as ProgressSchemaType
-	if (options?.userId) filter.owner = options.userId
+export async function fetch(filter: Partial<ProgressSchemaType>) {
 	const doc = await Progress.aggregate([
 		{ $match: filter },
 		{
@@ -151,11 +144,7 @@ export async function fetch(
 		createProgressProjectStage('$$CURRENT', { $arrayElemAt: ['$c', 0] }),
 		createSortStage()
 	])
-	if (doc.length > 0) {
-		return doc[0]
-	} else {
-		throw Error('Not Found')
-	}
+	return doc
 }
 
 export async function create(newProgress: NewProgress) {
@@ -168,7 +157,7 @@ export async function create(newProgress: NewProgress) {
 
 	const progress = new Progress(newProgress)
 	await progress.save()
-	return await fetch(progress._id)
+	return (await fetch({ _id: progress._id }))[0]
 }
 
 export async function del(
@@ -199,5 +188,5 @@ export async function update(
 		;(progress as any)[key] = value
 	}
 	await progress.save()
-	return await fetch(progress._id)
+	return (await fetch({ _id: progress._id }))[0]
 }

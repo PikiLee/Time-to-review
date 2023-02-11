@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, test, vi, beforeEach } from 'vitest'
 import CreatorDialog from '../components/CreatorDialog.vue'
-import { create } from '@/composables/useApi'
+import { create } from '@/composables/useSort'
 import { errorMsg } from '@/utils/useMessage'
 import { course1WithProgresses, courses } from './dummyData'
 

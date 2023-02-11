@@ -14,7 +14,6 @@ export async function update(
 	progressId: string,
 	updateProgress: UpdateProgress
 ) {
-	if (keys(updateProgress).length === 0) return
 	if (updateProgress.lastDate)
 		updateProgress.lastDate = getStartOfDay(updateProgress.lastDate)
 
@@ -26,4 +25,9 @@ export async function update(
 
 export async function del(progressId: string) {
 	return await api.delete(`${PROGRESS_URL}/${progressId}`)
+}
+
+export async function fetchAll(courseId: string) {
+	const res = await api.get(`${PROGRESS_URL}/all/${courseId}`)
+	return res.data
 }

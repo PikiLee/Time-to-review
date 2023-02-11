@@ -2,22 +2,13 @@
 import { ref, computed, watch } from 'vue'
 import { errorMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
-import type { Course, CourseWithProgress } from 'shared'
 
 const props = defineProps<{
-	resource:
-		| {
-				type: 'progress'
-				course: CourseWithProgress
-		  }
-		| {
-				type: 'course'
-				courses: Course[]
-		  }
+	type: 'course' | 'progress'
 }>()
-const emit = defineEmits(['ok'])
+const emit = defineEmits(['create:progress', 'create:course'])
 
-const isCreatingCourse = computed(() => props.resource.type === 'course')
+const isCreatingCourse = computed(() => props.type === 'course')
 const { t } = useI18n()
 const input = ref('')
 const defaultPlaceholder = computed(() => {
@@ -35,25 +26,11 @@ watch(
 async function handleCreate() {
 	if (!input.value) errorMsg(t('errors.required'))
 	if (input.value.length > 60) errorMsg('At most 60 characters long.')
-	if (props.resource.type === 'progress') {
-		// await create(
-		// 	{
-		// 		type: 'progress',
-		// 		name: input.value,
-		// 		course: props.resource.course._id
-		// 	},
-		// 	props.resource.course.progresses
-		// )
+	if (props.type === 'progress') {
+		emit('create:progress', input.value)
 	} else {
-		// await create(
-		// 	{
-		// 		type: 'course',
-		// 		name: input.value
-		// 	},
-		// 	props.resource.courses
-		// )
+		emit('create:course', input.value)
 	}
-	emit('ok')
 
 	input.value = ''
 }

@@ -1,4 +1,4 @@
-import { resolveMaybeRef } from '@/utils/helper'
+import { resolveMaybeRef } from './shared'
 import type { MaybeRef } from '@vueuse/shared'
 import { ref } from 'vue'
 

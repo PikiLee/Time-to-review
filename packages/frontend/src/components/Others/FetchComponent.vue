@@ -1,16 +1,8 @@
 <script setup lang="ts">
-import { useFetchData } from '@/composables/useFetchData'
-import { useVModel } from '@vueuse/core'
-
-const props = defineProps<{
-	fetchFunc: Function
-	data: any
+defineProps<{
+	loading: boolean
+	error: boolean
 }>()
-const emit = defineEmits(['update:data'])
-
-const data = useVModel(props, 'data', emit)
-
-const { loading, error } = useFetchData(props.fetchFunc, data)
 </script>
 
 <template>
@@ -30,8 +22,6 @@ const { loading, error } = useFetchData(props.fetchFunc, data)
 			>
 			</el-result>
 		</div>
-		<slot v-else name="data" :data="data" />
+		<slot v-else name="data" />
 	</div>
 </template>
-
-<style scoped></style>

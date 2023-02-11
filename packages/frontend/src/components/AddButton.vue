@@ -1,43 +1,26 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CreatorDialog from '@/components/CreatorDialog.vue'
-import type { Course, CourseWithProgress } from 'shared'
 
 const props = defineProps<{
-	resource:
-		| {
-				type: 'progress'
-				course: CourseWithProgress
-		  }
-		| {
-				type: 'course'
-				courses: Course[]
-		  }
+	type: 'course' | 'progress'
 }>()
+const emit = defineEmits(['create:progress', 'create:course'])
 
-const router = useRouter()
 const dialogVisible = ref(false)
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const largerThanMd = breakpoints.greater('md')
 const { t } = useI18n()
 
-const isCreatingCourse = computed(() => props.resource.type === 'course')
+const isCreatingCourse = computed(() => props.type === 'course')
 const toolTip = computed(() =>
 	isCreatingCourse.value
 		? t('addButton.course.create')
 		: t('addButton.progress.create')
 )
 const buttonType = computed(() => (isCreatingCourse.value ? 'primary' : 'info'))
-
-function handleOk() {
-	dialogVisible.value = false
-	if (isCreatingCourse.value) {
-		router.push({ name: 'courses' })
-	}
-}
 </script>
 
 <template>
@@ -63,7 +46,21 @@ function handleOk() {
 		:title="toolTip"
 		:width="largerThanMd ? '40%' : '90%'"
 	>
-		<CreatorDialog :resource="resource" @ok="handleOk" />
+		<CreatorDialog
+			:type="type"
+			@create:course="
+				(v) => {
+					emit('create:course', v)
+					dialogVisible = false
+				}
+			"
+			@create:progress="
+				(v) => {
+					emit('create:progress', v)
+					dialogVisible = false
+				}
+			"
+		/>
 	</el-dialog>
 </template>
 

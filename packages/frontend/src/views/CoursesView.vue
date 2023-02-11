@@ -7,16 +7,32 @@ import { useCourses } from '@/composables/useCourses'
 import type { Course } from 'shared'
 import AddButton from '../components/AddButton.vue'
 import { ref } from 'vue'
+import { useFetchData } from '@/composables/useFetchData'
 
 const courses = ref<Course[]>([])
 
-const { itemsCategoried, del, toggleArchive, toggleStatus, handleSort } =
-	useCourses(courses)
+const { loading, error } = useFetchData(fetchAll, courses)
+
+const {
+	itemsCategoried,
+	create,
+	del,
+	toggleArchive,
+	toggleStatus,
+	handleSort
+} = useCourses(courses)
 </script>
 <template>
 	<div data-testid="courses-view">
-		<AddButton :resource="{ type: 'course', courses }" />
-		<FetchComponent :fetch-func="fetchAll" v-model:data="courses">
+		<AddButton
+			type="course"
+			@create:course="
+				(v) => {
+					create(v)
+				}
+			"
+		/>
+		<FetchComponent :loading="loading" :error="error">
 			<template #data>
 				<div grid gap-8>
 					<Items
