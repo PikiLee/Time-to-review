@@ -31,6 +31,7 @@ function expectToBeTypeOfCourse(
 	)
 	const properties = [
 		'_id',
+		'type',
 		'name',
 		'owner',
 		'status',
