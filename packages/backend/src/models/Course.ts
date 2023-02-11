@@ -98,6 +98,7 @@ const isDueField = {
 
 const projectFields = {
 	name: 1,
+	type: 'course',
 	owner: 1,
 	status: 1,
 	archived: 1,

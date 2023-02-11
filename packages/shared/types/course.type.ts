@@ -10,6 +10,7 @@ export const courseStatusIndices = [0, 1]
 
 export interface Course {
 	_id: string
+	type: 'course'
 	owner: string
 	name: string
 	status: CourseStatus
@@ -26,7 +27,7 @@ export interface Course {
 export interface CourseSchema
 	extends Omit<
 		Course,
-		'_id' | 'owner' | 'dueCount' | 'isDue' | 'progressCount'
+		'_id' | 'owner' | 'dueCount' | 'isDue' | 'progressCount' | 'type'
 	> {
 	_id: Types.ObjectId
 	owner: Types.ObjectId
@@ -44,6 +45,7 @@ export interface NewCourse
 		| 'progressCount'
 		| 'dueCount'
 		| 'intervals'
+		| 'type'
 	> {
 	owner: string
 	intervals?: number[]
@@ -60,6 +62,7 @@ export type UpdateCourse = Partial<
 		| 'isDue'
 		| 'progressCount'
 		| 'dueCount'
+		| 'type'
 	>
 >
 

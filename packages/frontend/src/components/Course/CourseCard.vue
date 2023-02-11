@@ -3,12 +3,10 @@ import { type Course, CourseStatus } from 'shared'
 import dayjs from 'dayjs/esm'
 import relativeTime from 'dayjs/esm/plugin/relativeTime'
 import { computed } from 'vue'
-import { update, del as rawDel } from '@/database/course'
-import { errorMsg, successMsg } from '@/utils/useMessage'
+import { update, del } from '@/composables/useApi'
 import { useCreatedTime } from '@/utils/useDayjs'
 import { createUnitTestIdGetter } from '@/unit/utils'
 import { useVModel } from '@vueuse/core'
-import { useCourseStore } from '@/store/course.store'
 
 dayjs.extend(relativeTime)
 
@@ -29,39 +27,20 @@ const isArchived = computed(() => course.value.archived)
 
 const { createdTime } = useCreatedTime(course.value.createdAt)
 
-async function toggleArchive(courseId: string) {
-	try {
-		await update(courseId, { archived: !course.value.archived })
-		course.value.archived = !course.value.archived
-		successMsg('Action succeeded.')
-	} catch (err) {
-		errorMsg(`Action Failed. ${err}`)
-	}
+async function toggleArchive() {
+	await update(course.value, { archived: !course.value.archived })
 }
 
-async function toggleStatus(courseId: string) {
-	try {
-		const newStatus =
-			course.value.status === CourseStatus['In Progress']
-				? CourseStatus.Done
-				: CourseStatus['In Progress']
-		await update(courseId, { status: newStatus })
-		course.value.status = newStatus
-		successMsg('Action succeeded.')
-	} catch (err) {
-		errorMsg(`Action Failed. ${err}`)
-	}
+async function toggleStatus() {
+	const newStatus =
+		course.value.status === CourseStatus['In Progress']
+			? CourseStatus.Done
+			: CourseStatus['In Progress']
+	await update(course.value, { status: newStatus })
 }
 
 async function handleDelete() {
-	try {
-		await rawDel(course.value._id)
-		const courseStore = useCourseStore()
-		courseStore.del(course.value._id)
-		successMsg('Delete Succeeded.')
-	} catch (err) {
-		errorMsg(`Action Failed. ${err}`)
-	}
+	await del(course.value)
 }
 </script>
 
@@ -97,14 +76,14 @@ async function handleDelete() {
 					<div
 						v-if="!isArchived"
 						i-mdi-archive
-						@click="toggleArchive(course._id)"
+						@click="toggleArchive()"
 						:data-test-unit="getUnitTestId('archive')"
 					></div>
 					<div
 						v-else
 						i-mdi-archive-cancel
 						class="translate-y-0.25"
-						@click="toggleArchive(course._id)"
+						@click="toggleArchive()"
 						:data-test-unit="getUnitTestId('unarchive')"
 					></div>
 				</button>
@@ -136,13 +115,13 @@ async function handleDelete() {
 					<div
 						v-if="isInProgress"
 						i-ic-round-done
-						@click="toggleStatus(course._id)"
+						@click="toggleStatus()"
 						:data-test-unit="getUnitTestId('done')"
 					></div>
 					<div
 						v-else
 						i-mdi-undo
-						@click="toggleStatus(course._id)"
+						@click="toggleStatus()"
 						:data-test-unit="getUnitTestId('undone')"
 					></div>
 				</button>

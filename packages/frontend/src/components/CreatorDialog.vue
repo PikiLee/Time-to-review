@@ -1,19 +1,24 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { create as createCourse } from '@/database/course'
-import { create as createProgress } from '@/database/progress'
-import { errorMsg, successMsg } from '@/utils/useMessage'
+import { create } from '@/composables/useApi'
+import { errorMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
-import { useUserStore } from '@/store/user.store'
-import { useCourseStore } from '@/store/course.store'
-import { getStartOfDay } from '@/utils/progress.utils'
+import type { Course, CourseWithProgress } from 'shared'
 
 const props = defineProps<{
-	type: 'course' | 'progress'
+	resource:
+		| {
+				type: 'progress'
+				course: CourseWithProgress
+		  }
+		| {
+				type: 'course'
+				courses: Course[]
+		  }
 }>()
 const emit = defineEmits(['ok'])
 
-const isCreatingCourse = computed(() => props.type === 'course')
+const isCreatingCourse = computed(() => props.resource.type === 'course')
 const { t } = useI18n()
 const input = ref('')
 const defaultPlaceholder = computed(() => {
@@ -29,42 +34,29 @@ watch(
 )
 
 async function handleCreate() {
-	try {
-		if (!input.value) throw new Error(t('errors.required'))
-		if (input.value.length > 60)
-			throw new Error('At most 60 characters long.')
-		if (!isCreatingCourse.value) {
-			const userStore = useUserStore()
-			const courseStore = useCourseStore()
-			await createProgress({
+	if (!input.value) errorMsg(t('errors.required'))
+	if (input.value.length > 60) errorMsg('At most 60 characters long.')
+	if (props.resource.type === 'progress') {
+		await create(
+			{
+				type: 'progress',
 				name: input.value,
-				owner: userStore.user?._id ?? 'sdfsd',
-				course: courseStore.currentCourse?._id ?? '2312',
-				order: 1,
-				lastDate: getStartOfDay(Date.now())
-			})
-		} else {
-			const userStore = useUserStore()
-			await createCourse({
-				name: input.value,
-				owner: userStore.user?._id ?? 'sdfsd',
-				status: 0,
-				archived: false,
-				intervals: [1, 7, 14, 28],
-				order: 1
-			})
-		}
-		emit('ok')
-		successMsg(
-			isCreatingCourse.value
-				? t('addButton.progress.success', [input.value])
-				: t('addButton.course.success', [input.value])
+				course: props.resource.course._id
+			},
+			props.resource.course.progresses
 		)
-	} catch (err) {
-		errorMsg(String(err))
-	} finally {
-		input.value = ''
+	} else {
+		await create(
+			{
+				type: 'course',
+				name: input.value
+			},
+			props.resource.courses
+		)
 	}
+	emit('ok')
+
+	input.value = ''
 }
 
 const buttonType = computed(() => (isCreatingCourse.value ? 'primary' : 'info'))

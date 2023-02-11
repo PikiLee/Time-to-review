@@ -4,6 +4,7 @@ import { update, del } from '@/database/progress'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import ProgressForm from '@/components/Progress/ProgressForm.vue'
 import { createGetter } from './utils'
+import { progress1 as progress } from './dummyData'
 import DeleteButton from '@/components/Others/DeleteButton.vue'
 
 const NAME_SPACE = 'progress-form'
@@ -29,20 +30,6 @@ vi.mock('@/utils/useMessage', () => {
 })
 
 const $t = () => {}
-
-const progress = {
-	_id: 'test',
-	course: 'test',
-	owner: 'test',
-	name: 'test',
-	stage: 0,
-	lastDate: '2022-1-2',
-	createdAt: 'test',
-	updatedAt: 'test',
-	order: 0,
-	nextDate: 'test',
-	isDue: true
-}
 
 const intervals = [1, 7, 14, 28]
 

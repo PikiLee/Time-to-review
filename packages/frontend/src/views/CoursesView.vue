@@ -9,19 +9,20 @@ import AddButton from '../components/AddButton.vue'
 import { handleSort as rawHandleSort } from '../composables/useSort'
 
 async function handleSort(courses: Course[], evt: SortableEvent) {
-	const course = rawHandleSort(courses, evt)
-	if (course) {
-		await update(course._id, {
-			order: course.order
-		})
-	}
+	const updated = rawHandleSort(courses, evt)
+	if (updated)
+		updated.forEach((course) =>
+			update(course._id, {
+				order: course.order
+			})
+		)
 }
 </script>
 <template>
-	<AddButton type="course" />
 	<div data-testid="courses-view">
 		<FetchComponent :fetch-func="fetchAll">
 			<template #data="{ data: courses }">
+				<AddButton :resource="{ type: 'course', courses }" />
 				<div grid gap-8>
 					<Items
 						:items="

@@ -1,9 +1,9 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, test, vi, beforeEach } from 'vitest'
 import CreatorDialog from '../components/CreatorDialog.vue'
-import { create as createCourse } from '@/database/course'
-import { create as createProgress } from '@/database/progress'
-import { errorMsg, successMsg } from '@/utils/useMessage'
+import { create } from '@/composables/useApi'
+import { errorMsg } from '@/utils/useMessage'
+import { course1WithProgresses, courses } from './dummyData'
 
 vi.mock('vue-i18n', () => {
 	return {
@@ -11,12 +11,7 @@ vi.mock('vue-i18n', () => {
 	}
 })
 
-vi.mock('@/database/course', () => {
-	return {
-		create: vi.fn(() => {})
-	}
-})
-vi.mock('@/database/progress', () => {
+vi.mock('@/composables/useApi', () => {
 	return {
 		create: vi.fn(() => {})
 	}
@@ -32,31 +27,55 @@ describe('Rendered', () => {
 	beforeEach(() => {
 		vi.restoreAllMocks()
 	})
-	test('Rendered', () => {
-		const $t = () => ''
+	describe('Rendered', () => {
+		test('Rendered when creating course', () => {
+			const $t = () => ''
 
-		const wrapper = mount(CreatorDialog, {
-			props: {
-				type: 'course'
-			},
-			global: {
-				mocks: {
-					$t
+			const wrapper = mount(CreatorDialog, {
+				props: {
+					resource: { type: 'course', courses }
+				},
+				global: {
+					mocks: {
+						$t
+					}
 				}
-			}
+			})
+
+			expect(
+				wrapper.find(`[data-testid="creator-dialog"]`).exists()
+			).toBe(true)
 		})
 
-		expect(wrapper.find(`[data-testid="creator-dialog"]`).exists()).toBe(
-			true
-		)
+		test('Rendered when creating progress', () => {
+			const $t = () => ''
+
+			const wrapper = mount(CreatorDialog, {
+				props: {
+					resource: {
+						type: 'progress',
+						course: course1WithProgresses
+					}
+				},
+				global: {
+					mocks: {
+						$t
+					}
+				}
+			})
+
+			expect(
+				wrapper.find(`[data-testid="creator-dialog"]`).exists()
+			).toBe(true)
+		})
 	})
 
-	test('Call createCourse() when type is course and press button.', async () => {
+	test('Call create() when type is course and press button.', async () => {
 		const $t = () => ''
 
 		const wrapper = mount(CreatorDialog, {
 			props: {
-				type: 'course'
+				resource: { type: 'course', courses }
 			},
 			global: {
 				mocks: {
@@ -72,15 +91,18 @@ describe('Rendered', () => {
 			.get(`[data-testid="creator-dialog-button"]`)
 			.trigger('click')
 
-		expect(createCourse).toHaveBeenCalledOnce()
+		expect(create).toHaveBeenCalledOnce()
 	})
 
-	test('Call createCourse() when type is course and press button.', async () => {
+	test('Call create() when type is course and press button.', async () => {
 		const $t = () => ''
 
 		const wrapper = mount(CreatorDialog, {
 			props: {
-				type: 'progress'
+				resource: {
+					type: 'progress',
+					course: course1WithProgresses
+				}
 			},
 			global: {
 				mocks: {
@@ -96,7 +118,7 @@ describe('Rendered', () => {
 			.get(`[data-testid="creator-dialog-button"]`)
 			.trigger('click')
 
-		expect(createProgress).toHaveBeenCalledOnce()
+		expect(create).toHaveBeenCalledOnce()
 	})
 
 	test('Emit ok when press button.', async () => {
@@ -104,7 +126,7 @@ describe('Rendered', () => {
 
 		const wrapper = mount(CreatorDialog, {
 			props: {
-				type: 'course'
+				resource: { type: 'course', courses }
 			},
 			global: {
 				mocks: {
@@ -123,36 +145,12 @@ describe('Rendered', () => {
 		expect(wrapper.emitted()).toHaveProperty('ok')
 	})
 
-	test('Call successMsg() when succeed.', async () => {
-		const $t = () => ''
-
-		const wrapper = mount(CreatorDialog, {
-			props: {
-				type: 'progress'
-			},
-			global: {
-				mocks: {
-					$t
-				}
-			}
-		})
-
-		await wrapper
-			.get(`[data-testid="creator-dialog-input"]`)
-			.setValue('good')
-		await wrapper
-			.get(`[data-testid="creator-dialog-button"]`)
-			.trigger('click')
-
-		expect(successMsg).toHaveBeenCalledOnce()
-	})
-
 	test('Call errorMsg() when input is empty.', async () => {
 		const $t = () => ''
 
 		const wrapper = mount(CreatorDialog, {
 			props: {
-				type: 'progress'
+				resource: { type: 'course', courses }
 			},
 			global: {
 				mocks: {

@@ -109,6 +109,7 @@ export function createProgressProjectStage(
 ) {
 	return {
 		$project: {
+			type: 'progress',
 			course: 1,
 			owner: 1,
 			name: 1,

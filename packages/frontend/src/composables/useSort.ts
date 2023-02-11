@@ -8,7 +8,7 @@ export function calcOrder<T extends { order: number }>(
 	if (fromIndex === toIndex) return
 	const DEFAULT_INTERVAL = 50
 
-	const updatedItems = new Set()
+	const updatedItems = new Set<T>()
 
 	if (fromIndex < toIndex) {
 		if (toIndex === items.length - 1) {

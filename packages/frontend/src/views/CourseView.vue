@@ -20,19 +20,20 @@ const fetchCourse = () => {
 }
 
 async function handleSort(progresses: Progress[], evt: SortableEvent) {
-	const progress = rawHandleSort(progresses, evt)
-	if (progress) {
-		await update(progress._id, {
-			order: progress.order
-		})
-	}
+	const updated = rawHandleSort(progresses, evt)
+	if (updated)
+		updated.forEach((progress) =>
+			update(progress._id, {
+				order: progress.order
+			})
+		)
 }
 </script>
 <template>
-	<AddButton type="progress" />
 	<div data-testid="course-view">
 		<FetchComponent :fetch-func="fetchCourse">
 			<template #data="{ data: course }">
+				<AddButton :resource="{ type: 'progress', course }" />
 				<CourseSetting v-model="settingVisible" :course="course" />
 				<Items
 					:items="course.progresses"

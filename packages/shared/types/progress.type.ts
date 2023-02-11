@@ -4,6 +4,7 @@ export type ProgressStage = number
 
 export interface Progress {
 	_id: string
+	type: 'progress'
 	course: string
 	owner: string
 	name: string
@@ -18,7 +19,7 @@ export interface Progress {
 
 export type NewProgress = Omit<
 	Progress,
-	'_id' | 'createdAt' | 'nextDate' | 'isDue' | 'updatedAt'
+	'_id' | 'createdAt' | 'nextDate' | 'isDue' | 'updatedAt' | 'type'
 >
 
 export type UpdateProgress = Partial<
@@ -31,13 +32,14 @@ export type UpdateProgress = Partial<
 		| 'nextDate'
 		| 'isDue'
 		| 'updatedAt'
+		| 'type'
 	>
 >
 
 export interface ProgressSchema
 	extends Omit<
 		Progress,
-		'course' | 'owner' | '_id' | 'lastDate' | 'nextDate' | 'isDue'
+		'course' | 'owner' | '_id' | 'lastDate' | 'nextDate' | 'isDue' | 'type'
 	> {
 	_id: Types.ObjectId
 	owner: Types.ObjectId

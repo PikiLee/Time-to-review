@@ -18,7 +18,7 @@ export async function update(
 	courseId: string,
 	updateCourse: UpdateCourse,
 	options?: Options
-) {
+): Promise<Course | undefined> {
 	if (keys(updateCourse).length === 0) return
 
 	const { withProgresses, withDueProgresses } = buildOptions(options)

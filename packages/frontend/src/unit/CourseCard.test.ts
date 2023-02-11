@@ -1,51 +1,26 @@
 import { flushPromises, mount } from '@vue/test-utils'
 import { describe, test, vi, beforeEach, expect } from 'vitest'
-import { update, del as rawDel } from '@/database/course'
-import { successMsg } from '@/utils/useMessage'
+import { update, del } from '@/composables/useApi'
 import { createGetter } from './utils'
-import type { Course } from 'shared'
+import { course1 as course } from './dummyData'
 import CourseCard from '@/components/Course/CourseCard.vue'
 
 const NAME_SPACE = 'course-card'
 const { get } = createGetter(NAME_SPACE)
 
-vi.mock('@/database/course', () => {
+vi.mock('@/composables/useApi', () => {
 	return {
-		create: vi.fn(() => {}),
-		toggleArchive: vi.fn(() => {}),
-		toggleStatus: vi.fn(() => {}),
+		update: vi.fn(() => {}),
 		del: vi.fn(() => {})
 	}
 })
-const del = vi.fn(() => {})
-vi.mock('@/store/course.store', () => {
-	return {
-		useCourseStore: () => ({
-			del
-		})
-	}
-})
+
 vi.mock('@/utils/useMessage', () => {
 	return {
 		errorMsg: vi.fn(() => {}),
 		successMsg: vi.fn(() => {})
 	}
 })
-
-const course: Course = {
-	_id: 'test',
-	owner: 'test',
-	name: 'test',
-	status: 0,
-	archived: false,
-	intervals: [1, 7, 14, 28],
-	createdAt: '2022-1-1',
-	updatedAt: '2022-1-1',
-	dueCount: 1,
-	isDue: true,
-	order: 1,
-	progressCount: 1
-}
 
 describe('Rendered', () => {
 	beforeEach(() => {
@@ -72,7 +47,7 @@ describe('Rendered', () => {
 		await get(wrapper, 'done')
 	})
 
-	test('Call toggleArchive(), successMsg when click archive button', async () => {
+	test('Call udpate when click archive button', async () => {
 		const $t = () => ''
 
 		const wrapper = mount(CourseCard, {
@@ -90,16 +65,14 @@ describe('Rendered', () => {
 		await flushPromises()
 
 		expect(update).toHaveBeenCalledOnce()
-		expect(successMsg).toHaveBeenCalledOnce()
 
 		await get(wrapper, 'unarchive').trigger('click')
 		await flushPromises()
 
 		expect(update).toHaveBeenCalledTimes(2)
-		expect(successMsg).toHaveBeenCalledTimes(2)
 	})
 
-	test('Call toggleStatus(), successMsg when click done button', async () => {
+	test('Call udpate when click done button', async () => {
 		const $t = () => ''
 
 		const wrapper = mount(CourseCard, {
@@ -117,16 +90,14 @@ describe('Rendered', () => {
 		await flushPromises()
 
 		expect(update).toHaveBeenCalledOnce()
-		expect(successMsg).toHaveBeenCalledOnce()
 
 		await get(wrapper, 'undone').trigger('click')
 		await flushPromises()
 
 		expect(update).toHaveBeenCalledTimes(2)
-		expect(successMsg).toHaveBeenCalledTimes(2)
 	})
 
-	test('Call del(), successMsg() when click delete button', async () => {
+	test('Call del() when click delete button', async () => {
 		const $t = () => ''
 
 		const wrapper = mount(CourseCard, {
@@ -143,8 +114,6 @@ describe('Rendered', () => {
 		await get(wrapper, 'archive').trigger('click')
 		await get(wrapper, 'delete').trigger('click')
 		await flushPromises()
-		expect(rawDel).toHaveBeenCalledOnce()
 		expect(del).toHaveBeenCalledOnce()
-		expect(successMsg).toHaveBeenCalledTimes(2)
 	})
 })

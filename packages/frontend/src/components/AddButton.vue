@@ -4,9 +4,18 @@ import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CreatorDialog from '@/components/CreatorDialog.vue'
+import type { Course, CourseWithProgress } from 'shared'
 
 const props = defineProps<{
-	type: 'course' | 'progress'
+	resource:
+		| {
+				type: 'progress'
+				course: CourseWithProgress
+		  }
+		| {
+				type: 'course'
+				courses: Course[]
+		  }
 }>()
 
 const router = useRouter()
@@ -15,7 +24,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind)
 const largerThanMd = breakpoints.greater('md')
 const { t } = useI18n()
 
-const isCreatingCourse = computed(() => props.type === 'course')
+const isCreatingCourse = computed(() => props.resource.type === 'course')
 const toolTip = computed(() =>
 	isCreatingCourse.value
 		? t('addButton.course.create')
@@ -54,7 +63,7 @@ function handleOk() {
 		:title="toolTip"
 		:width="largerThanMd ? '40%' : '90%'"
 	>
-		<CreatorDialog :type="type" @ok="handleOk" />
+		<CreatorDialog :resource="resource" @ok="handleOk" />
 	</el-dialog>
 </template>
 
