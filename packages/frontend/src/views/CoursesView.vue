@@ -4,7 +4,7 @@ import FetchComponent from '@/components/Others/FetchComponent.vue'
 import Items from '@/components/Others/ListItems.vue'
 import { fetchAll, update as rawUpdate } from '@/database/course'
 import { useCourses } from '@/composables/useApi'
-import { CourseStatus, type Course } from 'shared'
+import type { Course } from 'shared'
 import type { SortableEvent } from 'sortablejs'
 import AddButton from '../components/AddButton.vue'
 import { handleSort as rawHandleSort } from '../composables/useSort'
@@ -22,65 +22,21 @@ async function handleSort(courses: Course[], evt: SortableEvent) {
 		)
 }
 
-const { del, toggleArchive, toggleStatus } = useCourses(courses)
+const { itemsCategoried, del, toggleArchive, toggleStatus } =
+	useCourses(courses)
 </script>
 <template>
 	<div data-testid="courses-view">
 		<AddButton :resource="{ type: 'course', courses }" />
 		<FetchComponent :fetch-func="fetchAll" v-model:data="courses">
-			<template #data="{ data: courses }">
+			<template #data>
 				<div grid gap-8>
 					<Items
-						:items="
-						courses.filter(
-							(course: Course) =>
-								course.status === CourseStatus['In Progress'] && course.archived !== true
-						)
-					"
+						v-for="coursesCategoried in itemsCategoried"
+						:key="coursesCategoried.value.title"
+						:items="coursesCategoried.value.items"
 						item-key="_id"
-						title="In Progress"
-						sortable
-						@dragend="(evt) => handleSort(courses, evt)"
-					>
-						<template #item="course">
-							<CourseCard
-								:course="course"
-								@delete="del"
-								@toggle:archive="toggleArchive"
-								@toggle:status="toggleStatus"
-							/>
-						</template>
-					</Items>
-					<Items
-						:items="
-						courses.filter(
-							(course: Course) =>
-								course.status === CourseStatus['Done'] && course.archived !== true
-						)
-					"
-						item-key="_id"
-						title="Done"
-						sortable
-						@dragend="(evt) => handleSort(courses, evt)"
-					>
-						<template #item="course">
-							<CourseCard
-								:course="course"
-								@delete="del"
-								@toggle:archive="toggleArchive"
-								@toggle:status="toggleStatus"
-							/>
-						</template>
-					</Items>
-					<Items
-						:items="
-						courses.filter(
-							(course: Course) =>
-								course.archived === true
-						)
-					"
-						item-key="_id"
-						title="Archived"
+						:title="coursesCategoried.value.title"
 						sortable
 						@dragend="(evt) => handleSort(courses, evt)"
 					>

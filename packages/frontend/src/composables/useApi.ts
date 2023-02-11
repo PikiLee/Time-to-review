@@ -20,7 +20,7 @@ import {
 import { assign, entries } from 'lodash-es'
 import { getStartOfDay } from '@/utils/progress.utils'
 import type { MaybeRef } from '@vueuse/shared'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { createWithDefaults, resolveMaybeRef } from '@/utils/helper'
 
 interface Options {
@@ -35,6 +35,7 @@ const withDefaults = createWithDefaults({
 
 export function useApi(rawItems: MaybeRef<Course[] | Progress[]>) {
 	const items = resolveMaybeRef(rawItems)
+
 	function find(_id: string) {
 		// @ts-expect-error
 		return items.value.find((item) => item._id === _id)
@@ -156,23 +157,78 @@ export function useApi(rawItems: MaybeRef<Course[] | Progress[]>) {
 export function useCourses(rawItems: MaybeRef<Course[]>) {
 	const items = ref(rawItems)
 
+	const itemsInprogress = computed(() => ({
+		title: 'In Progress',
+		items: items.value.filter(
+			(item) =>
+				item.status === CourseStatus['In Progress'] && !item.archived
+		)
+	}))
+
+	const itemsDone = computed(() => ({
+		title: 'Done',
+		items: items.value.filter(
+			(item) => item.status === CourseStatus['Done'] && !item.archived
+		)
+	}))
+
+	const itemsArchived = computed(() => ({
+		title: 'Archived',
+		items: items.value.filter((item) => item.archived)
+	}))
+
 	const { create, update, del, find } = useApi(items)
 
 	async function toggleArchive(_id: string) {
 		const item = find(_id)
 		if (!item) throw Error('Not found.')
-		await update(item._id, { archived: !item.archived })
+
+		let order = 2000
+		if (item.archived) {
+			if (itemsInprogress.value.items.length > 0)
+				order = itemsInprogress.value.items.slice(-1)[0].order + 50
+		} else {
+			if (itemsArchived.value.items.length > 0)
+				order = itemsArchived.value.items.slice(-1)[0].order + 50
+		}
+
+		await update(item._id, {
+			archived: !item.archived,
+			order
+		})
 	}
 
 	async function toggleStatus(_id: string) {
 		const item = find(_id)
 		if (!item) throw Error('Not found.')
+
+		let order = 2000
+		if (item.status === CourseStatus['In Progress']) {
+			if (itemsDone.value.items.length > 0)
+				order = itemsDone.value.items.slice(-1)[0].order + 50
+		} else {
+			if (itemsInprogress.value.items.length > 0)
+				order = itemsInprogress.value.items.slice(-1)[0].order + 50
+		}
+
 		const newStatus =
 			item.status === CourseStatus['In Progress']
 				? CourseStatus.Done
 				: CourseStatus['In Progress']
-		await update(item._id, { status: newStatus })
+		await update(item._id, { status: newStatus, order })
 	}
 
-	return { create, update, del, find, toggleArchive, toggleStatus }
+	return {
+		itemsInprogress,
+		itemsDone,
+		itemsArchived,
+		itemsCategoried: [itemsInprogress, itemsDone, itemsArchived],
+		items,
+		create,
+		update,
+		del,
+		find,
+		toggleArchive,
+		toggleStatus
+	}
 }
