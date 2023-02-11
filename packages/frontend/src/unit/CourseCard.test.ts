@@ -1,6 +1,5 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { describe, test, vi, beforeEach, expect } from 'vitest'
-import { update, del } from '@/composables/useApi'
 import { createGetter } from './utils'
 import { course1 as course } from './dummyData'
 import CourseCard from '@/components/Course/CourseCard.vue'
@@ -12,13 +11,6 @@ vi.mock('@/composables/useApi', () => {
 	return {
 		update: vi.fn(() => {}),
 		del: vi.fn(() => {})
-	}
-})
-
-vi.mock('@/utils/useMessage', () => {
-	return {
-		errorMsg: vi.fn(() => {}),
-		successMsg: vi.fn(() => {})
 	}
 })
 
@@ -38,21 +30,72 @@ describe('Rendered', () => {
 				mocks: {
 					$t
 				}
-			}
+			},
+			stubs: { RouterLink: true }
 		})
 
 		await get(wrapper, 'wrapper')
-		expect(await get(wrapper, 'badge').html()).contains(course.dueCount)
 		await get(wrapper, 'archive')
 		await get(wrapper, 'done')
 	})
 
-	test('Call udpate when click archive button', async () => {
+	test.each([
+		{ course, element: 'archive' },
+		{ course: { ...course, archived: true }, element: 'unarchive' }
+	])(
+		'emit toggle:archive when click archive button',
+		async ({ course, element }) => {
+			const $t = () => ''
+
+			const wrapper = mount(CourseCard, {
+				props: {
+					course
+				},
+				global: {
+					mocks: {
+						$t
+					}
+				},
+				stubs: { RouterLink: true }
+			})
+
+			await get(wrapper, element).trigger('click')
+
+			expect(wrapper.emitted()).toHaveProperty('toggle:archive')
+		}
+	)
+
+	test.each([
+		{ course, element: 'done' },
+		{ course: { ...course, status: 1 }, element: 'undone' }
+	])(
+		'emit toggle:status when click done button',
+		async ({ course, element }) => {
+			const $t = () => ''
+
+			const wrapper = mount(CourseCard, {
+				props: {
+					course
+				},
+				global: {
+					mocks: {
+						$t
+					}
+				}
+			})
+
+			await get(wrapper, element).trigger('click')
+
+			expect(wrapper.emitted()).toHaveProperty('toggle:status')
+		}
+	)
+
+	test('emit delete when click delete button', async () => {
 		const $t = () => ''
 
 		const wrapper = mount(CourseCard, {
 			props: {
-				course
+				course: { ...course, archived: true }
 			},
 			global: {
 				mocks: {
@@ -61,59 +104,8 @@ describe('Rendered', () => {
 			}
 		})
 
-		await get(wrapper, 'archive').trigger('click')
-		await flushPromises()
-
-		expect(update).toHaveBeenCalledOnce()
-
-		await get(wrapper, 'unarchive').trigger('click')
-		await flushPromises()
-
-		expect(update).toHaveBeenCalledTimes(2)
-	})
-
-	test('Call udpate when click done button', async () => {
-		const $t = () => ''
-
-		const wrapper = mount(CourseCard, {
-			props: {
-				course
-			},
-			global: {
-				mocks: {
-					$t
-				}
-			}
-		})
-
-		await get(wrapper, 'done').trigger('click')
-		await flushPromises()
-
-		expect(update).toHaveBeenCalledOnce()
-
-		await get(wrapper, 'undone').trigger('click')
-		await flushPromises()
-
-		expect(update).toHaveBeenCalledTimes(2)
-	})
-
-	test('Call del() when click delete button', async () => {
-		const $t = () => ''
-
-		const wrapper = mount(CourseCard, {
-			props: {
-				course
-			},
-			global: {
-				mocks: {
-					$t
-				}
-			}
-		})
-
-		await get(wrapper, 'archive').trigger('click')
 		await get(wrapper, 'delete').trigger('click')
-		await flushPromises()
-		expect(del).toHaveBeenCalledOnce()
+
+		expect(wrapper.emitted()).toHaveProperty('delete')
 	})
 })

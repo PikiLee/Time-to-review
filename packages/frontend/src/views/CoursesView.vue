@@ -2,7 +2,8 @@
 import CourseCard from '@/components/Course/CourseCard.vue'
 import FetchComponent from '@/components/Others/FetchComponent.vue'
 import Items from '@/components/Others/ListItems.vue'
-import { fetchAll, update } from '@/database/course'
+import { fetchAll, update as rawUpdate } from '@/database/course'
+import { update, del } from '@/composables/useApi'
 import { CourseStatus, type Course } from 'shared'
 import type { SortableEvent } from 'sortablejs'
 import AddButton from '../components/AddButton.vue'
@@ -12,10 +13,26 @@ async function handleSort(courses: Course[], evt: SortableEvent) {
 	const updated = rawHandleSort(courses, evt)
 	if (updated)
 		updated.forEach((course) =>
-			update(course._id, {
+			rawUpdate(course._id, {
 				order: course.order
 			})
 		)
+}
+
+async function toggleArchive(course: Course) {
+	await update(course, { archived: !course.archived })
+}
+
+async function toggleStatus(course: Course) {
+	const newStatus =
+		course.status === CourseStatus['In Progress']
+			? CourseStatus.Done
+			: CourseStatus['In Progress']
+	await update(course, { status: newStatus })
+}
+
+async function handleDelete(course: Course) {
+	await del(course)
 }
 </script>
 <template>
@@ -37,7 +54,12 @@ async function handleSort(courses: Course[], evt: SortableEvent) {
 						@dragend="(evt) => handleSort(courses, evt)"
 					>
 						<template #item="course">
-							<CourseCard :course="course" />
+							<CourseCard
+								:course="course"
+								@delete="handleDelete"
+								@toggle:archive="toggleArchive"
+								@toggle:status="toggleStatus"
+							/>
 						</template>
 					</Items>
 					<Items

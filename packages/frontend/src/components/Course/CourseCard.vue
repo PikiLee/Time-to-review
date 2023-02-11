@@ -3,45 +3,26 @@ import { type Course, CourseStatus } from 'shared'
 import dayjs from 'dayjs/esm'
 import relativeTime from 'dayjs/esm/plugin/relativeTime'
 import { computed } from 'vue'
-import { update, del } from '@/composables/useApi'
 import { useCreatedTime } from '@/utils/useDayjs'
 import { createUnitTestIdGetter } from '@/unit/utils'
-import { useVModel } from '@vueuse/core'
 
 dayjs.extend(relativeTime)
 
 const props = defineProps<{
 	course: Course
 }>()
-const emit = defineEmits(['update:course'])
+const emit = defineEmits(['delete', 'toggle:archive', 'toggle:status'])
 
 const NAME_SPACE = 'course-card'
 const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
 
-const course = useVModel(props, 'course', emit)
 const isInProgress = computed(
-	() => course.value.status === CourseStatus['In Progress']
+	() => props.course.status === CourseStatus['In Progress']
 )
 
-const isArchived = computed(() => course.value.archived)
+const isArchived = computed(() => props.course.archived)
 
-const { createdTime } = useCreatedTime(course.value.createdAt)
-
-async function toggleArchive() {
-	await update(course.value, { archived: !course.value.archived })
-}
-
-async function toggleStatus() {
-	const newStatus =
-		course.value.status === CourseStatus['In Progress']
-			? CourseStatus.Done
-			: CourseStatus['In Progress']
-	await update(course.value, { status: newStatus })
-}
-
-async function handleDelete() {
-	await del(course.value)
-}
+const { createdTime } = useCreatedTime(props.course.createdAt)
 </script>
 
 <template>
@@ -76,14 +57,14 @@ async function handleDelete() {
 					<div
 						v-if="!isArchived"
 						i-mdi-archive
-						@click="toggleArchive()"
+						@click="emit('toggle:archive', course)"
 						:data-test-unit="getUnitTestId('archive')"
 					></div>
 					<div
 						v-else
 						i-mdi-archive-cancel
 						class="translate-y-0.25"
-						@click="toggleArchive()"
+						@click="emit('toggle:archive', course)"
 						:data-test-unit="getUnitTestId('unarchive')"
 					></div>
 				</button>
@@ -115,13 +96,13 @@ async function handleDelete() {
 					<div
 						v-if="isInProgress"
 						i-ic-round-done
-						@click="toggleStatus()"
+						@click="emit('toggle:status', course)"
 						:data-test-unit="getUnitTestId('done')"
 					></div>
 					<div
 						v-else
 						i-mdi-undo
-						@click="toggleStatus()"
+						@click="emit('toggle:status', course)"
 						:data-test-unit="getUnitTestId('undone')"
 					></div>
 				</button>
@@ -140,7 +121,7 @@ async function handleDelete() {
 					cursor-pointer
 					align-middle
 					hover:text-lime-500
-					@click="handleDelete"
+					@click="emit('delete', course)"
 					:aria-label="$t('actions.delete')"
 					data-testid="course-card-delete"
 					:data-test-unit="getUnitTestId('delete')"
