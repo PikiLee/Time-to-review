@@ -10,23 +10,12 @@ import FetchComponent from '@/components/Others/FetchComponent.vue'
 import { useCustomRouter } from '@/utils/useCustomRouter'
 import { fetch } from '@/database/course'
 import Items from '@/components/Others/ListItems.vue'
-import { handleSort as rawHandleSort } from '../composables/useSort'
 
 const settingVisible = ref(false)
 const { id: courseId } = useCustomRouter()
 
 const fetchCourse = () => {
 	return fetch(courseId.value, { withProgresses: true })
-}
-
-async function handleSort(progresses: Progress[], evt: SortableEvent) {
-	const updated = rawHandleSort(progresses, evt)
-	if (updated)
-		updated.forEach((progress) =>
-			update(progress._id, {
-				order: progress.order
-			})
-		)
 }
 </script>
 <template>
