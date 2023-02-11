@@ -20,8 +20,9 @@ import {
 import { assign, entries } from 'lodash-es'
 import { getStartOfDay } from '@/utils/progress.utils'
 import type { MaybeRef } from '@vueuse/shared'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { createWithDefaults, resolveMaybeRef } from '@/utils/helper'
+import type { SortableEvent } from 'sortablejs'
 
 interface Options {
 	successMsg?: boolean
@@ -151,11 +152,125 @@ export function useApi(rawItems: MaybeRef<Course[] | Progress[]>) {
 		}
 	}
 
-	return { items, create, update, del, find }
+	function calcOrder<T extends { order: number }>(
+		fromIndex: number,
+		toIndex: number,
+		items: T[]
+	) {
+		if (fromIndex === toIndex) return
+		const DEFAULT_INTERVAL = 50
+
+		const updatedItems = new Set<T>()
+
+		if (fromIndex < toIndex) {
+			if (toIndex === items.length - 1) {
+				items[fromIndex].order = items[toIndex].order + 100
+				updatedItems.add(items[fromIndex])
+			} else {
+				let notEuqalIndex
+				// find the index of the item whose order is not equal than toIndex
+				for (let i = toIndex + 1; i < items.length; i++) {
+					if (items[i].order !== items[toIndex].order) {
+						notEuqalIndex = i
+						break
+					}
+				}
+
+				if (!notEuqalIndex) {
+					// the index is not found
+					for (let i = toIndex + 1; i < items.length; i++) {
+						items[i].order = items[i - 1].order + DEFAULT_INTERVAL
+						updatedItems.add(items[i])
+					}
+				} else if (notEuqalIndex !== toIndex + 1) {
+					// when the index is not toIndex
+					for (let i = toIndex + 1; i < notEuqalIndex; i++) {
+						const interval =
+							(items[notEuqalIndex].order -
+								items[toIndex].order) /
+							(notEuqalIndex - toIndex + 1)
+						items[i].order = items[i - 1].order + interval
+						updatedItems.add(items[i])
+					}
+				}
+
+				items[fromIndex].order =
+					(items[toIndex].order + items[toIndex + 1].order) * 0.5
+				updatedItems.add(items[fromIndex])
+			}
+		} else {
+			if (toIndex === 0) {
+				items[fromIndex].order = items[toIndex].order - 100
+				updatedItems.add(items[fromIndex])
+			} else {
+				let notEuqalIndex
+				// find the index of the item whose order is not equal than toIndex
+				for (let i = toIndex - 1; i >= 0; i--) {
+					if (items[i].order !== items[toIndex].order) {
+						notEuqalIndex = i
+						break
+					}
+				}
+
+				if (notEuqalIndex === undefined) {
+					// the index is not found
+					for (let i = toIndex - 1; i >= 0; i--) {
+						items[i].order = items[i + 1].order - DEFAULT_INTERVAL
+						updatedItems.add(items[i])
+					}
+				} else if (notEuqalIndex !== toIndex - 1) {
+					// when the index is not toIndex
+					for (let i = toIndex - 1; i > notEuqalIndex; i--) {
+						const interval =
+							(items[toIndex].order -
+								items[notEuqalIndex].order) /
+							(toIndex - notEuqalIndex + 1)
+						items[i].order = items[i + 1].order - interval
+						updatedItems.add(items[i])
+					}
+				}
+
+				items[fromIndex].order =
+					(items[toIndex].order + items[toIndex - 1].order) * 0.5
+				updatedItems.add(items[fromIndex])
+			}
+		}
+
+		return Array.from(updatedItems)
+	}
+
+	function handleSort(items: Course[] | Progress[], evt: SortableEvent) {
+		if (
+			evt.oldDraggableIndex !== undefined &&
+			evt.newDraggableIndex !== undefined
+		) {
+			const updatedItems = calcOrder<(typeof items)[number]>(
+				evt.oldDraggableIndex,
+				evt.newDraggableIndex,
+				items
+			)
+
+			if (updatedItems)
+				updatedItems.forEach((item) =>
+					update(item._id, {
+						order: item.order
+					})
+				)
+		}
+	}
+
+	return { items, create, update, del, find, handleSort }
 }
 
 export function useCourses(rawItems: MaybeRef<Course[]>) {
 	const items = ref(rawItems)
+
+	const { create, update, del, find, handleSort } = useApi(items)
+
+	watch(items, () => items.value.sort((a, b) => a.order - b.order), {
+		immediate: true,
+		deep: true
+	})
 
 	const itemsInprogress = computed(() => ({
 		title: 'In Progress',
@@ -177,16 +292,19 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 		items: items.value.filter((item) => item.archived)
 	}))
 
-	const { create, update, del, find } = useApi(items)
-
 	async function toggleArchive(_id: string) {
 		const item = find(_id)
 		if (!item) throw Error('Not found.')
 
 		let order = 2000
 		if (item.archived) {
-			if (itemsInprogress.value.items.length > 0)
-				order = itemsInprogress.value.items.slice(-1)[0].order + 50
+			if (item.status === CourseStatus['In Progress']) {
+				if (itemsInprogress.value.items.length > 0)
+					order = itemsInprogress.value.items.slice(-1)[0].order + 50
+			} else {
+				if (itemsDone.value.items.length > 0)
+					order = itemsDone.value.items.slice(-1)[0].order + 50
+			}
 		} else {
 			if (itemsArchived.value.items.length > 0)
 				order = itemsArchived.value.items.slice(-1)[0].order + 50
@@ -229,6 +347,7 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 		del,
 		find,
 		toggleArchive,
-		toggleStatus
+		toggleStatus,
+		handleSort
 	}
 }
