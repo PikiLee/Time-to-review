@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { create } from '@/composables/useApi'
 import { errorMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
 import type { Course, CourseWithProgress } from 'shared'
@@ -37,22 +36,22 @@ async function handleCreate() {
 	if (!input.value) errorMsg(t('errors.required'))
 	if (input.value.length > 60) errorMsg('At most 60 characters long.')
 	if (props.resource.type === 'progress') {
-		await create(
-			{
-				type: 'progress',
-				name: input.value,
-				course: props.resource.course._id
-			},
-			props.resource.course.progresses
-		)
+		// await create(
+		// 	{
+		// 		type: 'progress',
+		// 		name: input.value,
+		// 		course: props.resource.course._id
+		// 	},
+		// 	props.resource.course.progresses
+		// )
 	} else {
-		await create(
-			{
-				type: 'course',
-				name: input.value
-			},
-			props.resource.courses
-		)
+		// await create(
+		// 	{
+		// 		type: 'course',
+		// 		name: input.value
+		// 	},
+		// 	props.resource.courses
+		// )
 	}
 	emit('ok')
 

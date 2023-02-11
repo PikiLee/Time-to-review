@@ -57,14 +57,14 @@ const { createdTime } = useCreatedTime(props.course.createdAt)
 					<div
 						v-if="!isArchived"
 						i-mdi-archive
-						@click="emit('toggle:archive', course)"
+						@click="emit('toggle:archive', course._id)"
 						:data-test-unit="getUnitTestId('archive')"
 					></div>
 					<div
 						v-else
 						i-mdi-archive-cancel
 						class="translate-y-0.25"
-						@click="emit('toggle:archive', course)"
+						@click="emit('toggle:archive', course._id)"
 						:data-test-unit="getUnitTestId('unarchive')"
 					></div>
 				</button>
@@ -96,13 +96,13 @@ const { createdTime } = useCreatedTime(props.course.createdAt)
 					<div
 						v-if="isInProgress"
 						i-ic-round-done
-						@click="emit('toggle:status', course)"
+						@click="emit('toggle:status', course._id)"
 						:data-test-unit="getUnitTestId('done')"
 					></div>
 					<div
 						v-else
 						i-mdi-undo
-						@click="emit('toggle:status', course)"
+						@click="emit('toggle:status', course._id)"
 						:data-test-unit="getUnitTestId('undone')"
 					></div>
 				</button>
@@ -121,7 +121,7 @@ const { createdTime } = useCreatedTime(props.course.createdAt)
 					cursor-pointer
 					align-middle
 					hover:text-lime-500
-					@click="emit('delete', course)"
+					@click="emit('delete', course._id)"
 					:aria-label="$t('actions.delete')"
 					data-testid="course-card-delete"
 					:data-test-unit="getUnitTestId('delete')"

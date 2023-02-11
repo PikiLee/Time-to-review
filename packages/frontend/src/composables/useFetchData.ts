@@ -1,10 +1,11 @@
+import { resolveMaybeRef } from '@/utils/helper'
 import type { MaybeRef } from '@vueuse/shared'
-import { ref, type Ref } from 'vue'
+import { ref } from 'vue'
 
-export function useFetchData<T>(fetchFunc: Function, rawData?: Ref<T>) {
+export function useFetchData<T>(fetchFunc: Function, rawData?: MaybeRef<T>) {
 	const loading = ref(false)
 	const error = ref(false)
-	const data = ref(rawData)
+	const data = rawData ? resolveMaybeRef(rawData) : ref()
 
 	loading.value = true
 	fetchFunc()

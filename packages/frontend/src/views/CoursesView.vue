@@ -3,7 +3,7 @@ import CourseCard from '@/components/Course/CourseCard.vue'
 import FetchComponent from '@/components/Others/FetchComponent.vue'
 import Items from '@/components/Others/ListItems.vue'
 import { fetchAll, update as rawUpdate } from '@/database/course'
-import { update, del } from '@/composables/useApi'
+import { useCourses } from '@/composables/useApi'
 import { CourseStatus, type Course } from 'shared'
 import type { SortableEvent } from 'sortablejs'
 import AddButton from '../components/AddButton.vue'
@@ -22,34 +22,7 @@ async function handleSort(courses: Course[], evt: SortableEvent) {
 		)
 }
 
-function findCourse(courseId: string) {
-	return courses.value.find((course) => course._id === courseId)
-}
-
-async function toggleArchive(rawCourse: Course) {
-	const course = findCourse(rawCourse._id)
-	if (course) {
-		await update(course, { archived: !course.archived })
-	}
-}
-
-async function toggleStatus(rawCourse: Course) {
-	const course = findCourse(rawCourse._id)
-	if (course) {
-		const newStatus =
-			course.status === CourseStatus['In Progress']
-				? CourseStatus.Done
-				: CourseStatus['In Progress']
-		await update(course, { status: newStatus })
-	}
-}
-
-async function handleDelete(rawCourse: Course) {
-	const course = findCourse(rawCourse._id)
-	if (course) {
-		await del(course, courses.value)
-	}
-}
+const { del, toggleArchive, toggleStatus } = useCourses(courses)
 </script>
 <template>
 	<div data-testid="courses-view">
@@ -72,7 +45,7 @@ async function handleDelete(rawCourse: Course) {
 						<template #item="course">
 							<CourseCard
 								:course="course"
-								@delete="handleDelete"
+								@delete="del"
 								@toggle:archive="toggleArchive"
 								@toggle:status="toggleStatus"
 							/>
@@ -93,7 +66,7 @@ async function handleDelete(rawCourse: Course) {
 						<template #item="course">
 							<CourseCard
 								:course="course"
-								@delete="handleDelete"
+								@delete="del"
 								@toggle:archive="toggleArchive"
 								@toggle:status="toggleStatus"
 							/>
@@ -114,7 +87,7 @@ async function handleDelete(rawCourse: Course) {
 						<template #item="course">
 							<CourseCard
 								:course="course"
-								@delete="handleDelete"
+								@delete="del"
 								@toggle:archive="toggleArchive"
 								@toggle:status="toggleStatus"
 							/>
