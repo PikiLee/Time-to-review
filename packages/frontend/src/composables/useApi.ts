@@ -58,7 +58,11 @@ export async function update(
 	}
 }
 
-export async function del(item: Course | Progress, options?: Options) {
+export async function del(
+	item: Course | Progress,
+	items: Course[] | Progress[],
+	options?: Options
+) {
 	const opts = withDefaults(options)
 	try {
 		if (item.type === 'course') {
@@ -66,6 +70,9 @@ export async function del(item: Course | Progress, options?: Options) {
 		} else {
 			await delProgress(item._id)
 		}
+
+		const index = items.findIndex((el) => el._id === item._id)
+		items.splice(index, 1)
 		if (opts?.successMsg) {
 			successMsg('Deletion succeeded.')
 		}

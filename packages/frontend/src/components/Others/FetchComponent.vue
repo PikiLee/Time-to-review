@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { useFetchData } from '@/composables/useFetchData'
+import { useVModel } from '@vueuse/core'
 
 const props = defineProps<{
 	fetchFunc: Function
+	data: any
 }>()
+const emit = defineEmits(['update:data'])
 
-const { loading, error, data } = useFetchData(props.fetchFunc)
+const data = useVModel(props, 'data', emit)
+
+const { loading, error } = useFetchData(props.fetchFunc, data)
 </script>
 
 <template>

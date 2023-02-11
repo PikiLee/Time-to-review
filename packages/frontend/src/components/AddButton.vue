@@ -35,7 +35,7 @@ const buttonType = computed(() => (isCreatingCourse.value ? 'primary' : 'info'))
 function handleOk() {
 	dialogVisible.value = false
 	if (isCreatingCourse.value) {
-		router.push({ name: 'course' })
+		router.push({ name: 'courses' })
 	}
 }
 </script>

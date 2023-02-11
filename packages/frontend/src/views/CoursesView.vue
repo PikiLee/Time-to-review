@@ -8,6 +8,9 @@ import { CourseStatus, type Course } from 'shared'
 import type { SortableEvent } from 'sortablejs'
 import AddButton from '../components/AddButton.vue'
 import { handleSort as rawHandleSort } from '../composables/useSort'
+import { ref } from 'vue'
+
+const courses = ref<Course[]>([])
 
 async function handleSort(courses: Course[], evt: SortableEvent) {
 	const updated = rawHandleSort(courses, evt)
@@ -19,27 +22,40 @@ async function handleSort(courses: Course[], evt: SortableEvent) {
 		)
 }
 
-async function toggleArchive(course: Course) {
-	await update(course, { archived: !course.archived })
+function findCourse(courseId: string) {
+	return courses.value.find((course) => course._id === courseId)
 }
 
-async function toggleStatus(course: Course) {
-	const newStatus =
-		course.status === CourseStatus['In Progress']
-			? CourseStatus.Done
-			: CourseStatus['In Progress']
-	await update(course, { status: newStatus })
+async function toggleArchive(rawCourse: Course) {
+	const course = findCourse(rawCourse._id)
+	if (course) {
+		await update(course, { archived: !course.archived })
+	}
 }
 
-async function handleDelete(course: Course) {
-	await del(course)
+async function toggleStatus(rawCourse: Course) {
+	const course = findCourse(rawCourse._id)
+	if (course) {
+		const newStatus =
+			course.status === CourseStatus['In Progress']
+				? CourseStatus.Done
+				: CourseStatus['In Progress']
+		await update(course, { status: newStatus })
+	}
+}
+
+async function handleDelete(rawCourse: Course) {
+	const course = findCourse(rawCourse._id)
+	if (course) {
+		await del(course, courses.value)
+	}
 }
 </script>
 <template>
 	<div data-testid="courses-view">
-		<FetchComponent :fetch-func="fetchAll">
+		<AddButton :resource="{ type: 'course', courses }" />
+		<FetchComponent :fetch-func="fetchAll" v-model:data="courses">
 			<template #data="{ data: courses }">
-				<AddButton :resource="{ type: 'course', courses }" />
 				<div grid gap-8>
 					<Items
 						:items="
@@ -75,7 +91,12 @@ async function handleDelete(course: Course) {
 						@dragend="(evt) => handleSort(courses, evt)"
 					>
 						<template #item="course">
-							<CourseCard :course="course" />
+							<CourseCard
+								:course="course"
+								@delete="handleDelete"
+								@toggle:archive="toggleArchive"
+								@toggle:status="toggleStatus"
+							/>
 						</template>
 					</Items>
 					<Items
@@ -91,7 +112,12 @@ async function handleDelete(course: Course) {
 						@dragend="(evt) => handleSort(courses, evt)"
 					>
 						<template #item="course">
-							<CourseCard :course="course" />
+							<CourseCard
+								:course="course"
+								@delete="handleDelete"
+								@toggle:archive="toggleArchive"
+								@toggle:status="toggleStatus"
+							/>
 						</template>
 					</Items>
 				</div>
