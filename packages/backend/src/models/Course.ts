@@ -137,8 +137,15 @@ const sortStage = {
 	$sort: { order: 1, name: 1 }
 } as const
 
-export async function create(newCourse: NewCourse) {
+export async function create(
+	newCourse: NewCourse,
+	options?: {
+		currentUserId?: Types.ObjectId
+	}
+) {
 	const user = await User.findById(newCourse.owner)
+	if (options?.currentUserId && !user._id.equals(options?.currentUserId))
+		throw new Error('Not authorized.')
 
 	if (user) {
 		const session = await mongoose.startSession()
@@ -148,8 +155,7 @@ export async function create(newCourse: NewCourse) {
 			const count = await Course.find({
 				owner: newCourse.owner
 			}).countDocuments({})
-			newCourse.order = count
-			const course = new Course(newCourse)
+			const course = new Course({ ...newCourse, order: count })
 			await course.save()
 
 			await session.commitTransaction()
@@ -188,7 +194,7 @@ export async function update(
 	session.startTransaction()
 	try {
 		// deal with order
-		if (updateCourse.order) {
+		if (updateCourse.order !== undefined) {
 			if (updateCourse.order < course.order) {
 				const coursesNeedUpdate = await Course.find({
 					owner: course.owner
@@ -256,7 +262,7 @@ export async function del(
 	const filter: any = { _id: courseId }
 	if (options?.currentUserId) filter.owner = options.currentUserId
 
-	const course = await Course.findOne({ _id: courseId })
+	const course = await Course.findOne(filter)
 	if (!course) throw new Error('Course not found.')
 
 	const session = await mongoose.startSession()
@@ -308,6 +314,8 @@ export async function fetch(
 		createProjectStage({ withProgresses, withDueProgresses }),
 		sortStage
 	])
+
+	if (result.length === 0) throw Error('Not found.')
 
 	return result
 }

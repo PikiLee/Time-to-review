@@ -3,7 +3,6 @@ dotenv.config()
 
 import express from 'express'
 import bodyParser from 'body-parser'
-import mongoose from 'mongoose'
 import passport from 'passport'
 import expressSession from 'express-session'
 import morgan from 'morgan'
@@ -17,6 +16,7 @@ import { User } from './models/User.js'
 import { router as authRouter } from './routes/auth.js'
 import { router as courseRouter } from './routes/course.js'
 import { router as progressRouter } from './routes/progress.js'
+import { createDb } from './models/db'
 
 export const IS_DEV = process.env.NODE_ENV === 'development'
 
@@ -47,13 +47,11 @@ export function createApp(
 		port: 3000
 	}
 ) {
-	mongoose.connect(
+	createDb(
 		IS_DEV
 			? process.env.DATABASE_DEVELOPMENT!
 			: process.env.DATABASE_PRODUCTION!
 	)
-
-	console.log('Database connected.')
 
 	const app = express()
 

@@ -64,7 +64,6 @@ export type UpdateCourse = Partial<
 		| 'progressCount'
 		| 'dueCount'
 		| 'type'
-		| 'order'
 	>
 >
 
