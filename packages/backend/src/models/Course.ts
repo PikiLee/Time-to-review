@@ -12,7 +12,7 @@ import {
 } from 'shared'
 import mongoose, { Schema, Types } from 'mongoose'
 import lodash from 'lodash-es'
-import User from './User.js'
+import { User } from './User.js'
 import { toObjectId } from '../utils/id.js'
 
 const courseSchema = new Schema<CourseSchemaType>(
@@ -54,6 +54,9 @@ const courseSchema = new Schema<CourseSchemaType>(
 )
 
 export const Course = mongoose.model<CourseSchemaType>('Course', courseSchema)
+;(async function () {
+	await Course.createCollection()
+})()
 
 const lookupStage = {
 	$lookup: {
@@ -138,63 +141,149 @@ export async function create(newCourse: NewCourse) {
 	const user = await User.findById(newCourse.owner)
 
 	if (user) {
-		const course = new Course(newCourse)
-		await course.save()
-		return (await fetch({ _id: course._id }))[0]
+		const session = await mongoose.startSession()
+
+		session.startTransaction()
+		try {
+			const count = await Course.find({
+				owner: newCourse.owner
+			}).countDocuments({})
+			newCourse.order = count
+			const course = new Course(newCourse)
+			await course.save()
+
+			await session.commitTransaction()
+
+			return (await fetch({ _id: course._id }))[0]
+		} catch (error) {
+			await session.abortTransaction()
+
+			throw error
+		} finally {
+			session.endSession()
+		}
 	} else {
 		throw Error('User not found.')
 	}
 }
 
 export async function update(
-	_id: Types.ObjectId | string,
+	courseId: Types.ObjectId | string,
 	updateCourse: UpdateCourse,
 	options?: {
 		withProgresses?: boolean
 		withDueProgresses?: boolean
-		userId?: Types.ObjectId
+		currentUserId?: Types.ObjectId // for check whether the owner of the course is the same as current user
 	}
 ) {
-	_id = toObjectId(_id)
-	const course = await Course.findById(_id)
+	courseId = toObjectId(courseId)
+	const course = await Course.findById(courseId)
 	if (!course) throw new Error('Course not found.')
 
-	if (options?.userId && !course.owner.equals(options?.userId))
+	if (options?.currentUserId && !course.owner.equals(options?.currentUserId))
 		throw new Error('Not authorized.')
 
-	// update stage in child progresses if the intervals of the course are being modified.
-	if (updateCourse.intervals) {
-		const oldIntervalLength = course.intervals.length
-		const newIntervalLength = updateCourse.intervals.length
+	const session = await mongoose.startSession()
 
-		if (oldIntervalLength > newIntervalLength) {
-			const children = await Progress.find({ course: course._id })
-			for (const child of children) {
-				if (child.stage > newIntervalLength) {
-					child.stage = newIntervalLength
+	session.startTransaction()
+	try {
+		// deal with order
+		if (updateCourse.order) {
+			if (updateCourse.order < course.order) {
+				const coursesNeedUpdate = await Course.find({
+					owner: course.owner
+				})
+					.where('order')
+					.gte(updateCourse.order)
+					.lt(course.order)
+				for (const courseNeedUpdate of coursesNeedUpdate) {
+					courseNeedUpdate.order++
+					await courseNeedUpdate.save()
 				}
-				await child.save()
+			} else if (updateCourse.order > course.order) {
+				const coursesNeedUpdate = await Course.find({
+					owner: course.owner
+				})
+					.where('order')
+					.gt(course.order)
+					.lte(updateCourse.order)
+				for (const courseNeedUpdate of coursesNeedUpdate) {
+					courseNeedUpdate.order--
+					await courseNeedUpdate.save()
+				}
 			}
 		}
-	}
 
-	for (const [key, value] of lodash.entries(updateCourse)) {
-		;(course as any)[key] = value
-	}
-	await course.save()
+		if (updateCourse.intervals) {
+			// update stage in child progresses if the intervals of the course are being modified.
+			const oldIntervalLength = course.intervals.length
+			const newIntervalLength = updateCourse.intervals.length
 
-	return (await fetch({ _id: course._id }, options))[0]
+			if (oldIntervalLength > newIntervalLength) {
+				const children = await Progress.find({ course: course._id })
+				for (const child of children) {
+					if (child.stage > newIntervalLength) {
+						child.stage = newIntervalLength
+					}
+					await child.save()
+				}
+			}
+		}
+
+		for (const [key, value] of lodash.entries(updateCourse)) {
+			;(course as any)[key] = value
+		}
+		await course.save()
+
+		await session.commitTransaction()
+
+		return (await fetch({ _id: course._id }, options))[0]
+	} catch (error) {
+		await session.abortTransaction()
+
+		throw error
+	} finally {
+		session.endSession()
+	}
 }
 
 export async function del(
-	_id: Types.ObjectId,
+	courseId: Types.ObjectId,
 	options?: {
-		userId?: Types.ObjectId
+		currentUserId?: Types.ObjectId // for check whether the owner of the course is the same as current user
 	}
 ) {
-	const filter: any = { _id }
-	if (options?.userId) filter.owner = options.userId
-	return !!(await Course.findOneAndDelete({ _id }))
+	const filter: any = { _id: courseId }
+	if (options?.currentUserId) filter.owner = options.currentUserId
+
+	const course = await Course.findOne({ _id: courseId })
+	if (!course) throw new Error('Course not found.')
+
+	const session = await mongoose.startSession()
+
+	session.startTransaction()
+	try {
+		// reduce order by 1 for all courses after the one
+		const coursesNeedUpdate = await Course.find({
+			owner: course.owner
+		})
+			.where('order')
+			.gt(course.order)
+		for (const courseNeedUpdate of coursesNeedUpdate) {
+			courseNeedUpdate.order--
+			await courseNeedUpdate.save()
+		}
+
+		course.delete()
+		await course.save()
+		await session.commitTransaction()
+	} catch (error) {
+		await session.abortTransaction()
+
+		throw error
+	} finally {
+		session.endSession()
+	}
 }
 
 /**

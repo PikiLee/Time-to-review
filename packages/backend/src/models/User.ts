@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 import passportLocalMongoose from 'passport-local-mongoose'
 import { getPasswordValidationRegex } from 'shared'
 
-const User = new Schema(
+const schema = new Schema(
 	{},
 	{
 		id: false,
@@ -11,7 +11,7 @@ const User = new Schema(
 	}
 )
 
-User.plugin(passportLocalMongoose, {
+schema.plugin(passportLocalMongoose, {
 	passwordValidator(password: string, cb: any) {
 		const { regex, errorMsg } = getPasswordValidationRegex()
 		if (!regex.test(password))
@@ -23,19 +23,7 @@ User.plugin(passportLocalMongoose, {
 	}
 })
 
-User.virtual('courses', {
-	ref: 'Course',
-	localField: '_id',
-	foreignField: 'owner'
-})
-
-User.virtual('progresses', {
-	ref: 'Progress',
-	localField: '_id',
-	foreignField: 'owner'
-})
-
-User.set('toJSON', {
+schema.set('toJSON', {
 	versionKey: false,
 	transform: (_, ret) => {
 		return {
@@ -45,4 +33,7 @@ User.set('toJSON', {
 	}
 })
 
-export default mongoose.model('User', User)
+export const User = mongoose.model('User', schema)
+;(async function () {
+	await User.createCollection()
+})()

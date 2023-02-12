@@ -3,7 +3,7 @@ import mongoose, { Types } from 'mongoose'
 import { ProgressSchema as ProgressSchemaType } from 'shared'
 import { Course } from './Course.js'
 import lodash from 'lodash-es'
-import User from './User.js'
+import { User } from './User.js'
 import dayjs from 'dayjs'
 
 const { Schema } = mongoose
@@ -54,6 +54,9 @@ export const Progress = mongoose.model<ProgressSchemaType>(
 	'Progress',
 	progressSchema
 )
+;(async function () {
+	await Progress.createCollection()
+})()
 
 export function createNextDateField(
 	progress: string | object,

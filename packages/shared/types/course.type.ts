@@ -46,6 +46,7 @@ export interface NewCourse
 		| 'dueCount'
 		| 'intervals'
 		| 'type'
+		| 'order'
 	> {
 	owner: string
 	intervals?: number[]
@@ -63,6 +64,7 @@ export type UpdateCourse = Partial<
 		| 'progressCount'
 		| 'dueCount'
 		| 'type'
+		| 'order'
 	>
 >
 

@@ -19,7 +19,7 @@ router.put('/:courseId', async (req, res) => {
 			toObjectId(req.params.courseId),
 			req.body,
 			{
-				userId: toObjectId((req.user as any)._id),
+				currentUserId: toObjectId((req.user as any)._id),
 				...req.query
 			}
 		)
@@ -39,7 +39,7 @@ router.delete('/:courseId', async (req, res) => {
 	try {
 		if (
 			await del(toObjectId(req.params.courseId), {
-				userId: toObjectId((req.user as any)._id)
+				currentUserId: toObjectId((req.user as any)._id)
 			})
 		) {
 			res.sendStatus(200)

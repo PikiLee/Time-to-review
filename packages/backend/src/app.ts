@@ -13,7 +13,7 @@ import path from 'node:path'
 import url from 'node:url'
 import { AUTH_URL, COURSE_URL, PROGRESS_URL } from 'shared'
 
-import User from './models/User.js'
+import { User } from './models/User.js'
 import { router as authRouter } from './routes/auth.js'
 import { router as courseRouter } from './routes/course.js'
 import { router as progressRouter } from './routes/progress.js'
@@ -52,6 +52,8 @@ export function createApp(
 			? process.env.DATABASE_DEVELOPMENT!
 			: process.env.DATABASE_PRODUCTION!
 	)
+
+	console.log('Database connected.')
 
 	const app = express()
 
