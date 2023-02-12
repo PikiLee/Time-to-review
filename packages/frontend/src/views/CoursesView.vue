@@ -6,8 +6,19 @@ import { fetchAll } from '@/database/course'
 import { useCourses } from '@/composables/useCourses'
 import type { Course } from 'shared'
 import AddButton from '../components/AddButton.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useFetchData } from '@/composables/useFetchData'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const addButtonEl = ref()
+const visible = ref(false)
+
+onMounted(() => {
+	if (route.query.openAddButton) {
+		visible.value = true
+	}
+})
 
 const courses = ref<Course[]>([])
 
@@ -25,6 +36,8 @@ const {
 <template>
 	<div data-testid="courses-view">
 		<AddButton
+			:visible="visible"
+			ref="addButtonEl"
 			type="course"
 			@create:course="
 				(v) => {

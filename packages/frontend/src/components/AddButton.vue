@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
-import { computed, ref } from 'vue'
+import { breakpointsTailwind, useBreakpoints, useVModel } from '@vueuse/core'
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CreatorDialog from '@/components/CreatorDialog.vue'
 
 const props = defineProps<{
+	visible?: boolean
 	type: 'course' | 'progress'
 }>()
-const emit = defineEmits(['create:progress', 'create:course'])
+const emit = defineEmits(['create:progress', 'create:course', 'update:visible'])
 
-const dialogVisible = ref(false)
+const dialogVisible = useVModel(props, 'visible', emit)
 const breakpoints = useBreakpoints(breakpointsTailwind)
 const largerThanMd = breakpoints.greater('md')
 const { t } = useI18n()

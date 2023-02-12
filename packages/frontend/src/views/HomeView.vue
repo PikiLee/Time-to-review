@@ -9,6 +9,9 @@ import { fetchDue } from '@/database/course'
 import { errorMsg } from '@/utils/useMessage'
 import type { CourseWithDueProgresses, UpdateProgress } from 'shared'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const {
 	data: courses,
@@ -57,6 +60,10 @@ async function handleProgressUpdate(
 		errorMsg('Updation failed.')
 	}
 }
+
+function goAddCourse() {
+	router.push({ name: 'courses', query: { openAddButton: 'true' } })
+}
 </script>
 
 <template>
@@ -99,9 +106,13 @@ async function handleProgressUpdate(
 				</ListItems>
 			</template>
 		</FetchComponent>
-		<el-empty
-			:description="$t('common.empty')"
-			v-if="courses && courses.length === 0"
-		/>
+		<div v-if="courses && courses.length === 0">
+			<el-empty description="Congradulations! No Courses Need Rewiew!" />
+			<div flex items-center justify-center>
+				<el-button type="primary" @click="goAddCourse"
+					>Go Add Course</el-button
+				>
+			</div>
+		</div>
 	</main>
 </template>
