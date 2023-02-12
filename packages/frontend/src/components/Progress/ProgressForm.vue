@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-import { update } from '@/database/progress'
-import { errorMsg, successMsg } from '@/utils/useMessage'
-import { del } from '@/database/progress'
 import type { Progress } from 'shared'
 import { ref, reactive } from 'vue'
 import { getStageString } from '../../utils/progress.utils'
+import { createUnitTestIdGetter } from '@/unit/utils'
 
 const props = defineProps<{
+	visible: boolean
 	progress: Progress
 	intervals: number[]
 }>()
-const emit = defineEmits(['ok'])
+const emit = defineEmits(['update', 'delete'])
 const NAME_SPACE = 'progress-form'
+const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
 
 const ruleFormRef = ref<FormInstance>()
 const copy = {
@@ -21,6 +21,7 @@ const copy = {
 	lastDate: props.progress.lastDate,
 	order: props.progress.order
 }
+
 let ruleForm = reactive(copy)
 
 const rules = reactive<FormRules>({
@@ -65,83 +66,80 @@ const rules = reactive<FormRules>({
 const submitForm = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return
 	await formEl.validate(async (valid) => {
-		try {
-			if (valid) {
-				await update(props.progress._id, ruleForm)
-
-				successMsg('Updation succeeded.')
-				emit('ok')
-			} else {
-				throw new Error('In valid.')
-			}
-		} catch (err) {
-			errorMsg(`Updation failed.`)
+		if (valid) {
+			emit('update', [props.progress._id, ruleForm])
 		}
 	})
 }
 </script>
 
 <template>
-	<el-form
-		ref="ruleFormRef"
-		:model="ruleForm"
-		:rules="rules"
-		label-width="120px"
-		label-position="left"
-		status-icon
-		mt-6
-		col-span-12
-		@click.stop
-		data-testid="progress-form"
-		:data-test-unit="`${NAME_SPACE}-wrapper`"
+	<el-dialog
+		:modelValue="visible"
+		title="Edit Progress"
+		width="90%"
+		max-w-screen-sm
+		:data-test-unit="getUnitTestId('wrapper')"
 	>
-		<el-form-item :label="$t('course.name')" prop="name">
-			<el-input
-				v-model="ruleForm.name"
-				data-testid="progress-list-item-name-input"
-				:data-test-unit="`${NAME_SPACE}-input`"
-			/>
-		</el-form-item>
-		<el-form-item :label="$t('course.stage')" prop="stage">
-			<el-select v-model="ruleForm.stage">
-				<el-option
-					v-for="value in intervals.length + 1"
-					:key="value"
-					:label="getStageString(value - 1, intervals.length)"
-					:value="value - 1"
+		<el-form
+			ref="ruleFormRef"
+			:model="ruleForm"
+			:rules="rules"
+			label-width="120px"
+			label-position="left"
+			status-icon
+			mt-6
+			col-span-12
+			@click.stop
+			data-testid="progress-form"
+			:data-test-unit="getUnitTestId('form')"
+		>
+			<el-form-item :label="$t('course.name')" prop="name">
+				<el-input
+					v-model="ruleForm.name"
+					data-testid="progress-list-item-name-input"
+					:data-test-unit="`${NAME_SPACE}-input`"
 				/>
-			</el-select>
-		</el-form-item>
-		<el-form-item :label="$t('course.lastReviewDate')" prop="lastDate">
-			<el-date-picker
-				v-model="ruleForm.lastDate"
-				type="date"
-				placeholder="Pick a day"
-				:style="{ width: '100%' }"
-				:clearable="false"
-			/>
-		</el-form-item>
-
-		<el-form-item>
-			<div flex gap-2 flex-wrap>
-				<el-button
-					type="primary"
-					@click="submitForm(ruleFormRef)"
-					data-testid="progress-list-item-confirm"
-					:data-test-unit="`${NAME_SPACE}-confirm`"
-				>
-					{{ $t('actions.confirm') }}
-				</el-button>
-
-				<DeleteButton
-					:name="props.progress.name"
-					:data-test-unit="`${NAME_SPACE}-delete`"
-					data-testid="progress-list-item-delete"
-					@delete="del(progress._id)"
+			</el-form-item>
+			<el-form-item :label="$t('course.stage')" prop="stage">
+				<el-select v-model="ruleForm.stage">
+					<el-option
+						v-for="value in intervals.length + 1"
+						:key="value"
+						:label="getStageString(value - 1, intervals.length)"
+						:value="value - 1"
+					/>
+				</el-select>
+			</el-form-item>
+			<el-form-item :label="$t('course.lastReviewDate')" prop="lastDate">
+				<el-date-picker
+					v-model="ruleForm.lastDate"
+					type="date"
+					placeholder="Pick a day"
+					:style="{ width: '100%' }"
+					:clearable="false"
 				/>
-			</div>
-		</el-form-item>
-	</el-form>
+			</el-form-item>
+
+			<el-form-item>
+				<div flex gap-2 flex-wrap>
+					<el-button
+						type="primary"
+						@click="submitForm(ruleFormRef)"
+						data-testid="progress-list-item-confirm"
+						:data-test-unit="`${NAME_SPACE}-confirm`"
+					>
+						{{ $t('actions.confirm') }}
+					</el-button>
+
+					<DeleteButton
+						:name="props.progress.name"
+						@delete="emit('delete', progress._id)"
+					/>
+				</div>
+			</el-form-item>
+		</el-form>
+	</el-dialog>
 </template>
 
 <style scoped></style>

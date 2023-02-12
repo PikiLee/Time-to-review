@@ -1,7 +1,5 @@
-import { flushPromises, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import { describe, expect, test, vi, beforeEach } from 'vitest'
-import { update } from '@/database/progress'
-import { successMsg } from '@/utils/useMessage'
 import { createGetter } from './utils'
 import ProgressItem from '@/components/Progress/ProgressItem.vue'
 
@@ -11,20 +9,6 @@ const { get, find } = createGetter(NAME_SPACE)
 vi.mock('vue-i18n', () => {
 	return {
 		useI18n: () => ({ t: () => '' })
-	}
-})
-
-vi.mock('@/database/progress', () => {
-	return {
-		update: vi.fn(async () => 'hello'),
-		del: vi.fn(async () => {})
-	}
-})
-
-vi.mock('@/utils/useMessage', () => {
-	return {
-		errorMsg: vi.fn(() => {}),
-		successMsg: vi.fn(() => {})
 	}
 })
 
@@ -67,7 +51,7 @@ describe(NAME_SPACE, () => {
 		expect(await find(wrapper, 'wrapper').exists()).toBe(true)
 	})
 
-	test('call update() if press next stage button', async () => {
+	test('emit update if press next stage button', async () => {
 		const wrapper = mount(ProgressItem, {
 			props: {
 				progress,
@@ -81,13 +65,10 @@ describe(NAME_SPACE, () => {
 		})
 
 		await get(wrapper, 'next-stage').trigger('click')
-
-		await flushPromises()
-		expect(update).toHaveBeenCalledOnce()
-		expect(successMsg).toHaveBeenCalledOnce()
+		expect(wrapper.emitted()).toHaveProperty('update')
 	})
 
-	test('show dialog if press edit button', async () => {
+	test('emit open:form if press edit button', async () => {
 		const wrapper = mount(ProgressItem, {
 			props: {
 				progress,
@@ -102,6 +83,6 @@ describe(NAME_SPACE, () => {
 
 		await get(wrapper, 'edit').trigger('click')
 
-		await get(wrapper, 'dialog')
+		expect(wrapper.emitted()).toHaveProperty('open:form')
 	})
 })

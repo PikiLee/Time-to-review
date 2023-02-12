@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import type { Progress } from 'shared'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import dayjs from 'dayjs/esm'
-import { update } from '@/database/progress'
-import { errorMsg, successMsg } from '@/utils/useMessage'
 import { getStageString } from '../../utils/progress.utils'
-import ProgressForm from './ProgressForm.vue'
 import { createUnitTestIdGetter } from '@/unit/utils'
 
 const props = defineProps<{
@@ -13,9 +10,10 @@ const props = defineProps<{
 	intervals: number[]
 }>()
 
+const emit = defineEmits(['open:form', 'update'])
+
 const NAME_SPACE = 'progress-item'
 const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
-const showEditor = ref(false)
 
 const isDone = computed(() => props.progress.stage >= props.intervals.length)
 
@@ -23,19 +21,11 @@ const isDone = computed(() => props.progress.stage >= props.intervals.length)
  * to next stage button
  */
 async function toNextStage() {
-	try {
-		const newStage = Math.min(
-			props.progress.stage + 1,
-			props.intervals.length
-		)
-		await update(props.progress._id, {
-			stage: newStage,
-			lastDate: new Date().toISOString()
-		})
-		successMsg('Succeeded proceeding to next stage.')
-	} catch (err) {
-		errorMsg(String(err))
-	}
+	const newStage = Math.min(props.progress.stage + 1, props.intervals.length)
+	emit('update', props.progress._id, {
+		stage: newStage,
+		lastDate: new Date().toISOString()
+	})
 }
 </script>
 
@@ -146,7 +136,7 @@ async function toNextStage() {
 						placement="top"
 					>
 						<el-button
-							@click="showEditor = true"
+							@click="emit('open:form', progress._id)"
 							size="small"
 							:data-test-unit="getUnitTestId('edit')"
 							><span i-material-symbols-edit text-lg></span
@@ -156,20 +146,6 @@ async function toNextStage() {
 			</div>
 		</div>
 	</el-card>
-
-	<el-dialog
-		v-model="showEditor"
-		title="Edit Progress"
-		width="90%"
-		max-w-screen-sm
-		:data-test-unit="getUnitTestId('dialog')"
-	>
-		<ProgressForm
-			:progress="progress"
-			:intervals="intervals"
-			@ok="showEditor = false"
-		/>
-	</el-dialog>
 </template>
 
 <style lang="scss" scope>

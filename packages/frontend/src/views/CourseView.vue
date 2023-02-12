@@ -11,6 +11,9 @@ import Items from '@/components/Others/ListItems.vue'
 import { useFetchData } from '@/composables/useFetchData'
 import { useCourse } from '@/composables/useCourse'
 import { useProgresses } from '@/composables/useProgresses'
+import { errorMsg } from '@/utils/useMessage'
+import type { UpdateCourse } from 'shared'
+import router from '@/router'
 
 const settingVisible = ref(false)
 const { id: courseId } = useCustomRouter()
@@ -27,7 +30,35 @@ const { loading: loading2, error: error2 } = useFetchData(
 	progresses
 )
 const { update: updateCourse, del: delCourse } = useCourse(course)
-const { create, update, del, find, handleSort } = useProgresses(progresses)
+const { create, update, handleSort } = useProgresses(progresses)
+
+async function handleDelCourse() {
+	await delCourse()
+	router.push({ name: 'courses' })
+}
+
+async function handleUpdateCourse(update: UpdateCourse) {
+	await updateCourse(update)
+	if ('intervals' in updateCourse) {
+		useFetchData(() => fetchAll(courseId.value), progresses)
+	}
+}
+
+// form
+const activeProgressId = ref('')
+
+function handleOpenForm(_id: string) {
+	activeProgressId.value = _id
+}
+
+function handleProgressUpdate(v: any[]) {
+	try {
+		update(v[0], v[1])
+		activeProgressId.value = ''
+	} catch {
+		errorMsg('Updation failed.')
+	}
+}
 </script>
 <template>
 	<div data-testid="course-view">
@@ -47,7 +78,8 @@ const { create, update, del, find, handleSort } = useProgresses(progresses)
 				<CourseSetting
 					v-model="settingVisible"
 					:course="course"
-					@update="updateCourse"
+					@update="handleUpdateCourse"
+					@delete="handleDelCourse"
 				/>
 				<Items
 					:items="progresses"
@@ -73,6 +105,17 @@ const { create, update, del, find, handleSort } = useProgresses(progresses)
 						<ProgressItem
 							:progress="item"
 							:intervals="course.intervals"
+							@open:form="handleOpenForm"
+							@update="
+								(_id, updateProgress) =>
+									update(_id, updateProgress)
+							"
+						/>
+						<ProgressForm
+							:visible="activeProgressId === item._id"
+							:progress="item"
+							:intervals="course.intervals"
+							@update="handleProgressUpdate"
 						/>
 					</template>
 				</Items>

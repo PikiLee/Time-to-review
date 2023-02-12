@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { del } from '@/database/course'
 import { createUnitTestIdGetter } from '@/unit/utils'
 import { useVModel } from '@vueuse/core'
 import type { FormInstance, FormRules } from 'element-plus'
@@ -12,7 +11,7 @@ const props = defineProps<{
 	modelValue: boolean
 	course: Course
 }>()
-const emit = defineEmits(['update:modelValue', 'update'])
+const emit = defineEmits(['update:modelValue', 'update', 'delete'])
 
 const NAME_SPACE = 'course-setting'
 const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
@@ -90,7 +89,7 @@ function removeInterval() {
 }
 
 function handleDelete() {
-	del(props.course._id)
+	emit('delete', props.course._id)
 	visible.value = false
 }
 </script>
