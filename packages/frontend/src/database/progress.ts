@@ -1,7 +1,6 @@
 import { getStartOfDay } from '@/utils/progress.utils'
 import { PROGRESS_URL, type NewProgress, type UpdateProgress } from 'shared'
 import { api } from './api'
-import { keys } from 'lodash-es'
 
 export async function create(newProgress: NewProgress) {
 	const res = await api.post(PROGRESS_URL, {

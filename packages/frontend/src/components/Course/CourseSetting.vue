@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { update, del } from '@/database/course'
+import { del } from '@/database/course'
 import { createUnitTestIdGetter } from '@/unit/utils'
-import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useVModel } from '@vueuse/core'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Course } from 'shared'
@@ -13,7 +12,7 @@ const props = defineProps<{
 	modelValue: boolean
 	course: Course
 }>()
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'update'])
 
 const NAME_SPACE = 'course-setting'
 const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
@@ -76,17 +75,8 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return
 	await formEl.validate((valid) => {
 		if (valid) {
-			update(props.course._id, ruleForm, {
-				withProgresses: true
-			})
-				.then(() => {
-					visible.value = false
-					successMsg(t('components.course.courseSetting.success'))
-				})
-				.catch(() => {
-					visible.value = true
-					errorMsg(t('components.course.courseSetting.fail'))
-				})
+			emit('update', ruleForm)
+			visible.value = false
 		}
 	})
 }

@@ -44,7 +44,11 @@ const { create, update, del, find, handleSort } = useProgresses(progresses)
 						}
 					"
 				/>
-				<CourseSetting v-model="settingVisible" :course="course" />
+				<CourseSetting
+					v-model="settingVisible"
+					:course="course"
+					@update="updateCourse"
+				/>
 				<Items
 					:items="progresses"
 					item-key="_id"
