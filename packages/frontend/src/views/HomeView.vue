@@ -73,6 +73,7 @@ async function handleProgressUpdate(
 					:title="course.name"
 					:badge="course.dueCount"
 					item-key="_id"
+					badgeType="danger"
 				>
 					<template #item="item">
 						<ProgressItem

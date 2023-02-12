@@ -9,6 +9,7 @@ const props = defineProps<{
 	group?: string
 	sortable?: boolean
 	badge?: string | number
+	badgeType?: 'primary' | 'success' | 'warning' | 'danger' | 'info'
 }>()
 
 const emit = defineEmits(['dragend'])
@@ -47,7 +48,11 @@ onMounted(() => {
 	<div p-2>
 		<div text-3xl flex items-center mb-2>
 			<div text-2xl flex-grow-1 items-center>
-				<el-badge v-if="title" :value="badge" type="primary">
+				<el-badge
+					v-if="title"
+					:value="badge"
+					:type="badgeType ?? 'primary'"
+				>
 					<h3 m-0>{{ title }}</h3>
 				</el-badge>
 				<slot v-else name="header" />
