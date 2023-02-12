@@ -52,6 +52,23 @@ router.delete('/:courseId', async (req, res) => {
 })
 
 /**
+ * get due courses
+ */
+router.get('/due', async (req, res) => {
+	try {
+		const courses = await fetch(
+			{
+				owner: toObjectId((req.user as any)._id)
+			},
+			req.query
+		)
+		res.status(200).json(courses.filter((course) => course.isDue === true))
+	} catch (err) {
+		res.status(400).send(err)
+	}
+})
+
+/**
  * get a course
  */
 router.get('/:courseId', async (req, res) => {

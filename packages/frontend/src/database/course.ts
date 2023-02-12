@@ -59,3 +59,15 @@ export async function fetchAll(options?: Options): Promise<Course[]> {
 	})
 	return res.data
 }
+
+export async function fetchDue(options?: Options): Promise<Course[]> {
+	const { withProgresses, withDueProgresses } = buildOptions(options)
+
+	const res = await api.get(`${COURSE_URL}/due`, {
+		params: {
+			withProgresses,
+			withDueProgresses
+		}
+	})
+	return res.data
+}

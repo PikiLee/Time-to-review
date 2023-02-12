@@ -67,7 +67,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return
 	await formEl.validate(async (valid) => {
 		if (valid) {
-			emit('update', [props.progress._id, ruleForm])
+			emit('update', props.progress._id, props.progress.course, ruleForm)
 		}
 	})
 }

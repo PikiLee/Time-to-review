@@ -12,7 +12,7 @@ import { useFetchData } from '@/composables/useFetchData'
 import { useCourse } from '@/composables/useCourse'
 import { useProgresses } from '@/composables/useProgresses'
 import { errorMsg } from '@/utils/useMessage'
-import type { UpdateCourse } from 'shared'
+import type { UpdateCourse, UpdateProgress } from 'shared'
 import router from '@/router'
 
 const settingVisible = ref(false)
@@ -51,9 +51,13 @@ function handleOpenForm(_id: string) {
 	activeProgressId.value = _id
 }
 
-function handleProgressUpdate(v: any[]) {
+function handleProgressUpdate(
+	_id: string,
+	course: string,
+	updateProgress: UpdateProgress
+) {
 	try {
-		update(v[0], v[1])
+		update(_id, updateProgress)
 		activeProgressId.value = ''
 	} catch {
 		errorMsg('Updation failed.')
