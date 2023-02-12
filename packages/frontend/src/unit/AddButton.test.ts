@@ -2,7 +2,6 @@ import AddButton from '@/components/AddButton.vue'
 import { mount } from '@vue/test-utils'
 import { describe, expect, test, vi } from 'vitest'
 import CreatorDialog from '@/components/CreatorDialog.vue'
-import { course1WithProgresses, courses } from './dummyData'
 
 const $t = () => ''
 
@@ -23,52 +22,29 @@ vi.mock('vue-router', () => {
 	}
 })
 
-describe('AddButton', () => {
-	describe('Rendered', () => {
-		test('Rendered when create course', () => {
-			const wrapper = mount(AddButton, {
-				props: {
-					resource: { type: 'course', courses }
-				},
-				global: {
-					mocks: {
-						$t
-					}
-				},
-				components: { CreatorDialog }
-			})
+describe.each([['course'], ['progress']])('When creating $s', (t) => {
+	const type = t as 'course' | 'progress'
 
-			expect(wrapper.find(`[data-testid="add-button"]`).exists()).toBe(
-				true
-			)
-		})
-
-		test('Rendered when create progress', () => {
-			const wrapper = mount(AddButton, {
-				props: {
-					resource: {
-						type: 'progress',
-						course: course1WithProgresses
-					}
-				},
-				global: {
-					mocks: {
-						$t
-					}
-				},
-				components: { CreatorDialog }
-			})
-
-			expect(wrapper.find(`[data-testid="add-button"]`).exists()).toBe(
-				true
-			)
-		})
-	})
-
-	test('Go to course page if ok', async () => {
+	test('Rendered', () => {
 		const wrapper = mount(AddButton, {
 			props: {
-				resource: { type: 'course', courses }
+				type
+			},
+			global: {
+				mocks: {
+					$t
+				}
+			},
+			components: { CreatorDialog }
+		})
+
+		expect(wrapper.find(`[data-testid="add-button"]`).exists()).toBe(true)
+	})
+
+	test(`Emit create:${type} if ok`, async () => {
+		const wrapper = mount(AddButton, {
+			props: {
+				type
 			},
 			global: {
 				mocks: {
@@ -79,9 +55,8 @@ describe('AddButton', () => {
 		})
 
 		await wrapper.get(`[data-testid="add-button"]`).trigger('click')
-		await wrapper.getComponent(CreatorDialog).vm.$emit('ok')
+		await wrapper.getComponent(CreatorDialog).vm.$emit(`create:${type}`)
 
-		expect(push).toHaveBeenCalledOnce()
-		expect(push).toHaveBeenCalledWith({ name: 'course' })
+		expect(wrapper.emitted()).toHaveProperty(`create:${type}`)
 	})
 })

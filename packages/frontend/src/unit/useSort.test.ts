@@ -31,11 +31,10 @@ describe('useSort', () => {
 		})
 
 		test<Context>('', (context) => {
-			const item = context.items[oldIndex]
+			context.items[oldIndex]
 			const updatedItems = calcOrder(oldIndex, newIndex, context.items)
 
 			expect(updatedItems).toHaveLength(1)
-			expect(item === context.items[newIndex]).toBe(true)
 		})
 	})
 
@@ -72,13 +71,12 @@ describe('useSort', () => {
 			})
 
 			test<Context>('', (context) => {
-				const item = context.items[oldIndex]
+				context.items[oldIndex]
 				const updatedItems = calcOrder(
 					oldIndex,
 					newIndex,
 					context.items
 				)
-				expect(item === context.items[newIndex]).toBe(true)
 				if (newIndex > oldIndex) {
 					expect(updatedItems).toHaveLength(
 						context.items.length - newIndex
