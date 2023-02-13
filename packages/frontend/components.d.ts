@@ -11,6 +11,7 @@ declare module '@vue/runtime-core' {
 		AppHeader: typeof import('./src/components/AppHeader.vue')['default']
 		CourseCard: typeof import('./src/components/Course/CourseCard.vue')['default']
 		CourseComponent: typeof import('./src/components/Course/CourseComponent.vue')['default']
+		CourseListContainer: typeof import('./src/components/CourseList/CourseListContainer.vue')['default']
 		CourseSetting: typeof import('./src/components/Course/CourseSetting.vue')['default']
 		CreatorDialog: typeof import('./src/components/CreatorDialog.vue')['default']
 		DeleteButton: typeof import('./src/components/Others/DeleteButton.vue')['default']
