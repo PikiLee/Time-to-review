@@ -8,7 +8,7 @@ import {
 	errorIfIdNotEqual,
 	errorIfProgressNotExist,
 	errorIfUserNotExist
-} from '../utils/id'
+} from '../utils/id.js'
 
 const { Schema } = mongoose
 

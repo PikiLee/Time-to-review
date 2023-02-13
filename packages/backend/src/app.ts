@@ -16,7 +16,7 @@ import { User } from './models/User.js'
 import { router as authRouter } from './routes/auth.js'
 import { router as courseRouter } from './routes/course.js'
 import { router as progressRouter } from './routes/progress.js'
-import { createDb } from './models/db'
+import { createDb } from './models/db.js'
 
 export const IS_DEV = process.env.NODE_ENV === 'development'
 

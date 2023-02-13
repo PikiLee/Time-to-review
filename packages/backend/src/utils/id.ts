@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
-import { Course } from '../models/Course'
-import { Progress } from '../models/Progress'
-import { User } from '../models/User'
+import { Course } from '../models/Course.js'
+import { Progress } from '../models/Progress.js'
+import { User } from '../models/User.js'
 
 type ID = string | mongoose.Types.ObjectId
 
