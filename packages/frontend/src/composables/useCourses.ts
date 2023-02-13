@@ -4,7 +4,7 @@ import type { SortableEvent } from 'sortablejs'
 import { computed, ref, watch } from 'vue'
 import type { Options } from './shared'
 import { createCourse, delCourse, updateCourse } from './useCourse'
-import { rawHandleSort } from './useSort'
+import { calcOrder } from './useSort'
 
 export function useCourses(rawItems: MaybeRef<Course[]>) {
 	const items = ref(rawItems)
@@ -73,7 +73,8 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 		const item = find(_id)
 		if (!item) throw Error('Not found.')
 
-		const order = items.value.length
+		const order = items.value.length - 1
+		calcOrder(item.order, order, items.value)
 
 		await update(item._id, {
 			archived: !item.archived,
@@ -85,7 +86,8 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 		const item = find(_id)
 		if (!item) throw Error('Not found.')
 
-		const order = items.value.length
+		const order = items.value.length - 1
+		calcOrder(item.order, order, items.value)
 
 		const newStatus =
 			item.status === CourseStatus['In Progress']
@@ -94,14 +96,20 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 		await update(item._id, { status: newStatus, order })
 	}
 
-	function handleSort(items: Course[], evt: SortableEvent) {
-		const updatedItems = rawHandleSort(items, evt)
-		if (updatedItems)
-			updatedItems.forEach((item) =>
-				update(item._id, {
-					order: item.order
-				})
-			)
+	async function handleSort(targetItems: Course[], evt: SortableEvent) {
+		if (
+			evt.oldDraggableIndex !== undefined &&
+			evt.newDraggableIndex !== undefined
+		) {
+			const realOldIndex = targetItems[evt.oldDraggableIndex].order
+			const realNewIndex = targetItems[evt.newDraggableIndex].order
+
+			await updateCourse(items.value[realOldIndex]._id, {
+				order: realNewIndex
+			})
+
+			calcOrder(realOldIndex, realNewIndex, items.value)
+		}
 	}
 
 	return {

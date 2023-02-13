@@ -12,7 +12,7 @@ import type { MaybeRef } from '@vueuse/shared'
 import { withDefaults, type Options, resolveMaybeRef } from './shared'
 import type { SortableEvent } from 'sortablejs'
 import { watch } from 'vue'
-import { rawHandleSort } from './useSort'
+import { calcOrder } from './useSort'
 
 export async function updateProgress(
 	_id: string,
@@ -119,14 +119,17 @@ export function useProgresses(rawItems: MaybeRef<Progress[]>) {
 		items.value.push(progress)
 	}
 
-	function handleSort(evt: SortableEvent) {
-		const updatedItems = rawHandleSort(items.value, evt)
-		if (updatedItems)
-			updatedItems.forEach((item) =>
-				update(item._id, {
-					order: item.order
-				})
-			)
+	async function handleSort(evt: SortableEvent) {
+		if (
+			evt.oldDraggableIndex !== undefined &&
+			evt.newDraggableIndex !== undefined
+		) {
+			await updateProgress(items.value[evt.oldDraggableIndex]._id, {
+				order: evt.newDraggableIndex
+			})
+
+			calcOrder(evt.oldDraggableIndex, evt.newDraggableIndex, items.value)
+		}
 	}
 
 	return { items, create, update, del, find, handleSort }
