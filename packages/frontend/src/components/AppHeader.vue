@@ -1,14 +1,20 @@
 <script setup lang="ts">
 import { api } from '@/database/api'
 import { useUserStore } from '@/store/user.store'
-import { useDark, useToggle } from '@vueuse/core'
+import { useDark, useElementBounding, useToggle } from '@vueuse/core'
 import { AUTH_URL } from 'shared'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const emit = defineEmits(['updateHeight'])
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 const userStore = useUserStore()
 const router = useRouter()
+const route = useRoute()
+
+const isIntroPage = computed(() => route.name === 'intro')
 
 function logout() {
 	api.post(`${AUTH_URL}/logout`).finally(() => {
@@ -17,10 +23,24 @@ function logout() {
 		router.push({ name: 'login' })
 	})
 }
+
+// calc height
+const wrapperEl = ref()
+const { height } = useElementBounding(wrapperEl)
+
+onMounted(() => {
+	watch(
+		height,
+		() => {
+			emit('updateHeight', height.value)
+		},
+		{ immediate: true }
+	)
+})
 </script>
 
 <template>
-	<div flex py-4 gap-8>
+	<div flex py-4 gap-8 ref="wrapperEl">
 		<div flex-grow-1></div>
 
 		<!-- Web site icon -->
@@ -31,7 +51,7 @@ function logout() {
 			flex-row
 			gap-3
 			link-decoration-none
-			:to="{ name: 'home' }"
+			:to="{ name: 'intro' }"
 		>
 			<div>
 				<img
@@ -47,6 +67,7 @@ function logout() {
 		<!-- Home Course Link -->
 		<div flex-grow-3 flex flex-row gap-4 items-center justify-end>
 			<RouterLink
+				v-if="!isIntroPage || userStore.isLogin"
 				font-600
 				text-lg
 				link-decoration-none
@@ -56,6 +77,7 @@ function logout() {
 				>{{ $t('header.home') }}</RouterLink
 			>
 			<RouterLink
+				v-if="!isIntroPage || userStore.isLogin"
 				font-600
 				text-lg
 				link-decoration-none

@@ -1,6 +1,33 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { computed, ref } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
+import IntroView from './views/IntroView.vue'
+
+const route = useRoute()
+
+const isIntroPage = computed(() => route.name === 'intro')
+
+// update height
+
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const mdAndLarger = breakpoints.greaterOrEqual('md') // sm and larger
+const footerEl = ref()
+const contentHeight = ref(200)
+
+const contentStyle = computed(() => {
+	if (mdAndLarger.value) {
+		return { height: contentHeight.value + 'px' }
+	} else {
+		return {}
+	}
+})
+
+function updateHeight(h: number) {
+	contentHeight.value =
+		document.documentElement.clientHeight - h - footerEl.value.clientHeight
+}
 </script>
 
 <template>
@@ -8,16 +35,20 @@ import AppHeader from './components/AppHeader.vue'
 		bg-warmgray-100
 		min-w-full
 		min-h-screen
+		h-max
 		text-xs
 		prose
 		dark:prose-invert
 		prose-warmgray
 		dark:bg-warmgray-800
 	>
-		<AppHeader />
-		<div w-4xl max-w-screen mx-auto px-2 gap-4>
+		<AppHeader @update-height="updateHeight" />
+		<div w-4xl max-w-screen mx-auto px-2 gap-4 v-if="!isIntroPage">
 			<RouterView />
 		</div>
-		<div h-30></div>
+		<div v-else>
+			<IntroView :style="contentStyle" />
+		</div>
+		<div h-10vh ref="footerEl"></div>
 	</div>
 </template>
