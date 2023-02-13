@@ -7,7 +7,9 @@ export const router = express.Router()
 
 router.post('/', async (req, res) => {
 	try {
-		const progress = await create(req.body)
+		const progress = await create(req.body, {
+			currentUserId: toObjectId((req.user as any)._id)
+		})
 		res.json(progress)
 	} catch (err) {
 		res.status(400).send(err)
@@ -44,15 +46,10 @@ router.get('/:progressId', async (req, res) => {
 
 router.delete('/:progressId', async (req, res) => {
 	try {
-		if (
-			await del(toObjectId(req.params.progressId), {
-				userId: toObjectId((req.user as any)._id)
-			})
-		) {
-			res.status(200).send()
-		} else {
-			res.sendStatus(404)
-		}
+		await del(toObjectId(req.params.progressId), {
+			currentUserId: toObjectId((req.user as any)._id)
+		})
+		res.sendStatus(200)
 	} catch (err) {
 		res.status(404).send(err)
 	}
@@ -63,13 +60,9 @@ router.put('/:progressId', async (req, res) => {
 		const updatedProgress = await update(
 			toObjectId(req.params.progressId),
 			req.body,
-			{ userId: toObjectId((req.user as any)._id) }
+			{ currentUserId: toObjectId((req.user as any)._id) }
 		)
-		if (updatedProgress) {
-			return res.json(updatedProgress)
-		} else {
-			res.sendStatus(404)
-		}
+		return res.json(updatedProgress)
 	} catch (err) {
 		res.status(400).send(err)
 	}

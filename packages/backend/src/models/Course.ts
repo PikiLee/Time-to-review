@@ -13,7 +13,11 @@ import {
 import mongoose, { Schema, Types } from 'mongoose'
 import lodash from 'lodash-es'
 import { User } from './User.js'
-import { toObjectId } from '../utils/id.js'
+import {
+	errorIfCourseNotExist,
+	errorIfIdNotEqual,
+	toObjectId
+} from '../utils/id.js'
 
 const courseSchema = new Schema<CourseSchemaType>(
 	{
@@ -259,11 +263,9 @@ export async function del(
 		currentUserId?: Types.ObjectId // for check whether the owner of the course is the same as current user
 	}
 ) {
-	const filter: any = { _id: courseId }
-	if (options?.currentUserId) filter.owner = options.currentUserId
-
-	const course = await Course.findOne(filter)
-	if (!course) throw new Error('Course not found.')
+	const course = await errorIfCourseNotExist(courseId)
+	if (options?.currentUserId)
+		errorIfIdNotEqual(course.owner, options.currentUserId)
 
 	const session = await mongoose.startSession()
 
@@ -280,8 +282,7 @@ export async function del(
 			await courseNeedUpdate.save()
 		}
 
-		course.delete()
-		await course.save()
+		await Course.findByIdAndDelete(course._id)
 		await session.commitTransaction()
 	} catch (error) {
 		await session.abortTransaction()
