@@ -199,6 +199,11 @@ export async function update(
 	try {
 		// deal with order
 		if (updateCourse.order !== undefined) {
+			const count = await Course.find({ owner: course.owner }).count()
+			updateCourse.order = Math.min(
+				Math.max(0, updateCourse.order),
+				count
+			)
 			if (updateCourse.order < course.order) {
 				const coursesNeedUpdate = await Course.find({
 					owner: course.owner

@@ -229,6 +229,12 @@ export async function update(
 	try {
 		// deal with order
 		if (updateProgress.order !== undefined) {
+			const count = await Progress.find({ owner: progress.owner }).count()
+			updateProgress.order = Math.min(
+				Math.max(0, updateProgress.order),
+				count
+			)
+
 			if (updateProgress.order < progress.order) {
 				const progressesNeedUpdate = await Progress.find({
 					owner: progress.owner
