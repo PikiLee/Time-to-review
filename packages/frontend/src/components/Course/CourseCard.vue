@@ -147,12 +147,7 @@ const { createdTime } = useCreatedTime(props.course.createdAt)
 						v-if="course.dueCount > 0"
 						:data-test-unit="getUnitTestId('badge')"
 					>
-						<div
-							w-full
-							text-ellipsis
-							overflow-hidden
-							whitespace-nowrap
-						>
+						<div w-full>
 							{{ course.name }}
 						</div>
 					</el-badge>

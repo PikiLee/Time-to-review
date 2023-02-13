@@ -73,37 +73,39 @@ function goAddCourse() {
 		</h2>
 		<FetchComponent :loading="loading" :error="error">
 			<template #data>
-				<ListItems
-					v-for="course in courses"
-					:key="course._id"
-					:items="course.dueProgresses"
-					:title="course.name"
-					:badge="course.dueCount"
-					item-key="_id"
-					badgeType="danger"
-				>
-					<template #item="item">
-						<ProgressItem
-							:progress="item"
-							:intervals="course.intervals"
-							@open:form="handleOpenForm"
-							@update="
-								(_id, updateProgress) =>
-									handleProgressUpdate(
-										_id,
-										item._id,
-										updateProgress
-									)
-							"
-						/>
-						<ProgressForm
-							:visible="activeProgressId === item._id"
-							:progress="item"
-							:intervals="course.intervals"
-							@update="handleProgressUpdate"
-						/>
-					</template>
-				</ListItems>
+				<div flex flex-col gap-8>
+					<ListItems
+						v-for="course in courses"
+						:key="course._id"
+						:items="course.dueProgresses"
+						:title="course.name"
+						:badge="course.dueCount"
+						item-key="_id"
+						badgeType="danger"
+					>
+						<template #item="item">
+							<ProgressItem
+								:progress="item"
+								:intervals="course.intervals"
+								@open:form="handleOpenForm"
+								@update="
+									(_id, updateProgress) =>
+										handleProgressUpdate(
+											_id,
+											item._id,
+											updateProgress
+										)
+								"
+							/>
+							<ProgressForm
+								:visible="activeProgressId === item._id"
+								:progress="item"
+								:intervals="course.intervals"
+								@update="handleProgressUpdate"
+							/>
+						</template>
+					</ListItems>
+				</div>
 			</template>
 		</FetchComponent>
 		<div v-if="courses && courses.length === 0">
