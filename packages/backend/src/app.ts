@@ -31,10 +31,7 @@ function checkEnvVarExistence(
 	if (error) throw new Error('Enviornment variable not exist!')
 }
 if (IS_DEV) {
-	checkEnvVarExistence([
-		process.env.DATABASE_DEVELOPMENT,
-		process.env.SESSION_SECRET_DEVELOPMRNT
-	])
+	checkEnvVarExistence([process.env.SESSION_SECRET_DEVELOPMRNT])
 } else {
 	checkEnvVarExistence([
 		process.env.DATABASE_PRODUCTION,
@@ -47,11 +44,7 @@ export function createApp(
 		port: 3000
 	}
 ) {
-	createDb(
-		IS_DEV
-			? process.env.DATABASE_DEVELOPMENT!
-			: process.env.DATABASE_PRODUCTION!
-	)
+	createDb(IS_DEV ? undefined : process.env.DATABASE_PRODUCTION!)
 
 	const app = express()
 

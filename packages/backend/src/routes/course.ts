@@ -13,6 +13,8 @@ router.post('/', async (req, res) => {
 			})
 		)
 	} catch (err) {
+		printDebugInfo(req)
+		console.trace({ err })
 		res.status(400).send(err)
 	}
 })
@@ -27,11 +29,7 @@ router.put('/:courseId', async (req, res) => {
 				...req.query
 			}
 		)
-		if (updatedCourse) {
-			res.status(200).json(updatedCourse)
-		} else {
-			res.sendStatus(404)
-		}
+		res.status(200).json(updatedCourse)
 	} catch (err) {
 		printDebugInfo(req)
 		console.trace({ err })
@@ -47,7 +45,9 @@ router.delete('/:courseId', async (req, res) => {
 
 		res.sendStatus(200)
 	} catch (err) {
-		res.status(404).send(err)
+		printDebugInfo(req)
+		console.trace({ err })
+		res.status(400).send(err)
 	}
 })
 
@@ -64,7 +64,9 @@ router.get('/due', async (req, res) => {
 		)
 		res.status(200).json(courses.filter((course) => course.isDue === true))
 	} catch (err) {
-		res.status(400).send(err)
+		printDebugInfo(req)
+		console.trace({ err })
+		res.status(200).json([])
 	}
 })
 
@@ -80,10 +82,11 @@ router.get('/:courseId', async (req, res) => {
 			},
 			req.query
 		)
-		if (course.length === 0) throw new Error('now found.')
 		res.status(200).json(course[0])
 	} catch (err) {
-		res.status(400).send(err)
+		printDebugInfo(req)
+		console.trace({ err })
+		res.status(404).send(err)
 	}
 })
 
@@ -103,6 +106,6 @@ router.get('/', async (req, res) => {
 	} catch (err) {
 		printDebugInfo(err)
 		console.log(err)
-		res.status(400).send(err)
+		res.status(200).json([])
 	}
 })

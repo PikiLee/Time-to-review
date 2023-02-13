@@ -27,7 +27,7 @@ router.get('/all/:courseId', async (req, res) => {
 	} catch (err) {
 		printDebugInfo(req)
 		console.log({ err })
-		res.status(404).send(err)
+		res.status(200).json([])
 	}
 })
 
@@ -51,7 +51,7 @@ router.delete('/:progressId', async (req, res) => {
 		})
 		res.sendStatus(200)
 	} catch (err) {
-		res.status(404).send(err)
+		res.status(400).send(err)
 	}
 })
 
@@ -64,6 +64,8 @@ router.put('/:progressId', async (req, res) => {
 		)
 		return res.json(updatedProgress)
 	} catch (err) {
+		printDebugInfo(req)
+		console.trace({ err })
 		res.status(400).send(err)
 	}
 })
