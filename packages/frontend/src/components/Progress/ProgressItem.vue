@@ -27,6 +27,11 @@ async function toNextStage() {
 		lastDate: new Date().toISOString()
 	})
 }
+
+const percentage = computed(
+	() =>
+		`${((props.progress.stage + 1) / (props.intervals.length + 1)) * 100}%`
+)
 </script>
 
 <template>
@@ -38,7 +43,7 @@ async function toNextStage() {
 		data-testid="progress-list-item"
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
-		<div flex flex-col justify-start h-full>
+		<div flex flex-col justify-start h-full class="body">
 			<!-- Stage -->
 			<div flex items-center gap-2>
 				<h4 m-0 text-xs font-thin text-warmgray-400>
@@ -156,10 +161,26 @@ async function toNextStage() {
 	&:focus-within,
 	&:focus,
 	&:focus-visible {
-		border: 1px solid rgba(#84cc16, 0.7);
+		border: 1px solid rgba(#64748b, 0.7);
 
 		.actions {
 			display: flex;
+		}
+	}
+
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		height: 3px;
+		bottom: 0;
+		background-color: #cbd5e1;
+		width: v-bind('percentage');
+		z-index: 99;
+
+		html.dark & {
+			background-color: #475569;
 		}
 	}
 }
