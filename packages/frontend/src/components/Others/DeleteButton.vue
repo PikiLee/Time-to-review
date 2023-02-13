@@ -21,6 +21,7 @@ function handleDelete() {
 	<el-button
 		type="info"
 		@click="dialogVisible = true"
+		data-testid="delete-button"
 		:data-test-unit="getUnitTestId('button')"
 	>
 		{{ $t('actions.delete') }}
@@ -45,6 +46,7 @@ function handleDelete() {
 				<el-button
 					type="primary"
 					@click="handleDelete"
+					data-testid="delete-button-confirm"
 					:data-test-unit="getUnitTestId('confirm')"
 				>
 					Confirm

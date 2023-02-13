@@ -11,7 +11,7 @@ import type { MaybeRef } from '@vueuse/shared'
 import { withDefaults, resolveMaybeRef, type Options } from './shared'
 
 export async function createCourse(
-	newItem: { name: string; order: number },
+	newItem: { name: string },
 	options?: Options
 ) {
 	const opts = withDefaults(options)

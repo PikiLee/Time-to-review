@@ -40,11 +40,7 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 	async function create(name: string, options?: Options) {
 		const res = await createCourse(
 			{
-				name,
-				order:
-					items.value.length === 0
-						? 2000
-						: items.value.slice(-1)[0].order + 50
+				name
 			},
 			options
 		)
@@ -77,19 +73,7 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 		const item = find(_id)
 		if (!item) throw Error('Not found.')
 
-		let order = 2000
-		if (item.archived) {
-			if (item.status === CourseStatus['In Progress']) {
-				if (itemsInprogress.value.items.length > 0)
-					order = itemsInprogress.value.items.slice(-1)[0].order + 50
-			} else {
-				if (itemsDone.value.items.length > 0)
-					order = itemsDone.value.items.slice(-1)[0].order + 50
-			}
-		} else {
-			if (itemsArchived.value.items.length > 0)
-				order = itemsArchived.value.items.slice(-1)[0].order + 50
-		}
+		const order = items.value.length
 
 		await update(item._id, {
 			archived: !item.archived,
@@ -101,14 +85,7 @@ export function useCourses(rawItems: MaybeRef<Course[]>) {
 		const item = find(_id)
 		if (!item) throw Error('Not found.')
 
-		let order = 2000
-		if (item.status === CourseStatus['In Progress']) {
-			if (itemsDone.value.items.length > 0)
-				order = itemsDone.value.items.slice(-1)[0].order + 50
-		} else {
-			if (itemsInprogress.value.items.length > 0)
-				order = itemsInprogress.value.items.slice(-1)[0].order + 50
-		}
+		const order = items.value.length
 
 		const newStatus =
 			item.status === CourseStatus['In Progress']

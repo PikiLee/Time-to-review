@@ -49,7 +49,6 @@ export async function createProgress(
 	newItem: {
 		name: string
 		course: string
-		order: number
 	},
 	options?: Options
 ) {
@@ -113,11 +112,7 @@ export function useProgresses(rawItems: MaybeRef<Progress[]>) {
 		const progress = await createProgress(
 			{
 				name,
-				course,
-				order:
-					items.value.length === 0
-						? 2000
-						: items.value.slice(-1)[0].order + 50
+				course
 			},
 			options
 		)

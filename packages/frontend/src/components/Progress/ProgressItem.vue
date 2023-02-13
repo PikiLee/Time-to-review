@@ -35,6 +35,7 @@ async function toNextStage() {
 		v-bind="$attrs"
 		class="card"
 		:body-style="{ height: '100%' }"
+		data-testid="progress-list-item"
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
 		<div flex flex-col justify-start h-full>
@@ -138,6 +139,7 @@ async function toNextStage() {
 						<el-button
 							@click="emit('open:form', progress._id)"
 							size="small"
+							data-testid="progress-list-item-edit"
 							:data-test-unit="getUnitTestId('edit')"
 							><span i-material-symbols-edit text-lg></span
 						></el-button>

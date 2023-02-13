@@ -21,21 +21,23 @@ describe('course', () => {
 			cy.createCourse(courseName)
 			cy.visit('/courses')
 			cy.get('[data-testid="course-card-toggle-archive"]').last().click()
-			cy.get('[data-testid="courses-view-in-progress-courses"]').should(
+			cy.contains('[data-testid="items"]', 'In Progress').should(
 				'not.contain',
 				courseName
 			)
-			cy.get('[data-testid="courses-view-archived-courses"]').contains(
+			cy.contains('[data-testid="items"]', 'Archived').should(
+				'contain',
 				courseName
 			)
 
 			//reverse
 			cy.get('[data-testid="course-card-toggle-archive"]').last().click()
-			cy.get('[data-testid="courses-view-archived-courses"]').should(
-				'not.contain',
+			cy.contains('[data-testid="items"]', 'In Progress').should(
+				'contain',
 				courseName
 			)
-			cy.get('[data-testid="courses-view-in-progress-courses"]').contains(
+			cy.contains('[data-testid="items"]', 'Archived').should(
+				'not.contain',
 				courseName
 			)
 		})
@@ -46,21 +48,23 @@ describe('course', () => {
 			cy.createCourse(courseName)
 			cy.visit('/courses')
 			cy.get('[data-testid="course-card-toggle-status"]').last().click()
-			cy.get('[data-testid="courses-view-in-progress-courses"]').should(
+			cy.contains('[data-testid="items"]', 'In Progress').should(
 				'not.contain',
 				courseName
 			)
-			cy.get('[data-testid="courses-view-done-courses"]').contains(
+			cy.contains('[data-testid="items"]', 'Done').should(
+				'contain',
 				courseName
 			)
 
 			// reverse
 			cy.get('[data-testid="course-card-toggle-status"]').last().click()
-			cy.get('[data-testid="courses-view-done-courses"]').should(
-				'not.contain',
+			cy.contains('[data-testid="items"]', 'In Progress').should(
+				'contain',
 				courseName
 			)
-			cy.get('[data-testid="courses-view-in-progress-courses"]').contains(
+			cy.contains('[data-testid="items"]', 'Done').should(
+				'not.contain',
 				courseName
 			)
 		})
@@ -89,7 +93,7 @@ describe('progress', () => {
 		cy.createProgress(progressName)
 	})
 
-	context.only('Manipulate progresses', () => {
+	context('Manipulate progresses', () => {
 		it('update progress', () => {
 			const courseName = generateName()
 			cy.login(username, password)
@@ -99,10 +103,14 @@ describe('progress', () => {
 			// update progress
 			const newProgressName = generateName()
 			cy.get('[data-testid="progress-list-item"]').last().click()
-			cy.get('[data-testid="progress-list-item-name-input"]').type(
-				`{selectAll}{del}${newProgressName}`
-			)
-			cy.get('[data-testid="progress-list-item-confirm"]').click()
+			cy.get('[data-testid="progress-list-item-edit"]').click({
+				force: true
+			})
+			cy.get('[data-testid="progress-form"]')
+				.find('input')
+				.first()
+				.type('{selectAll}{backspace}' + newProgressName)
+			cy.get('[data-testid="progress-form-confirm"]').click()
 			cy.get('[data-testid="progress-list-item-name"]')
 				.last()
 				.should('have.text', newProgressName)
@@ -114,7 +122,12 @@ describe('progress', () => {
 			const progressName = generateName()
 			cy.createProgress(progressName)
 			cy.get('[data-testid="progress-list-item"]').last().click()
-			cy.get('[data-testid="progress-list-item-delete"]').click()
+			cy.get('[data-testid="progress-list-item-edit"]').click({
+				force: true
+			})
+			cy.get('[data-testid="delete-button"]').click()
+			cy.get('[data-testid="delete-button-confirm"]').click()
+
 			cy.get('[data-testid="course-view"]').should(
 				'not.contain',
 				progressName

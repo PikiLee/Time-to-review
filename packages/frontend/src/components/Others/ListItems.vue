@@ -45,7 +45,7 @@ onMounted(() => {
 </script>
 
 <template>
-	<div p-2>
+	<div p-2 data-testid="items">
 		<div text-3xl flex items-center mb-2>
 			<div text-2xl flex-grow-1 items-center>
 				<el-badge

@@ -34,45 +34,42 @@ const {
 } = useCourses(courses)
 </script>
 <template>
-	<div data-testid="courses-view">
-		<AddButton
-			v-model:visible="visible"
-			ref="addButtonEl"
-			type="course"
-			@create:course="
-				(v) => {
-					create(v)
-				}
-			"
-		/>
-		<FetchComponent :loading="loading" :error="error">
-			<template #data>
-				<div grid gap-8>
-					<Items
-						v-for="coursesCategoried in itemsCategoried"
-						:key="coursesCategoried.value.title"
-						:items="coursesCategoried.value.items"
-						item-key="_id"
-						:title="coursesCategoried.value.title"
-						sortable
-						@dragend="
-							(evt) =>
-								handleSort(coursesCategoried.value.items, evt)
-						"
-					>
-						<template #item="course">
-							<CourseCard
-								:course="course"
-								@delete="del"
-								@toggle:archive="toggleArchive"
-								@toggle:status="toggleStatus"
-							/>
-						</template>
-					</Items>
-				</div>
-			</template>
-		</FetchComponent>
-	</div>
+	<AddButton
+		v-model:visible="visible"
+		ref="addButtonEl"
+		type="course"
+		@create:course="
+			(v) => {
+				create(v)
+			}
+		"
+	/>
+	<FetchComponent :loading="loading" :error="error">
+		<template #data>
+			<div grid gap-8>
+				<Items
+					v-for="coursesCategoried in itemsCategoried"
+					:key="coursesCategoried.value.title"
+					:items="coursesCategoried.value.items"
+					item-key="_id"
+					:title="coursesCategoried.value.title"
+					sortable
+					@dragend="
+						(evt) => handleSort(coursesCategoried.value.items, evt)
+					"
+				>
+					<template #item="course">
+						<CourseCard
+							:course="course"
+							@delete="del"
+							@toggle:archive="toggleArchive"
+							@toggle:status="toggleStatus"
+						/>
+					</template>
+				</Items>
+			</div>
+		</template>
+	</FetchComponent>
 </template>
 
 <style scoped></style>

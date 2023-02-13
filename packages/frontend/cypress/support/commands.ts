@@ -80,10 +80,10 @@ Cypress.Commands.addAll({
 	createCourse(name: string) {
 		cy.visit('/courses')
 		cy.get('[data-testid="add-button"]').click()
-		cy.get('[data-testid="course-creator"]').should('exist')
+		cy.get('[data-testid="creator-dialog"]').should('exist')
 
-		cy.get('[data-testid="course-creator"]').find('input').type(name)
-		cy.get('[data-testid="course-creator"]').find('button').click()
+		cy.get('[data-testid="creator-dialog"]').find('input').type(name)
+		cy.get('[data-testid="creator-dialog"]').find('button').click()
 
 		cy.get('[data-testid="course-card-name"]')
 			.last()
@@ -100,10 +100,10 @@ Cypress.Commands.addAll({
 		cy.url().should('contain', '/course')
 
 		cy.get('[data-testid="add-button"]').click()
-		cy.get('[data-testid="course-creator"]').should('exist')
+		cy.get('[data-testid="creator-dialog"]').should('exist')
 
-		cy.get('[data-testid="course-creator"]').find('input').type(name)
-		cy.get('[data-testid="course-creator"]').find('button').click()
+		cy.get('[data-testid="creator-dialog"]').find('input').type(name)
+		cy.get('[data-testid="creator-dialog"]').find('button').click()
 
 		cy.get('[data-testid="progress-list-item-name"]')
 			.last()

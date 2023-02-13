@@ -79,6 +79,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		title="Edit Progress"
 		width="90%"
 		max-w-screen-sm
+		data-testid="progress-form"
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
 		<el-form
@@ -126,7 +127,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 					<el-button
 						type="primary"
 						@click="submitForm(ruleFormRef)"
-						data-testid="progress-list-item-confirm"
+						data-testid="progress-form-confirm"
 						:data-test-unit="`${NAME_SPACE}-confirm`"
 					>
 						{{ $t('actions.confirm') }}

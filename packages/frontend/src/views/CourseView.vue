@@ -31,7 +31,7 @@ const { loading: loading2, error: error2 } = useFetchData(
 	progresses
 )
 const { update: updateCourse, del: delCourse } = useCourse(course)
-const { create, update, handleSort } = useProgresses(progresses)
+const { create, update, handleSort, del } = useProgresses(progresses)
 
 async function handleDelCourse() {
 	await delCourse()
@@ -122,6 +122,7 @@ function handleProgressUpdate(
 							:progress="item"
 							:intervals="course.intervals"
 							@update="handleProgressUpdate"
+							@delete="del"
 						/>
 					</template>
 				</Items>
