@@ -14,9 +14,9 @@ import { useProgresses } from '@/composables/useProgresses'
 import { errorMsg } from '@/utils/useMessage'
 import type { UpdateCourse, UpdateProgress } from 'shared'
 import router from '@/router'
+import BaseDialog from '../components/Others/BaseDialog.vue'
 
 const settingVisible = ref(false)
-const visible = ref(false)
 const { id: courseId } = useCustomRouter()
 
 const fetchCourse = () => {
@@ -45,6 +45,18 @@ async function handleUpdateCourse(update: UpdateCourse) {
 	}
 }
 
+// create progress form
+const createFormVisible = ref(false)
+
+async function handleProgressCreate(name: string) {
+	try {
+		await create(name, course.value._id)
+		createFormVisible.value = false
+	} catch (err) {
+		errorMsg(`Creation Failed. Error: ${err}`)
+	}
+}
+
 // form
 const activeProgressId = ref('')
 
@@ -66,21 +78,24 @@ function handleProgressUpdate(
 }
 </script>
 <template>
+	<AddButton
+		type="info"
+		tool-tip="Create Progress"
+		@click="createFormVisible = true"
+	/>
+	<BaseDialog v-model="createFormVisible" title="Create Progress">
+		<CreateForm
+			label="Progress Name"
+			buttonType="info"
+			@ok="handleProgressCreate"
+		/>
+	</BaseDialog>
 	<div data-testid="course-view">
 		<FetchComponent
 			:loading="loading1 || loading2"
 			:error="error1 || error2"
 		>
 			<template #data>
-				<AddButton
-					v-model:visible="visible"
-					type="progress"
-					@create:progress="
-						(v) => {
-							create(v, course._id)
-						}
-					"
-				/>
 				<CourseSetting
 					v-model="settingVisible"
 					:course="course"

@@ -9,14 +9,15 @@ import AddButton from '../AddButton.vue'
 import { onMounted, ref } from 'vue'
 import { useFetchData } from '@/composables/useFetchData'
 import { useRoute } from 'vue-router'
+import CreateForm from '../CreateForm.vue'
+import BaseDialog from '../Others/BaseDialog.vue'
 
 const route = useRoute()
-const addButtonEl = ref()
-const visible = ref(false)
+const formVisible = ref(false)
 
 onMounted(() => {
 	if (route.query.openAddButton) {
-		visible.value = true
+		formVisible.value = true
 	}
 })
 
@@ -32,18 +33,21 @@ const {
 	toggleStatus,
 	handleSort
 } = useCourses(courses)
+
+async function handleCreate(name: string) {
+	await create(name)
+	formVisible.value = false
+}
 </script>
 <template>
 	<AddButton
-		v-model:visible="visible"
-		ref="addButtonEl"
-		type="course"
-		@create:course="
-			(v) => {
-				create(v)
-			}
-		"
+		type="primary"
+		tool-tip="Create Course"
+		@click="formVisible = true"
 	/>
+	<BaseDialog v-model="formVisible" title="Create Course">
+		<CreateForm label="Course Name" @ok="handleCreate" />
+	</BaseDialog>
 	<FetchComponent :loading="loading" :error="error">
 		<template #data>
 			<div grid gap-8>
