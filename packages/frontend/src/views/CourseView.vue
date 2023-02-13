@@ -16,6 +16,7 @@ import type { UpdateCourse, UpdateProgress } from 'shared'
 import router from '@/router'
 
 const settingVisible = ref(false)
+const visible = ref(false)
 const { id: courseId } = useCustomRouter()
 
 const fetchCourse = () => {
@@ -72,6 +73,7 @@ function handleProgressUpdate(
 		>
 			<template #data>
 				<AddButton
+					v-model:visible="visible"
 					type="progress"
 					@create:progress="
 						(v) => {
