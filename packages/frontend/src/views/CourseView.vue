@@ -7,7 +7,7 @@ import CourseSetting from '@/components/Course/CourseSetting.vue'
 import FetchComponent from '@/components/Others/FetchComponent.vue'
 import { useCustomRouter } from '@/utils/useCustomRouter'
 import { fetch } from '@/database/course'
-import Items from '@/components/Others/ListItems.vue'
+import ListItems from '@/components/Others/ListItems.vue'
 import { useFetchData } from '@/composables/useFetchData'
 import { errorMsg } from '@/utils/useMessage'
 import type {
@@ -94,24 +94,28 @@ function handleOpenForm(_id: string) {
 }
 
 async function handleProgressUpdate(
-	_id: string,
+	progressId: string,
 	updateProgress: UpdateProgress
 ) {
 	try {
 		if (course.value === undefined) return
-		const res = await progressApi.update(_id, updateProgress)
+		const res = await progressApi.update(progressId, updateProgress)
 		findByIdAndUpdate(course.value.progresses, res)
+
+		if (!res.isDue) course.value.dueCount--
 		progressFormVisible.value = false
 	} catch {
 		errorMsg('Updation failed.')
 	}
 }
 
-async function handleProgressDel(_id: string) {
+async function handleProgressDel(progressId: string) {
 	try {
 		if (course.value === undefined) return
-		await progressApi.del(_id)
-		findByIdAndDeleteAndCalcOrder(course.value.progresses, _id)
+		await progressApi.del(progressId)
+		findByIdAndDeleteAndCalcOrder(course.value.progresses, progressId)
+		course.value.progressCount--
+
 		progressFormVisible.value = false
 	} catch {
 		errorMsg('Deletion failed.')
@@ -146,7 +150,10 @@ async function handleProgressSort(evt: SortableEvent) {
 			v-if="course"
 			:progress="activeProgress"
 			:intervals="course.intervals"
-			@update="handleProgressUpdate"
+			@update="
+				(progressId: string, _courseId: string, updateProgress: UpdateProgress) =>
+					handleProgressUpdate(progressId, updateProgress)
+			"
 			@cancel="progressFormVisible = false"
 		>
 			<template #actions>
@@ -160,6 +167,7 @@ async function handleProgressSort(evt: SortableEvent) {
 	</BaseDialog>
 	<div data-testid="course-view">
 		<FetchComponent :loading="loading" :error="error" :data="course">
+			<!-- todo implement a generic typed component so data here has the correct type  -->
 			<template #data="{ data: course }">
 				<BaseDialog v-model="settingVisible" title="Course Settings">
 					<CourseSetting
@@ -175,7 +183,7 @@ async function handleProgressSort(evt: SortableEvent) {
 						</template>
 					</CourseSetting>
 				</BaseDialog>
-				<Items
+				<ListItems
 					:items="course.progresses"
 					item-key="_id"
 					:title="course.name"
@@ -195,7 +203,8 @@ async function handleProgressSort(evt: SortableEvent) {
 							></button>
 						</el-tooltip>
 					</template>
-					<template #item="item">
+					<!-- todo implement a generic typed ListItems component so item here has the correct type  -->
+					<template #item="{ item }">
 						<ProgressItem
 							:progress="item"
 							:intervals="course.intervals"
@@ -203,7 +212,7 @@ async function handleProgressSort(evt: SortableEvent) {
 							@update="handleProgressUpdate"
 						/>
 					</template>
-				</Items>
+				</ListItems>
 			</template>
 		</FetchComponent>
 	</div>

@@ -153,7 +153,7 @@ async function handleCourseSort(items: Course[], evt: SortableEvent) {
 						(evt) => handleCourseSort(coursesCategoried.items, evt)
 					"
 				>
-					<template #item="course">
+					<template #item="{ item: course }">
 						<CourseCard
 							:course="course"
 							@delete="handleDel"

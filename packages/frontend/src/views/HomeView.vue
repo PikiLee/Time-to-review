@@ -5,9 +5,16 @@ import ProgressItem from '@/components/Progress/ProgressItem.vue'
 import { useFetchData } from '@/composables/useFetchData'
 import { fetchDue } from '@/database/course'
 import * as progressApi from '@/database/progress'
+import {
+	findById,
+	findByIdAndDelete,
+	findByIdAndDeleteAndCalcOrder,
+	findByIdAndUpdate,
+	findByIdOrError
+} from '@/utils/query'
 import { errorMsg } from '@/utils/useMessage'
-import type { CourseWithDueProgresses, UpdateProgress } from 'shared'
-import { ref } from 'vue'
+import type { CourseWithDueProgresses, Progress, UpdateProgress } from 'shared'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -20,48 +27,78 @@ const {
 	fetchDue({ withDueProgresses: true })
 )
 
-// form
-const activeProgressId = ref('')
-
-function handleOpenForm(_id: string) {
-	activeProgressId.value = _id
+function goAddCourse() {
+	router.push({ name: 'courses', query: { openAddButton: 'true' } })
 }
 
-async function handleProgressUpdate(
-	_id: string,
-	course: string,
-	update: UpdateProgress
-) {
+// form
+const activeProgress = ref<Progress | null>(null)
+const activeCourse = ref<CourseWithDueProgresses | null>(null)
+const progressFormVisible = computed({
+	get() {
+		return activeProgress.value !== null && activeCourse.value !== null
+	},
+	set(value: boolean) {
+		if (value) return
+		activeProgress.value = null
+		activeCourse.value = null
+	}
+})
+
+function handleOpenForm(courseId: string, progressId: string) {
+	if (!courses.value) return
+	const course = findById(courses.value, courseId)
+
+	if (!course) return
+	activeCourse.value = course
+	activeProgress.value = findById(course.dueProgresses, progressId) ?? null
+}
+
+async function handleProgressDel() {
 	try {
-		const updatedProgress = await progressApi.update(_id, update)
-		if (!courses.value)
-			throw Error('Course not Found in Local. Please refresh.')
-		const parent = courses.value.find((c) => (c._id = course))
+		if (!courses.value) throw Error()
+		if (!activeCourse.value) throw Error()
+		if (!activeProgress.value) throw Error()
+		await progressApi.del(activeProgress.value._id)
+		findByIdAndDeleteAndCalcOrder(
+			activeCourse.value.dueProgresses,
+			activeProgress.value._id
+		)
+		activeCourse.value.dueCount--
 
-		if (!parent) throw Error('Course not Found in Local. Please refresh.')
-
-		if (!updatedProgress.isDue) {
-			parent.dueProgresses = parent.dueProgresses.filter(
-				(p) => p._id !== _id
-			)
-			parent.dueCount--
-
-			if (parent.dueProgresses.length === 0)
-				courses.value = courses.value.filter((c) => c._id !== _id)
-		} else {
-			parent.dueProgresses = parent.dueProgresses.map((p) => {
-				if (p._id === _id) return updatedProgress
-				return p
-			})
-		}
-		activeProgressId.value = ''
+		if (activeCourse.value.dueProgresses.length === 0)
+			findByIdAndDelete(courses.value, activeCourse.value._id)
+		progressFormVisible.value = false
 	} catch {
 		errorMsg('Updation failed.')
 	}
 }
 
-function goAddCourse() {
-	router.push({ name: 'courses', query: { openAddButton: 'true' } })
+async function handleProgressUpdate(
+	progressId: string,
+	courseId: string,
+	update: UpdateProgress
+) {
+	try {
+		if (!courses.value) throw Error()
+		const course = findByIdOrError(courses.value, courseId)
+		const progress = findByIdOrError(course.dueProgresses, progressId)
+		const updatedProgress = await progressApi.update(progress._id, update)
+
+		if (!updatedProgress.isDue) {
+			findByIdAndDeleteAndCalcOrder(course.dueProgresses, progress._id)
+			course.dueCount--
+
+			if (course.dueProgresses.length === 0)
+				findByIdAndDelete(courses.value, course._id)
+		} else {
+			findByIdAndUpdate(course.dueProgresses, updatedProgress)
+		}
+
+		progressFormVisible.value = false
+	} catch {
+		errorMsg('Updation failed.')
+	}
 }
 </script>
 
@@ -70,6 +107,23 @@ function goAddCourse() {
 		<h2 text-center text-3xl data-testid="home-view-title">
 			{{ $t('home.title') }}
 		</h2>
+		<BaseDialog v-model="progressFormVisible" title="Update Progress">
+			<ProgressForm
+				v-if="activeCourse"
+				:progress="activeProgress"
+				:intervals="activeCourse.intervals"
+				@update="handleProgressUpdate"
+				@cancel="progressFormVisible = false"
+			>
+				<template #actions>
+					<DeleteButton
+						v-if="activeProgress && activeCourse"
+						:name="activeProgress.name"
+						@delete="handleProgressDel"
+					/>
+				</template>
+			</ProgressForm>
+		</BaseDialog>
 		<FetchComponent :loading="loading" :error="error">
 			<template #data>
 				<div flex flex-col gap-8>
@@ -82,24 +136,13 @@ function goAddCourse() {
 						item-key="_id"
 						badgeType="danger"
 					>
-						<template #item="item">
+						<template #item="{ item }">
 							<ProgressItem
 								:progress="item"
 								:intervals="course.intervals"
-								@open:form="handleOpenForm"
-								@update="
-									(_id, updateProgress) =>
-										handleProgressUpdate(
-											_id,
-											item._id,
-											updateProgress
-										)
+								@open:form="
+									handleOpenForm(course._id, item._id)
 								"
-							/>
-							<ProgressForm
-								:visible="activeProgressId === item._id"
-								:progress="item"
-								:intervals="course.intervals"
 								@update="handleProgressUpdate"
 							/>
 						</template>

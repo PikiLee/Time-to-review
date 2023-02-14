@@ -22,7 +22,7 @@ const isDone = computed(() => props.progress.stage >= props.intervals.length)
  */
 async function toNextStage() {
 	const newStage = Math.min(props.progress.stage + 1, props.intervals.length)
-	emit('update', props.progress._id, {
+	emit('update', props.progress._id, props.progress.course, {
 		stage: newStage,
 		lastDate: new Date().toISOString()
 	})

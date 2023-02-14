@@ -2,6 +2,15 @@ export function findById<T extends { _id: string }>(list: T[], _id: string) {
 	return list.find((item) => item._id === _id)
 }
 
+export function findByIdOrError<T extends { _id: string }>(
+	list: T[],
+	_id: string
+) {
+	const res = list.find((item) => item._id === _id)
+	if (!res) throw Error('Not found')
+	return res
+}
+
 export function findIndexById<T extends { _id: string }>(
 	list: T[],
 	_id: string

@@ -86,7 +86,7 @@ onMounted(() => {
 				:key="item[itemKey]"
 				:class="draggableClass"
 			>
-				<slot name="item" v-bind="item" />
+				<slot name="item" :item="item" />
 			</li>
 		</ul>
 		<el-empty
