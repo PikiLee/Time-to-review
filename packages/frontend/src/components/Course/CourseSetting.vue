@@ -140,7 +140,6 @@ function removeInterval() {
 				:data-test-unit="getUnitTestId('cancel')"
 				>{{ $t('actions.cancel') }}</el-button
 			>
-			<!-- <DeleteButton :name="props.course.name" @delete="handleDelete" /> -->
 			<el-button
 				type="primary"
 				@click="() => submitForm(ruleFormRef)"
@@ -150,17 +149,6 @@ function removeInterval() {
 			</el-button>
 		</el-form-item>
 	</el-form>
-	<!-- <template #footer>
-		<span class="dialog-footer">
-			<el-button @click="visible = false">{{
-				$t('actions.cancel')
-			}}</el-button>
-			<DeleteButton :name="props.course.name" @delete="handleDelete" />
-			<el-button type="primary" @click="submitForm(ruleFormRef)">
-				{{ $t('actions.confirm') }}
-			</el-button>
-		</span>
-	</template> -->
 </template>
 
 <style scoped></style>

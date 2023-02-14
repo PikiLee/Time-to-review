@@ -6,11 +6,10 @@ import { getStageString } from '../../utils/progress.utils'
 import { createUnitTestIdGetter } from '@/unit/utils'
 
 const props = defineProps<{
-	visible: boolean
 	progress: Progress
 	intervals: number[]
 }>()
-const emit = defineEmits(['update', 'delete'])
+const emit = defineEmits(['update', 'cancel'])
 const NAME_SPACE = 'progress-form'
 const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
 
@@ -74,73 +73,64 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 </script>
 
 <template>
-	<el-dialog
-		:modelValue="visible"
-		title="Edit Progress"
-		width="90%"
-		max-w-screen-sm
+	<el-form
+		ref="ruleFormRef"
+		:model="ruleForm"
+		:rules="rules"
+		label-width="120px"
+		label-position="left"
+		status-icon
+		mt-6
+		col-span-12
 		data-testid="progress-form"
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
-		<el-form
-			ref="ruleFormRef"
-			:model="ruleForm"
-			:rules="rules"
-			label-width="120px"
-			label-position="left"
-			status-icon
-			mt-6
-			col-span-12
-			@click.stop
-			data-testid="progress-form"
-			:data-test-unit="getUnitTestId('form')"
-		>
-			<el-form-item :label="$t('course.name')" prop="name">
-				<el-input
-					v-model="ruleForm.name"
-					data-testid="progress-list-item-name-input"
-					:data-test-unit="`${NAME_SPACE}-input`"
+		<el-form-item :label="$t('course.name')" prop="name">
+			<el-input
+				v-model="ruleForm.name"
+				data-testid="progress-list-item-name-input"
+				:data-test-unit="`${NAME_SPACE}-input`"
+			/>
+		</el-form-item>
+		<el-form-item :label="$t('course.stage')" prop="stage">
+			<el-select v-model="ruleForm.stage">
+				<el-option
+					v-for="value in intervals.length + 1"
+					:key="value"
+					:label="getStageString(value - 1, intervals.length)"
+					:value="value - 1"
 				/>
-			</el-form-item>
-			<el-form-item :label="$t('course.stage')" prop="stage">
-				<el-select v-model="ruleForm.stage">
-					<el-option
-						v-for="value in intervals.length + 1"
-						:key="value"
-						:label="getStageString(value - 1, intervals.length)"
-						:value="value - 1"
-					/>
-				</el-select>
-			</el-form-item>
-			<el-form-item :label="$t('course.lastReviewDate')" prop="lastDate">
-				<el-date-picker
-					v-model="ruleForm.lastDate"
-					type="date"
-					placeholder="Pick a day"
-					:style="{ width: '100%' }"
-					:clearable="false"
-				/>
-			</el-form-item>
+			</el-select>
+		</el-form-item>
+		<el-form-item :label="$t('course.lastReviewDate')" prop="lastDate">
+			<el-date-picker
+				v-model="ruleForm.lastDate"
+				type="date"
+				placeholder="Pick a day"
+				:style="{ width: '100%' }"
+				:clearable="false"
+			/>
+		</el-form-item>
 
-			<el-form-item>
-				<div flex gap-2 flex-wrap>
-					<el-button
-						type="primary"
-						@click="submitForm(ruleFormRef)"
-						data-testid="progress-form-confirm"
-						:data-test-unit="`${NAME_SPACE}-confirm`"
-					>
-						{{ $t('actions.confirm') }}
-					</el-button>
-
-					<DeleteButton
-						:name="props.progress.name"
-						@delete="emit('delete', progress._id)"
-					/>
-				</div>
-			</el-form-item>
-		</el-form>
-	</el-dialog>
+		<el-form-item>
+			<div flex gap-2 flex-wrap>
+				<slot name="actions" />
+				<el-button
+					@click="emit('cancel')"
+					:data-test-unit="getUnitTestId('cancel')"
+					>{{ $t('actions.cancel') }}</el-button
+				>
+				<el-button
+					type="primary"
+					@click="submitForm(ruleFormRef)"
+					data-testid="progress-form-confirm"
+					:data-test-unit="`${NAME_SPACE}-confirm`"
+				>
+					{{ $t('actions.confirm') }}
+				</el-button>
+			</div>
+		</el-form-item>
+	</el-form>
 </template>
 
 <style scoped></style>

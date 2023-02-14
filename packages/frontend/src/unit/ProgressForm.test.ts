@@ -1,9 +1,8 @@
 import { flushPromises, mount } from '@vue/test-utils'
-import { describe, expect, test, vi, beforeEach } from 'vitest'
+import { expect, test, vi, beforeEach } from 'vitest'
 import ProgressForm from '@/components/Progress/ProgressForm.vue'
 import { createGetter } from './utils'
 import { progress1 as progress } from './dummyData'
-import DeleteButton from '@/components/Others/DeleteButton.vue'
 
 const NAME_SPACE = 'progress-form'
 const { get, find } = createGetter(NAME_SPACE)
@@ -18,70 +17,45 @@ const $t = () => {}
 
 const intervals = [1, 7, 14, 28]
 
-// can not test since the dialog is appended to body
-describe.skip('ProgressForm', () => {
-	beforeEach(() => {
-		vi.restoreAllMocks()
-	})
+beforeEach(() => {
+	vi.restoreAllMocks()
+})
 
-	test('Rendered', async () => {
-		const wrapper = mount(ProgressForm, {
-			props: {
-				progress,
-				intervals,
-				visible: true
-			},
-			global: {
-				mocks: {
-					$t
-				}
+test('Rendered', async () => {
+	const wrapper = mount(ProgressForm, {
+		props: {
+			progress,
+			intervals
+		},
+		global: {
+			mocks: {
+				$t
 			}
-		})
-
-		expect(await find(wrapper, 'wrapper').exists()).toBe(true)
+		}
 	})
 
-	test('emit update if update', async () => {
-		const wrapper = mount(ProgressForm, {
-			props: {
-				progress,
-				intervals,
-				visible: true
-			},
-			global: {
-				mocks: {
-					$t
-				}
+	await find(wrapper, 'wrapper')
+})
+
+test.each([
+	['update', 'confirm'],
+	['cancel', 'cancel']
+])('emit %s if %s', async (event, selector) => {
+	const wrapper = mount(ProgressForm, {
+		props: {
+			progress,
+			intervals
+		},
+		global: {
+			mocks: {
+				$t
 			}
-		})
-
-		await get(wrapper, 'input').setValue('good')
-		await get(wrapper, 'confirm').trigger('click')
-
-		await flushPromises()
-		expect(wrapper.emitted()).toHaveProperty('update')
+		}
 	})
 
-	test('emit delete when delete', async () => {
-		const wrapper = mount(ProgressForm, {
-			props: {
-				progress,
-				intervals,
-				visible: true
-			},
-			global: {
-				mocks: {
-					$t
-				}
-			},
-			components: {
-				DeleteButton
-			}
-		})
+	await get(wrapper, 'input').setValue('good')
+	await get(wrapper, selector).trigger('click')
 
-		await wrapper.getComponent(DeleteButton).vm.$emit('delete')
-
-		await flushPromises()
-		expect(wrapper.emitted()).toHaveProperty('delete')
-	})
+	await flushPromises()
+	expect(wrapper.emitted()).toHaveProperty(event)
 })

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AddButton from '../components/AddButton.vue'
 import ProgressItem from '@/components/Progress/ProgressItem.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import * as progressApi from '@/database/progress'
 import CourseSetting from '@/components/Course/CourseSetting.vue'
 import FetchComponent from '@/components/Others/FetchComponent.vue'
@@ -10,11 +10,20 @@ import { fetch } from '@/database/course'
 import Items from '@/components/Others/ListItems.vue'
 import { useFetchData } from '@/composables/useFetchData'
 import { errorMsg } from '@/utils/useMessage'
-import type { CourseWithProgress, UpdateCourse, UpdateProgress } from 'shared'
+import type {
+	CourseWithProgress,
+	Progress,
+	UpdateCourse,
+	UpdateProgress
+} from 'shared'
 import router from '@/router'
 import BaseDialog from '../components/Others/BaseDialog.vue'
 import * as courseApi from '../database/course'
-import { findByIdAndDeleteAndCalcOrder, findByIdAndUpdate } from '@/utils/query'
+import {
+	findByIdAndDeleteAndCalcOrder,
+	findByIdAndUpdate,
+	findById
+} from '@/utils/query'
 import type { SortableEvent } from 'sortablejs'
 import { handleSort } from '@/composables/useSort'
 import DeleteButton from '@/components/Others/DeleteButton.vue'
@@ -68,10 +77,20 @@ async function handleProgressCreate(name: string) {
 }
 
 // form
-const activeProgressId = ref('')
+const activeProgress = ref<Progress | null>(null)
+const progressFormVisible = computed({
+	get() {
+		return activeProgress.value !== null
+	},
+	set(value: boolean) {
+		if (value) return
+		activeProgress.value = null
+	}
+})
 
 function handleOpenForm(_id: string) {
-	activeProgressId.value = _id
+	if (course.value === undefined) return
+	activeProgress.value = findById(course.value.progresses, _id) ?? null
 }
 
 async function handleProgressUpdate(
@@ -82,7 +101,7 @@ async function handleProgressUpdate(
 		if (course.value === undefined) return
 		const res = await progressApi.update(_id, updateProgress)
 		findByIdAndUpdate(course.value.progresses, res)
-		activeProgressId.value = ''
+		progressFormVisible.value = false
 	} catch {
 		errorMsg('Updation failed.')
 	}
@@ -93,7 +112,7 @@ async function handleProgressDel(_id: string) {
 		if (course.value === undefined) return
 		await progressApi.del(_id)
 		findByIdAndDeleteAndCalcOrder(course.value.progresses, _id)
-		activeProgressId.value = ''
+		progressFormVisible.value = false
 	} catch {
 		errorMsg('Deletion failed.')
 	}
@@ -120,6 +139,24 @@ async function handleProgressSort(evt: SortableEvent) {
 			buttonType="info"
 			@ok="handleProgressCreate"
 		/>
+	</BaseDialog>
+
+	<BaseDialog v-model="progressFormVisible" title="Update Progress">
+		<ProgressForm
+			v-if="course"
+			:progress="activeProgress"
+			:intervals="course.intervals"
+			@update="handleProgressUpdate"
+			@cancel="progressFormVisible = false"
+		>
+			<template #actions>
+				<DeleteButton
+					v-if="activeProgress"
+					:name="activeProgress.name"
+					@delete="handleProgressDel(activeProgress!._id)"
+				/>
+			</template>
+		</ProgressForm>
 	</BaseDialog>
 	<div data-testid="course-view">
 		<FetchComponent :loading="loading" :error="error" :data="course">
@@ -164,13 +201,6 @@ async function handleProgressSort(evt: SortableEvent) {
 							:intervals="course.intervals"
 							@open:form="handleOpenForm"
 							@update="handleProgressUpdate"
-						/>
-						<ProgressForm
-							:visible="activeProgressId === item._id"
-							:progress="item"
-							:intervals="course.intervals"
-							@update="handleProgressUpdate"
-							@delete="handleProgressDel"
 						/>
 					</template>
 				</Items>
