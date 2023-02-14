@@ -84,7 +84,7 @@ describe('course', () => {
 	})
 })
 
-describe.only('progress', () => {
+describe('progress', () => {
 	it('create progress', () => {
 		const courseName = generateName()
 		cy.login(username, password)
@@ -115,7 +115,7 @@ describe.only('progress', () => {
 				.last()
 				.should('have.text', newProgressName)
 		})
-		it('delete progress', () => {
+		it.only('delete progress', () => {
 			const courseName = generateName()
 			cy.login(username, password)
 			cy.createCourse(courseName)
@@ -132,6 +132,8 @@ describe.only('progress', () => {
 				'not.contain',
 				progressName
 			)
+
+			cy.get(`[data-testid="items-badge"]`).contains(0)
 		})
 	})
 })

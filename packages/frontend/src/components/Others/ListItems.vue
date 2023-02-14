@@ -52,6 +52,7 @@ onMounted(() => {
 					v-if="title"
 					:value="badge"
 					:type="badgeType ?? 'primary'"
+					data-testid="items-badge"
 				>
 					<h3 m-0>{{ title }}</h3>
 				</el-badge>
