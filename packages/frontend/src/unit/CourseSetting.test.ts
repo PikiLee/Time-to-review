@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { describe, test, vi, beforeEach, expect } from 'vitest'
 import CourseSetting from '@/components/Course/CourseSetting.vue'
 import { createGetter } from './utils'
@@ -34,7 +34,6 @@ describe('Rendered', () => {
 		vi.restoreAllMocks()
 	})
 
-	// ? do not know why emit update not work, but work in dev server
 	test.each([
 		['confirm', 'update'],
 		['cancel', 'cancel']
@@ -53,6 +52,8 @@ describe('Rendered', () => {
 		})
 
 		await get(wrapper, selector).trigger('click')
+
+		await flushPromises()
 		expect(wrapper.emitted()).toHaveProperty(event)
 	})
 
