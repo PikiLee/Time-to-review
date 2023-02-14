@@ -17,6 +17,7 @@ import * as courseApi from '../database/course'
 import { findByIdAndDeleteAndCalcOrder, findByIdAndUpdate } from '@/utils/query'
 import type { SortableEvent } from 'sortablejs'
 import { handleSort } from '@/composables/useSort'
+import DeleteButton from '@/components/Others/DeleteButton.vue'
 
 const settingVisible = ref(false)
 const { id: courseId } = useCustomRouter()
@@ -43,6 +44,7 @@ async function handleUpdateCourse(update: UpdateCourse) {
 		course.value = await courseApi.update(course.value._id, update, {
 			withProgresses: true
 		})
+		settingVisible.value = false
 	} catch {
 		errorMsg('Updation failed.')
 	}
@@ -122,12 +124,20 @@ async function handleProgressSort(evt: SortableEvent) {
 	<div data-testid="course-view">
 		<FetchComponent :loading="loading" :error="error" :data="course">
 			<template #data="{ data: course }">
-				<CourseSetting
-					v-model="settingVisible"
-					:course="course"
-					@update="handleUpdateCourse"
-					@delete="handleDelCourse"
-				/>
+				<BaseDialog v-model="settingVisible" title="Course Settings">
+					<CourseSetting
+						:course="course"
+						@update="handleUpdateCourse"
+						@cancel="settingVisible = false"
+					>
+						<template #actions>
+							<DeleteButton
+								:name="course.name"
+								@delete="handleDelCourse"
+							/>
+						</template>
+					</CourseSetting>
+				</BaseDialog>
 				<Items
 					:items="course.progresses"
 					item-key="_id"

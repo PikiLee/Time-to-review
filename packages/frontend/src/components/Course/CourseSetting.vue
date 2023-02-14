@@ -1,27 +1,18 @@
 <script setup lang="ts">
 import { createUnitTestIdGetter } from '@/unit/utils'
-import { useVModel } from '@vueuse/core'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { Course } from 'shared'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import DeleteButton from '../Others/DeleteButton.vue'
 
 const props = defineProps<{
-	modelValue: boolean
 	course: Course
 }>()
-const emit = defineEmits(['update:modelValue', 'update', 'delete'])
+const emit = defineEmits(['update', 'cancel'])
 
 const NAME_SPACE = 'course-setting'
 const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
 const { t } = useI18n()
-
-// dialog
-const visible = useVModel(props, 'modelValue', emit)
-function handleClose() {
-	visible.value = false
-}
 
 //form
 const ruleFormRef = ref<FormInstance>()
@@ -75,7 +66,6 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 	await formEl.validate((valid) => {
 		if (valid) {
 			emit('update', ruleForm)
-			visible.value = false
 		}
 	})
 }
@@ -87,85 +77,90 @@ function addInterval() {
 function removeInterval() {
 	ruleForm.intervals.splice(-1, 1)
 }
-
-function handleDelete() {
-	emit('delete', props.course._id)
-	visible.value = false
-}
 </script>
 
 <template>
-	<el-dialog
-		v-model="visible"
-		:title="$t('components.course.courseSetting.title')"
-		width="90%"
-		max-w-screen-sm
-		:before-close="handleClose"
+	<el-form
+		ref="ruleFormRef"
+		:model="ruleForm"
+		:rules="rules"
+		label-width="120px"
+		class="demo-ruleForm"
+		status-icon
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
-		<el-form
-			ref="ruleFormRef"
-			:model="ruleForm"
-			:rules="rules"
-			label-width="120px"
-			class="demo-ruleForm"
-			status-icon
+		<el-form-item
+			:label="$t('components.course.courseSetting.name')"
+			prop="name"
 		>
-			<el-form-item
-				:label="$t('components.course.courseSetting.name')"
-				prop="name"
-			>
-				<el-input v-model="ruleForm.name" />
-			</el-form-item>
-			<div flex gap-6 my-6 items-center justify-between>
-				<h3 m-none>
-					{{ $t('components.course.courseSetting.interval', 2) }}
-				</h3>
-				<div>
-					<el-tooltip
-						effect="dark"
-						:content="$t('components.course.courseSetting.add')"
-						placement="top"
-					>
-						<el-button @click="addInterval"
-							><div i-mdi-add></div
-						></el-button>
-					</el-tooltip>
-					<el-tooltip
-						effect="dark"
-						:content="$t('components.course.courseSetting.remove')"
-						placement="top"
-					>
-						<el-button @click="removeInterval"
-							><div i-mdi-minus></div
-						></el-button>
-					</el-tooltip>
-				</div>
+			<el-input v-model="ruleForm.name" />
+		</el-form-item>
+		<div flex gap-6 my-6 items-center justify-between>
+			<h3 m-none>
+				{{ $t('components.course.courseSetting.interval', 2) }}
+			</h3>
+			<div>
+				<el-tooltip
+					effect="dark"
+					:content="$t('components.course.courseSetting.add')"
+					placement="top"
+				>
+					<el-button
+						@click="addInterval"
+						:data-test-unit="getUnitTestId('add-interval')"
+						><div i-mdi-add></div
+					></el-button>
+				</el-tooltip>
+				<el-tooltip
+					effect="dark"
+					:content="$t('components.course.courseSetting.remove')"
+					placement="top"
+				>
+					<el-button
+						@click="removeInterval"
+						:data-test-unit="getUnitTestId('remove-interval')"
+						><div i-mdi-minus></div
+					></el-button>
+				</el-tooltip>
 			</div>
-			<el-form-item
-				:label="getPropertyName(index)"
-				prop="intervals"
-				v-for="(interval, index) in ruleForm.intervals"
-				:key="index"
+		</div>
+		<el-form-item
+			:label="getPropertyName(index)"
+			prop="intervals"
+			v-for="(interval, index) in ruleForm.intervals"
+			:key="index"
+			:data-test-unit="getUnitTestId('interval-input')"
+		>
+			<el-input-number v-model="ruleForm.intervals[index]" :min="1" />
+		</el-form-item>
+		<el-form-item>
+			<slot name="actions"></slot>
+			<el-button
+				@click="$emit('cancel')"
+				:data-test-unit="getUnitTestId('cancel')"
+				>{{ $t('actions.cancel') }}</el-button
 			>
-				<el-input-number v-model="ruleForm.intervals[index]" :min="1" />
-			</el-form-item>
-		</el-form>
-		<template #footer>
-			<span class="dialog-footer">
-				<el-button @click="visible = false">{{
-					$t('actions.cancel')
-				}}</el-button>
-				<DeleteButton
-					:name="props.course.name"
-					@delete="handleDelete"
-				/>
-				<el-button type="primary" @click="submitForm(ruleFormRef)">
-					{{ $t('actions.confirm') }}
-				</el-button>
-			</span>
-		</template>
-	</el-dialog>
+			<!-- <DeleteButton :name="props.course.name" @delete="handleDelete" /> -->
+			<el-button
+				type="primary"
+				@click="() => submitForm(ruleFormRef)"
+				:data-test-unit="getUnitTestId('confirm')"
+			>
+				{{ $t('actions.confirm') }}
+			</el-button>
+		</el-form-item>
+	</el-form>
+	<!-- <template #footer>
+		<span class="dialog-footer">
+			<el-button @click="visible = false">{{
+				$t('actions.cancel')
+			}}</el-button>
+			<DeleteButton :name="props.course.name" @delete="handleDelete" />
+			<el-button type="primary" @click="submitForm(ruleFormRef)">
+				{{ $t('actions.confirm') }}
+			</el-button>
+		</span>
+	</template> -->
 </template>
 
 <style scoped></style>

@@ -13,6 +13,9 @@ export function createGetter(nameSpace: string) {
 		},
 		find<T extends VueWrapper<any>>(wrapper: T, element: string) {
 			return wrapper.find(`[${prefix}="${getUnitTestId(element)}"]`)
+		},
+		findAll<T extends VueWrapper<any>>(wrapper: T, element: string) {
+			return wrapper.findAll(`[${prefix}="${getUnitTestId(element)}"]`)
 		}
 	}
 }

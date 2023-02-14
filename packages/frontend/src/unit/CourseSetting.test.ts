@@ -1,14 +1,11 @@
 import { mount } from '@vue/test-utils'
-import { describe, test, vi, beforeEach } from 'vitest'
-// import { create as createCourse } from '@/database/course'
-// import { create as createProgress } from '@/database/progress'
-// import { errorMsg, successMsg } from '@/utils/useMessage'
+import { describe, test, vi, beforeEach, expect } from 'vitest'
 import CourseSetting from '@/components/Course/CourseSetting.vue'
 import { createGetter } from './utils'
 import type { Course } from 'shared'
 
 const NAME_SPACE = 'course-setting'
-const { get } = createGetter(NAME_SPACE)
+const { get, findAll } = createGetter(NAME_SPACE)
 
 vi.mock('vue-i18n', () => {
 	return {
@@ -16,26 +13,10 @@ vi.mock('vue-i18n', () => {
 	}
 })
 
-vi.mock('@/database/course', () => {
-	return {
-		create: vi.fn(() => {})
-	}
-})
-vi.mock('@/database/progress', () => {
-	return {
-		create: vi.fn(() => {})
-	}
-})
-vi.mock('@/utils/useMessage', () => {
-	return {
-		errorMsg: vi.fn(() => {}),
-		successMsg: vi.fn(() => {})
-	}
-})
-
 const course: Course = {
 	_id: 'test',
 	owner: 'test',
+	type: 'course',
 	name: 'test',
 	status: 0,
 	archived: false,
@@ -52,16 +33,17 @@ describe('Rendered', () => {
 	beforeEach(() => {
 		vi.restoreAllMocks()
 	})
-	// can not test since dialog is teleport
-	test.todo('Rendered', async () => {
+
+	// ? do not know why emit update not work, but work in dev server
+	test.each([
+		['confirm', 'update'],
+		['cancel', 'cancel']
+	])('when click %s, emit %s', async (selector, event) => {
 		const $t = () => ''
 
 		const wrapper = mount(CourseSetting, {
 			props: {
-				course,
-				modelValue: true,
-				'onUpdate:modelValue': (e: boolean) =>
-					wrapper.setProps({ modelValue: e })
+				course
 			},
 			global: {
 				mocks: {
@@ -70,6 +52,30 @@ describe('Rendered', () => {
 			}
 		})
 
-		await get(wrapper, 'wrapper')
+		await get(wrapper, selector).trigger('click')
+		expect(wrapper.emitted()).toHaveProperty(event)
+	})
+
+	test.each([
+		[5, 'add-interval'],
+		[4, 'remove-interval'],
+		[3, 'remove-interval'],
+		[4, 'add-interval']
+	])('the number of intervals is %i when click %s', async (num, selector) => {
+		const $t = () => ''
+
+		const wrapper = mount(CourseSetting, {
+			props: {
+				course
+			},
+			global: {
+				mocks: {
+					$t
+				}
+			}
+		})
+
+		await get(wrapper, selector).trigger('click')
+		expect(await findAll(wrapper, 'interval-input')).toHaveLength(num)
 	})
 })
