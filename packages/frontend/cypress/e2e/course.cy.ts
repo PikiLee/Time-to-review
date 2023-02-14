@@ -115,7 +115,7 @@ describe('progress', () => {
 				.last()
 				.should('have.text', newProgressName)
 		})
-		it.only('delete progress', () => {
+		it('delete progress', () => {
 			const courseName = generateName()
 			cy.login(username, password)
 			cy.createCourse(courseName)

@@ -209,7 +209,8 @@ async function handleProgressSort(evt: SortableEvent) {
 							:progress="item"
 							:intervals="course.intervals"
 							@open:form="handleOpenForm"
-							@update="handleProgressUpdate"
+							@update="(progressId: string, _courseId: string, updateProgress: UpdateProgress) =>
+							handleProgressUpdate(progressId, updateProgress)"
 						/>
 					</template>
 				</ListItems>
