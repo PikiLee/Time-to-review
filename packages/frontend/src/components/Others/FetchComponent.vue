@@ -1,5 +1,6 @@
 <script setup lang="ts">
 defineProps<{
+	data?: any
 	loading: boolean
 	error: boolean
 }>()
@@ -22,6 +23,6 @@ defineProps<{
 			>
 			</el-result>
 		</div>
-		<slot v-else name="data" />
+		<slot v-else name="data" :data="data" />
 	</div>
 </template>

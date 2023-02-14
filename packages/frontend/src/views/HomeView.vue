@@ -3,9 +3,8 @@ import FetchComponent from '@/components/Others/FetchComponent.vue'
 import ListItems from '@/components/Others/ListItems.vue'
 import ProgressItem from '@/components/Progress/ProgressItem.vue'
 import { useFetchData } from '@/composables/useFetchData'
-import { updateProgress } from '@/composables/useProgresses'
 import { fetchDue } from '@/database/course'
-
+import * as progressApi from '@/database/progress'
 import { errorMsg } from '@/utils/useMessage'
 import type { CourseWithDueProgresses, UpdateProgress } from 'shared'
 import { ref } from 'vue'
@@ -34,7 +33,7 @@ async function handleProgressUpdate(
 	update: UpdateProgress
 ) {
 	try {
-		const updatedProgress = await updateProgress(_id, update)
+		const updatedProgress = await progressApi.update(_id, update)
 		if (!courses.value)
 			throw Error('Course not Found in Local. Please refresh.')
 		const parent = courses.value.find((c) => (c._id = course))

@@ -84,7 +84,7 @@ describe('course', () => {
 	})
 })
 
-describe('progress', () => {
+describe.only('progress', () => {
 	it('create progress', () => {
 		const courseName = generateName()
 		cy.login(username, password)
