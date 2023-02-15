@@ -81,17 +81,23 @@ export function createApp(
 	passport.deserializeUser(User.deserializeUser())
 
 	// log
-	const logsDir = path.resolve(
-		url.fileURLToPath(import.meta.url),
-		'../../logs'
-	)
-	const accessLogPath = path.join(logsDir, 'access.log')
-	if (!fs.existsSync(logsDir)) {
-		fs.mkdirSync(logsDir)
-		console.log(`Created logs direcotry at ${logsDir}`)
+	if (IS_DEV) {
+		const logsDir = path.resolve(
+			url.fileURLToPath(import.meta.url),
+			'../../logs'
+		)
+		const accessLogPath = path.join(logsDir, 'access.log')
+		if (!fs.existsSync(logsDir)) {
+			fs.mkdirSync(logsDir)
+			console.log(`Created logs direcotry at ${logsDir}`)
+		}
+		const accessLogStream = fs.createWriteStream(accessLogPath, {
+			flags: 'a'
+		})
+		app.use(morgan('combined', { stream: accessLogStream }))
+	} else {
+		app.use(morgan('combined'))
 	}
-	const accessLogStream = fs.createWriteStream(accessLogPath, { flags: 'a' })
-	app.use(morgan('combined', { stream: accessLogStream }))
 
 	// auth guard
 	app.use(['/course', '/progress'], (req, res, next) => {
