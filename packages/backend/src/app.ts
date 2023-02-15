@@ -34,11 +34,15 @@ function checkEnvVarExistence(
 	if (error) throw new Error('Enviornment variable not exist!')
 }
 if (IS_DEV) {
-	checkEnvVarExistence([process.env.SESSION_SECRET_DEVELOPMRNT])
+	checkEnvVarExistence([
+		process.env.SESSION_SECRET_DEVELOPMRNT,
+		process.env.CORS_ORIGIN_DEVELOPMENT
+	])
 } else {
 	checkEnvVarExistence([
 		process.env.DATABASE_PRODUCTION,
-		process.env.SESSION_SECRET_PRODUCTION
+		process.env.SESSION_SECRET_PRODUCTION,
+		process.env.CORS_ORIGIN_PRODUCTION
 	])
 }
 
@@ -51,16 +55,17 @@ export function createApp(
 
 	const app = express()
 
-	// only allow cors in dev mode
-	if (IS_DEV) {
-		app.use(
-			cors({
-				origin: ['http://localhost:4173'],
-				credentials: true,
-				exposedHeaders: ['set-cookie']
-			})
-		)
-	}
+	app.use(
+		cors({
+			origin: [
+				IS_DEV
+					? process.env.CORS_ORIGIN_DEVELOPMENT!
+					: process.env.CORS_ORIGIN_PRODUCTION!
+			],
+			credentials: true,
+			exposedHeaders: ['set-cookie']
+		})
+	)
 	app.use(bodyParser.urlencoded({ extended: false }))
 	app.use(bodyParser.json())
 
