@@ -4,3 +4,4 @@ dist
 test-db
 logs
 .env
+sessions.db
