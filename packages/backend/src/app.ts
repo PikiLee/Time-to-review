@@ -57,11 +57,9 @@ export function createApp(
 
 	app.use(
 		cors({
-			origin: [
-				IS_DEV
-					? process.env.CORS_ORIGIN_DEVELOPMENT!
-					: process.env.CORS_ORIGIN_PRODUCTION!
-			],
+			origin: IS_DEV
+				? process.env.CORS_ORIGIN_DEVELOPMENT!
+				: process.env.CORS_ORIGIN_PRODUCTION!,
 			credentials: true,
 			exposedHeaders: ['set-cookie']
 		})
@@ -87,7 +85,7 @@ export function createApp(
 				: process.env.SESSION_SECRET_PRODUCITON!,
 			resave: false,
 			saveUninitialized: false,
-			cookie: { httpOnly: false, secure: !IS_DEV, maxAge: 30 * ONE_DAY }
+			cookie: { httpOnly: false, secure: false, maxAge: 30 * ONE_DAY }
 		})
 	)
 

@@ -11,7 +11,7 @@ import {
 } from 'shared'
 import lodash from 'lodash-es'
 
-import { MongoMemoryReplSet } from 'mongodb-memory-server'
+import { MongoMemoryReplSet } from 'mongodb-memory-server-core'
 import { createDb } from '../src/models/db'
 
 const replset = await MongoMemoryReplSet.create({ replSet: { count: 4 } }) // This will create an ReplSet with 4 members

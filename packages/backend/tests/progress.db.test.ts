@@ -16,7 +16,7 @@ import { Progress, create, update, fetch, del } from '../src/models/Progress'
 import { entries } from 'lodash-es'
 // import { toObjectId } from '../src/utils/id'
 
-import { MongoMemoryReplSet } from 'mongodb-memory-server'
+import { MongoMemoryReplSet } from 'mongodb-memory-server-core'
 import { isIdEqual, toObjectId } from '../src/utils/id'
 
 // This will create an new instance of "MongoMemoryReplSet" and automatically start all Servers

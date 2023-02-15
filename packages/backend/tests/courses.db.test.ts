@@ -1,4 +1,4 @@
-import { NewCourse } from './../../shared/types/course.type'
+import { NewCourse } from 'shared'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -18,7 +18,7 @@ import mongoose, { Types } from 'mongoose'
 import { Course, create, del, fetch, update } from '../src/models/Course'
 import { entries } from 'lodash-es'
 import { toObjectId } from '../src/utils/id'
-import { MongoMemoryReplSet } from 'mongodb-memory-server'
+import { MongoMemoryReplSet } from 'mongodb-memory-server-core'
 
 const replset = await MongoMemoryReplSet.create({ replSet: { count: 4 } }) // This will create an ReplSet with 4 members
 beforeAll(async () => {

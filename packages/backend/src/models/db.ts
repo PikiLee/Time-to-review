@@ -1,4 +1,4 @@
-import { MongoMemoryReplSet } from 'mongodb-memory-server'
+import { MongoMemoryReplSet } from 'mongodb-memory-server-core'
 import mongoose from 'mongoose'
 
 export async function createDb(link?: string) {
