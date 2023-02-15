@@ -9,6 +9,7 @@
 		"lint:shared": "cd ./packages/shared && pnpm run lint",
 		"test:backend": "cd ./packages/backend && pnpm run test",
 		"build:backend": "cd ./packages/backend && pnpm run build",
+		"build:frontend": "cd ./packages/frontend && pnpm run build-only",
 		"watch:backend": "cd ./packages/backend && pnpm run watch",
 		"dev:backend": "cd ./packages/backend && pnpm run dev",
 		"dev:frontend": "cd ./packages/frontend && pnpm run dev",
