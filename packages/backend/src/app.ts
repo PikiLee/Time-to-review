@@ -17,6 +17,9 @@ import { router as authRouter } from './routes/auth.js'
 import { router as courseRouter } from './routes/course.js'
 import { router as progressRouter } from './routes/progress.js'
 import { createDb } from './models/db.js'
+// @ts-expect-error better-sqlite3-session-store has no types
+import sessionStore from 'better-sqlite3-session-store'
+import sqlite from 'better-sqlite3'
 
 export const IS_DEV = process.env.NODE_ENV === 'development'
 
@@ -61,15 +64,25 @@ export function createApp(
 	app.use(bodyParser.urlencoded({ extended: false }))
 	app.use(bodyParser.json())
 
+	// session
 	const ONE_DAY = 1000 * 60 * 60 * 24
+	const SqliteStore = sessionStore(expressSession)
+	const sessionDb = new sqlite('sessions.db', { verbose: console.log })
 	app.use(
 		expressSession({
+			store: new SqliteStore({
+				client: sessionDb,
+				expired: {
+					clear: true,
+					intervalMs: 900000 //ms = 15min
+				}
+			}),
 			secret: IS_DEV
 				? process.env.SESSION_SECRET_DEVELOPMRNT!
 				: process.env.SESSION_SECRET_PRODUCITON!,
 			resave: false,
 			saveUninitialized: false,
-			cookie: { httpOnly: false, secure: !IS_DEV, maxAge: ONE_DAY }
+			cookie: { httpOnly: false, secure: !IS_DEV, maxAge: 30 * ONE_DAY }
 		})
 	)
 

@@ -13,8 +13,8 @@
 		"watch": "tsc -w",
 		"prepack": "pnpm run build",
 		"type-check": "tsc --noEmit",
-		"run": "cross-env NODE_ENV=production node ./dist/src/index.js",
-		"dev": "cross-env NODE_ENV=development ts-node --esm ./src/index.ts"
+		"run": "cross-env NODE_ENV=productionts ts-node --esm --experimental-specifier-resolution=node ./src/index.ts",
+		"dev": "cross-env NODE_ENV=development ts-node --esm --experimental-specifier-resolution=node ./src/index.ts"
 	},
 	"files": [
 		"dist/src/*"
@@ -23,12 +23,14 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
+		"@types/better-sqlite3": "^7.6.3",
 		"@types/body-parser": "^1.19.2",
 		"@types/cors": "^2.8.13",
 		"@types/express": "^4.17.16",
 		"@types/express-serve-static-core": "^4.17.33",
 		"@types/express-session": "^1.17.5",
 		"@types/lodash-es": "^4.17.6",
+		"@types/mongodb-memory-server": "^2.3.0",
 		"@types/morgan": "^1.9.4",
 		"@types/passport": "^1.0.11",
 		"@types/passport-local": "^1.0.35",
@@ -47,6 +49,8 @@
 		"vitest": "^0.27.2"
 	},
 	"dependencies": {
+		"better-sqlite3": "^8.1.0",
+		"better-sqlite3-session-store": "^0.1.0",
 		"body-parser": "^1.20.1",
 		"cors": "^2.8.5",
 		"cross-env": "^7.0.3",

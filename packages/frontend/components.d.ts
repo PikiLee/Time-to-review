@@ -11,13 +11,10 @@ declare module '@vue/runtime-core' {
 		AppHeader: typeof import('./src/components/AppHeader.vue')['default']
 		BaseDialog: typeof import('./src/components/Others/BaseDialog.vue')['default']
 		CourseCard: typeof import('./src/components/Course/CourseCard.vue')['default']
-		CourseComponent: typeof import('./src/components/Course/CourseComponent.vue')['default']
 		CourseListContainer: typeof import('./src/components/CourseList/CourseListContainer.vue')['default']
 		CourseSetting: typeof import('./src/components/Course/CourseSetting.vue')['default']
 		CreateForm: typeof import('./src/components/CreateForm.vue')['default']
-		CreatorDialog: typeof import('./src/components/CreatorDialog.vue')['default']
 		DeleteButton: typeof import('./src/components/Others/DeleteButton.vue')['default']
-		DueCourseSection: typeof import('./src/components/Course/DueCourseSection.vue')['default']
 		ElBadge: typeof import('element-plus/es')['ElBadge']
 		ElButton: typeof import('element-plus/es')['ElButton']
 		ElCard: typeof import('element-plus/es')['ElCard']
@@ -46,8 +43,6 @@ declare module '@vue/runtime-core' {
 		ProgressItem: typeof import('./src/components/Progress/ProgressItem.vue')['default']
 		RouterLink: typeof import('vue-router')['RouterLink']
 		RouterView: typeof import('vue-router')['RouterView']
-		SideBar: typeof import('./src/components/SideBar.vue')['default']
-		WatchComponent: typeof import('./src/components/Others/WatchComponent.vue')['default']
 	}
 	export interface ComponentCustomProperties {
 		vLoading: typeof import('element-plus/es')['ElLoadingDirective']
