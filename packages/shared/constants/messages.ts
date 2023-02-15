@@ -1,22 +1,47 @@
 export const messages = {
 	en: {
 		message: {
-			hello: 'hello world'
+			hello: 'hello world',
+			created: '{0} has been created.',
+			updated: '{0} has been updated.',
+			deleted: '{0} has been deleted.',
+			fail: 'Action failed.'
 		},
 		actions: {
 			confirm: 'Confirm',
 			delete: 'Delete',
 			create: 'Create',
 			cancel: 'Cancel',
-			edit: 'Edit'
+			edit: 'Edit',
+			placeholder: 'Input Something...'
+		},
+		course: {
+			name: 'course',
+			cap: '@.capitalize:course.name',
+			create: '@:actions.create @:course.cap',
+			setting: '@:course.cap Settings',
+			edit: '@:actions.edit @:course.cap',
+			stage: 'Stage',
+			lastReviewDate: 'Last Review Date',
+			nextReviewDate: 'Next Review Date',
+			nextStage: 'Update to Next Stage'
+		},
+		progress: {
+			name: 'progress',
+			cap: '@.capitalize:progress.name',
+			create: '@:actions.create @:progress.cap',
+			update: '@:actions.update @:progress.cap'
 		},
 		common: {
 			empty: 'Nothing here.',
 			course: 'course',
-			progress: 'progress'
+			progress: 'progress',
+			Course: '@capitalize.common.course',
+			Pourse: '@capitalize.common.progress'
 		},
 		errors: {
-			required: 'Please input a value.'
+			required: 'Please input a value.',
+			length: 'Length should be {0} to {1}'
 		},
 		stages: {
 			learned: 'Learned',
@@ -44,54 +69,6 @@ export const messages = {
 					'Should be 12 to 24 long and contain at least one of !@#$%^&*, one number',
 				fail: '{0} failed.'
 			}
-		},
-		home: {
-			title: 'Review Courses'
-		},
-		courses: {
-			title: 'All Courses',
-			inProgress: 'In Progress',
-			done: 'Done',
-			archived: 'Archived'
-		},
-		course: {
-			name: 'Progress',
-			stage: 'Stage',
-			lastReviewDate: 'Last Review Date',
-			nextReviewDate: 'Next Review Date',
-			nextStage: 'Update to Next Stage'
-		},
-		addButton: {
-			course: {
-				create: 'Create Course',
-				success: 'Course {0} Have been Created.',
-				fail: 'Created failed.'
-			},
-			progress: {
-				create: 'Create Progress',
-				success: 'Progress {0} Have been Created.',
-				fail: 'Created failed.'
-			}
-		},
-		components: {
-			course: {
-				courseCard: {
-					markDone: 'Mark as Done',
-					markInProgress: 'Mark as In Progress',
-					markArchived: 'Archive',
-					markUnarchived: 'Unarchive'
-				},
-				courseSetting: {
-					name: 'name',
-					interval: 'interval | intervals',
-					required: 'Please input {0}',
-					title: 'Course Settings',
-					add: 'Add Interval',
-					remove: 'Remove Interval',
-					success: 'Edit succeeded.',
-					fail: 'Edit Failed.'
-				}
-			}
 		}
 	},
 	'zh-Hans': {
@@ -103,15 +80,35 @@ export const messages = {
 			delete: '删除',
 			create: '创建',
 			cancel: '取消',
-			edit: '编辑'
+			edit: '编辑',
+			placeholder: '输入点什么吧...'
+		},
+		course: {
+			name: '课程',
+			cap: '@.capitalize:course.name',
+			create: '@:actions.create@:course.cap',
+			edit: '@:actions.edit@:course.cap',
+			setting: '课程设置',
+			stage: '阶段',
+			lastReviewDate: '上次复习时间',
+			nextReviewDate: '下次复习时间',
+			nextStage: '修改为下一阶段'
+		},
+		progress: {
+			name: '进度',
+			cap: '@.capitalize:progress.name',
+			create: '@:actions.create@:progress.cap',
+			update: '@:actions.update@:progress.cap'
 		},
 		common: {
 			empty: '这里什么也没有',
 			course: '课程',
 			progress: '进度'
 		},
+
 		errors: {
-			required: '请输入一个值'
+			required: '请输入一个值',
+			length: '长度应在{0}至{1}之间'
 		},
 		stages: {
 			learned: '已学习',
@@ -138,54 +135,6 @@ export const messages = {
 				invalidPassword:
 					'长度应在{0}至{1}之间, 并至少包含!@#$%^&*的其中一个和一个数字',
 				fail: '{0}失败'
-			}
-		},
-		home: {
-			title: '待复习课程'
-		},
-		courses: {
-			title: '所有课程',
-			inProgress: '进行中',
-			done: '已完成',
-			archived: '已归档'
-		},
-		course: {
-			name: '进度',
-			stage: '阶段',
-			lastReviewDate: '上次复习时间',
-			nextReviewDate: '下次复习时间',
-			nextStage: '修改为下一阶段'
-		},
-		addButton: {
-			course: {
-				create: '创建课程',
-				success: '课程{0}创建成功',
-				fail: '课程创建失败'
-			},
-			progress: {
-				create: '创建进度',
-				success: '进度{0}创建成功',
-				fail: '进度创建失败'
-			}
-		},
-		components: {
-			course: {
-				courseCard: {
-					markDone: '标记为完成',
-					markInProgress: '标记为进行中',
-					markArchived: '归档',
-					markUnarchived: '撤销归档'
-				},
-				courseSetting: {
-					name: '名字',
-					interval: '复习间隔',
-					required: '请输入{0}',
-					title: '课程设置',
-					add: '添加间隔',
-					remove: '移除间隔',
-					success: '编辑成功',
-					fail: '编辑失败'
-				}
 			}
 		}
 	}

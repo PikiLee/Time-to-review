@@ -29,11 +29,11 @@ const error = ref('')
 
 async function handleCreate() {
 	if (input.value.length < props.min) {
-		error.value = `Length should be at least ${props.min}`
+		error.value = t('errors.length', [props.min, props.max])
 		return
 	}
 	if (input.value.length > 60) {
-		error.value = `Length should be at most ${props.max}`
+		error.value = t('errors.length', [props.min, props.max])
 		return
 	}
 
@@ -57,7 +57,7 @@ async function handleCreate() {
 			minlength="min"
 			maxlength="max"
 			autofocus
-			placeholder="Type Something..."
+			:placeholder="$t('actions.placeholder')"
 			@keyup.enter="handleCreate"
 			@change="error = ''"
 			id="create-form-input"

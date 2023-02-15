@@ -5,6 +5,27 @@ import { useUserStore } from '@/store/user.store'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import { computed } from 'vue'
 
+import { useI18n } from 'vue-i18n'
+import { messages } from 'shared'
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			banner: 'Effortlessly Track Your Progress and Review at the Right Time',
+			subBanner: `Never Forget What You've Learned`,
+			signUp: `SIGN UP NOW`,
+			start: `Start Review`
+		},
+		'zh-Hans': {
+			banner: '轻松追踪你的学习进度，并在合适的时间复习',
+			subBanner: `Never Forget What You've Learned`,
+			signUp: `立刻注册`,
+			start: `开始复习`
+		}
+	},
+	sharedMessages: messages
+})
+
 const fit = 'cover'
 
 const breakpoints = useBreakpoints(breakpointsTailwind)
@@ -30,16 +51,16 @@ const userStore = useUserStore()
 		</div>
 		<div md-col-span-4 p-8 grid place-items-center>
 			<h1 text-center>
-				Effortlessly Track Your Progress and Review at the Right Time
+				{{ t('banner') }}
 			</h1>
 			<el-button type="primary" size="large" v-if="!userStore.isLogin"
 				><RouterLink no-underline :to="{ name: 'register' }">
-					SIGN UP NOW
+					{{ t('signUp') }}
 				</RouterLink></el-button
 			>
 			<el-button type="primary" size="large" v-else
 				><RouterLink no-underline :to="{ name: 'home' }">
-					Start Review
+					{{ t('start') }}
 				</RouterLink></el-button
 			>
 		</div>

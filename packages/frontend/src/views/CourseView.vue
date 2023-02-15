@@ -27,6 +27,20 @@ import {
 import type { SortableEvent } from 'sortablejs'
 import { handleSort } from '@/composables/useSort'
 import DeleteButton from '@/components/Others/DeleteButton.vue'
+import { useI18n } from 'vue-i18n'
+import { messages } from 'shared'
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			name: 'Name'
+		},
+		'zh-Hans': {
+			name: '进度名'
+		}
+	},
+	sharedMessages: messages
+})
 
 const settingVisible = ref(false)
 const { id: courseId } = useCustomRouter()
@@ -134,18 +148,18 @@ async function handleProgressSort(evt: SortableEvent) {
 <template>
 	<AddButton
 		type="info"
-		tool-tip="Create Progress"
+		:tool-tip="$t('progress.create')"
 		@click="createFormVisible = true"
 	/>
-	<BaseDialog v-model="createFormVisible" title="Create Progress">
+	<BaseDialog v-model="createFormVisible" :title="$t('progress.create')">
 		<CreateForm
-			label="Progress Name"
+			:label="t('name')"
 			buttonType="info"
 			@ok="handleProgressCreate"
 		/>
 	</BaseDialog>
 
-	<BaseDialog v-model="progressFormVisible" title="Update Progress">
+	<BaseDialog v-model="progressFormVisible" :title="$t('progress.update')">
 		<ProgressForm
 			v-if="course"
 			:progress="activeProgress"
@@ -169,7 +183,10 @@ async function handleProgressSort(evt: SortableEvent) {
 		<FetchComponent :loading="loading" :error="error" :data="course">
 			<!-- todo implement a generic typed component so data here has the correct type  -->
 			<template #data="{ data: course }">
-				<BaseDialog v-model="settingVisible" title="Course Settings">
+				<BaseDialog
+					v-model="settingVisible"
+					:title="$t('course.setting')"
+				>
 					<CourseSetting
 						:course="course"
 						@update="handleUpdateCourse"
@@ -194,7 +211,7 @@ async function handleProgressSort(evt: SortableEvent) {
 					<template #actions>
 						<el-tooltip
 							effect="dark"
-							:content="$t('actions.edit')"
+							:content="$t('course.edit')"
 							placement="top-start"
 						>
 							<button

@@ -4,6 +4,7 @@ import type { FormInstance, FormRules } from 'element-plus'
 import type { Course } from 'shared'
 import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { messages } from 'shared'
 
 const props = defineProps<{
 	course: Course
@@ -12,22 +13,43 @@ const emit = defineEmits(['update', 'cancel'])
 
 const NAME_SPACE = 'course-setting'
 const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
-const { t } = useI18n()
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			name: 'name',
+			interval: 'interval | intervals',
+			required: 'Please input {0}',
+			add: 'Add Interval',
+			remove: 'Remove Interval',
+			success: 'Edit succeeded.',
+			fail: 'Edit Failed.'
+		},
+		'zh-Hans': {
+			name: '名字',
+			interval: '复习间隔',
+			required: '请输入{0}',
+			add: '添加间隔',
+			remove: '移除间隔',
+			success: '编辑成功',
+			fail: '编辑失败'
+		}
+	},
+	sharedMessages: messages
+})
 
 //form
 const ruleFormRef = ref<FormInstance>()
 
 function getPropertyName(index: number) {
-	return `${t('components.course.courseSetting.interval')} ${index + 1}`
+	return `${t('interval')} ${index + 1}`
 }
 
 const rules = reactive<FormRules>({
 	name: [
 		{
 			required: true,
-			message: t('components.course.courseSetting.required', [
-				t('components.course.courseSetting.name')
-			]),
+			message: t(' required', [t(' name')]),
 			trigger: 'blur'
 		},
 		{
@@ -41,9 +63,7 @@ const rules = reactive<FormRules>({
 	intervals: [
 		{
 			required: true,
-			message: t('components.course.courseSetting.required', [
-				t('components.course.courseSetting.name')
-			]),
+			message: t(' required', [t(' name')]),
 			trigger: 'blur'
 		},
 		{
@@ -89,22 +109,15 @@ function removeInterval() {
 		status-icon
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
-		<el-form-item
-			:label="$t('components.course.courseSetting.name')"
-			prop="name"
-		>
+		<el-form-item :label="t('name')" prop="name">
 			<el-input v-model="ruleForm.name" />
 		</el-form-item>
 		<div flex gap-6 my-6 items-center justify-between>
 			<h3 m-none>
-				{{ $t('components.course.courseSetting.interval', 2) }}
+				{{ $t('interval', 2) }}
 			</h3>
 			<div>
-				<el-tooltip
-					effect="dark"
-					:content="$t('components.course.courseSetting.add')"
-					placement="top"
-				>
+				<el-tooltip effect="dark" :content="t('add')" placement="top">
 					<el-button
 						@click="addInterval"
 						:data-test-unit="getUnitTestId('add-interval')"
@@ -113,7 +126,7 @@ function removeInterval() {
 				</el-tooltip>
 				<el-tooltip
 					effect="dark"
-					:content="$t('components.course.courseSetting.remove')"
+					:content="t('remove')"
 					placement="top"
 				>
 					<el-button

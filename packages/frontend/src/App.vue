@@ -4,6 +4,9 @@ import { RouterView, useRoute } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import IntroView from './views/IntroView.vue'
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import en from 'element-plus/dist/locale/en.mjs'
+import { useI18n } from 'vue-i18n'
 
 const route = useRoute()
 
@@ -28,27 +31,33 @@ function updateHeight(h: number) {
 	contentHeight.value =
 		document.documentElement.clientHeight - h - footerEl.value.clientHeight
 }
+
+// local
+const i18n = useI18n()
+const locale = computed(() => (i18n.locale.value === 'zh-Hans' ? zhCn : en))
 </script>
 
 <template>
-	<div
-		bg-warmgray-100
-		min-w-full
-		min-h-screen
-		h-max
-		text-xs
-		prose
-		dark:prose-invert
-		prose-warmgray
-		dark:bg-warmgray-800
-	>
-		<AppHeader @update-height="updateHeight" />
-		<div w-4xl max-w-screen mx-auto px-2 gap-4 v-if="!isIntroPage">
-			<RouterView />
+	<el-config-provider :locale="locale">
+		<div
+			bg-warmgray-100
+			min-w-full
+			min-h-screen
+			h-max
+			text-xs
+			prose
+			dark:prose-invert
+			prose-warmgray
+			dark:bg-warmgray-800
+		>
+			<AppHeader @update-height="updateHeight" />
+			<div w-4xl max-w-screen mx-auto px-2 gap-4 v-if="!isIntroPage">
+				<RouterView />
+			</div>
+			<div v-else>
+				<IntroView :style="contentStyle" />
+			</div>
+			<div h-10vh ref="footerEl"></div>
 		</div>
-		<div v-else>
-			<IntroView :style="contentStyle" />
-		</div>
-		<div h-10vh ref="footerEl"></div>
-	</div>
+	</el-config-provider>
 </template>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import Sortable from 'sortablejs'
 import { computed, onMounted, ref } from 'vue'
+import { messages } from 'shared'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
 	items: any[]
@@ -13,6 +15,18 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['dragend'])
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			empty: 'There is nothing here.'
+		},
+		'zh-Hans': {
+			empty: '这里什么也没有。'
+		}
+	},
+	sharedMessages: messages
+})
 
 // is empty
 const isEmpty = computed(() => props.items.length === 0)
@@ -90,10 +104,7 @@ onMounted(() => {
 				<slot name="item" :item="item" />
 			</li>
 		</ul>
-		<el-empty
-			v-if="!hidden && isEmpty"
-			description="There is nothing here."
-		/>
+		<el-empty v-if="!hidden && isEmpty" :description="t('empty')" />
 	</div>
 </template>
 

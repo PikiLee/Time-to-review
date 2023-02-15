@@ -14,6 +14,28 @@ import { errorMsg } from '@/utils/useMessage'
 import { findById, findByIdAndDeleteAndCalcOrder } from '@/utils/query'
 import { calcOrder } from '@/composables/useSort'
 import type { SortableEvent } from 'sortablejs'
+import { useI18n } from 'vue-i18n'
+import { messages } from 'shared'
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			title: 'All Courses',
+			inProgress: 'In Progress',
+			done: 'Done',
+			archived: 'Archived',
+			name: 'Name'
+		},
+		'zh-Hans': {
+			title: '所有课程',
+			inProgress: '进行中',
+			done: '已完成',
+			archived: '已归档',
+			name: '课程名'
+		}
+	},
+	sharedMessages: messages
+})
 
 const route = useRoute()
 const formVisible = ref(false)
@@ -29,7 +51,7 @@ const { loading, error } = useFetchData<Course[]>(courseApi.fetchAll, courses)
 
 const coursesInprogress = computed(() => {
 	return {
-		title: 'In Progress',
+		title: t('inProgress'),
 		items: courses.value.filter(
 			(item) =>
 				item.status === CourseStatus['In Progress'] && !item.archived
@@ -38,14 +60,14 @@ const coursesInprogress = computed(() => {
 })
 
 const coursesDone = computed(() => ({
-	title: 'Done',
+	title: t('done'),
 	items: courses.value.filter(
 		(item) => item.status === CourseStatus['Done'] && !item.archived
 	)
 }))
 
 const coursesArchived = computed(() => ({
-	title: 'Archived',
+	title: t('archived'),
 	items: courses.value.filter((item) => item.archived)
 }))
 const courseByCatogry = computed(() => [
@@ -60,7 +82,7 @@ async function handleCreate(name: string) {
 		courses.value.push(await courseApi.create(newCourse))
 		formVisible.value = false
 	} catch {
-		errorMsg('Creation failed.')
+		errorMsg(t('message.fail'))
 	}
 }
 
@@ -69,7 +91,7 @@ async function handleDel(_id: string) {
 		await courseApi.del(_id)
 		findByIdAndDeleteAndCalcOrder(courses.value, _id)
 	} catch {
-		errorMsg('Deletion failed.')
+		errorMsg(t('message.fail'))
 	}
 }
 
@@ -88,7 +110,7 @@ async function handleToggleStatus(_id: string) {
 		await courseApi.update(item._id, { status: newStatus, order })
 		item.status = newStatus
 	} catch {
-		errorMsg('Toggle status failed.')
+		errorMsg(t('message.fail'))
 	}
 }
 
@@ -106,7 +128,7 @@ async function handleToggleArchive(_id: string) {
 		})
 		item.archived = !item.archived
 	} catch (err) {
-		errorMsg('Toggle archived failed.')
+		errorMsg(t('message.fail'))
 	}
 }
 
@@ -126,19 +148,20 @@ async function handleCourseSort(items: Course[], evt: SortableEvent) {
 			calcOrder(fromInex, toIndex, courses.value)
 		}
 	} catch {
-		errorMsg('Deletion failed.')
+		errorMsg(t('message.fail'))
 	}
 }
 </script>
 <template>
 	<AddButton
 		type="primary"
-		tool-tip="Create Course"
+		:tool-tip="t('course.create')"
 		@click="formVisible = true"
 	/>
-	<BaseDialog v-model="formVisible" title="Create Course">
-		<CreateForm label="Course Name" @ok="handleCreate" />
+	<BaseDialog v-model="formVisible" :title="t('course.create')">
+		<CreateForm :label="t('name')" @ok="handleCreate" />
 	</BaseDialog>
+	<h2 text-center text-3xl>{{ t('title') }}</h2>
 	<FetchComponent :loading="loading" :error="error">
 		<template #data>
 			<div grid gap-8>

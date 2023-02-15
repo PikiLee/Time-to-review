@@ -1,9 +1,26 @@
 <script setup lang="ts">
+import { messages } from 'shared'
+import { useI18n } from 'vue-i18n'
+
 defineProps<{
 	data?: any
 	loading: boolean
 	error: boolean
 }>()
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			title: 'Error',
+			subTitle: 'Error when fetching data.'
+		},
+		'zh-Hans': {
+			title: '错误',
+			subTitle: '获取数据时发生错误。'
+		}
+	},
+	sharedMessages: messages
+})
 </script>
 
 <template>
@@ -18,8 +35,8 @@ defineProps<{
 		<div v-else-if="error">
 			<el-result
 				icon="error"
-				title="Error"
-				sub-title="Error when fetching data."
+				:title="t('title')"
+				:sub-title="t('subTitle')"
 			>
 			</el-result>
 		</div>

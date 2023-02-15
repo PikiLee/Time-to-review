@@ -16,6 +16,24 @@ import { errorMsg } from '@/utils/useMessage'
 import type { CourseWithDueProgresses, Progress, UpdateProgress } from 'shared'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { messages } from 'shared'
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			title: 'Start Review!',
+			congradulation: 'Congradulations! No Courses Need Rewiew!',
+			goAdd: 'Go Add One!'
+		},
+		'zh-Hans': {
+			title: '开始复习吧',
+			congradulation: '恭喜! 没有需要复习的课程',
+			goAdd: '去添加一个吧!'
+		}
+	},
+	sharedMessages: messages
+})
 
 const router = useRouter()
 
@@ -70,7 +88,7 @@ async function handleProgressDel() {
 			findByIdAndDelete(courses.value, activeCourse.value._id)
 		progressFormVisible.value = false
 	} catch {
-		errorMsg('Updation failed.')
+		errorMsg(t('message.fail'))
 	}
 }
 
@@ -97,7 +115,7 @@ async function handleProgressUpdate(
 
 		progressFormVisible.value = false
 	} catch {
-		errorMsg('Updation failed.')
+		errorMsg(t('message.fail'))
 	}
 }
 </script>
@@ -105,7 +123,7 @@ async function handleProgressUpdate(
 <template>
 	<main>
 		<h2 text-center text-3xl data-testid="home-view-title">
-			{{ $t('home.title') }}
+			{{ t('title') }}
 		</h2>
 		<BaseDialog v-model="progressFormVisible" title="Update Progress">
 			<ProgressForm
@@ -151,11 +169,11 @@ async function handleProgressUpdate(
 			</template>
 		</FetchComponent>
 		<div v-if="courses && courses.length === 0">
-			<el-empty description="Congradulations! No Courses Need Rewiew!" />
+			<el-empty :description="t('congradulation')" />
 			<div flex items-center justify-center>
-				<el-button type="primary" @click="goAddCourse"
-					>Go Add Course</el-button
-				>
+				<el-button type="primary" @click="goAddCourse">{{
+					t('goAdd')
+				}}</el-button>
 			</div>
 		</div>
 	</main>

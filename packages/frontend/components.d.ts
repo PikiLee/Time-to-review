@@ -21,6 +21,7 @@ declare module '@vue/runtime-core' {
 		ElBadge: typeof import('element-plus/es')['ElBadge']
 		ElButton: typeof import('element-plus/es')['ElButton']
 		ElCard: typeof import('element-plus/es')['ElCard']
+		ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
 		ElDatePicker: typeof import('element-plus/es')['ElDatePicker']
 		ElDialog: typeof import('element-plus/es')['ElDialog']
 		ElEmpty: typeof import('element-plus/es')['ElEmpty']

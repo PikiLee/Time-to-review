@@ -5,6 +5,8 @@ import relativeTime from 'dayjs/esm/plugin/relativeTime'
 import { computed } from 'vue'
 import { useCreatedTime } from '@/utils/useDayjs'
 import { createUnitTestIdGetter } from '@/unit/utils'
+import { useI18n } from 'vue-i18n'
+import { messages } from 'shared'
 
 dayjs.extend(relativeTime)
 
@@ -15,6 +17,24 @@ const emit = defineEmits(['delete', 'toggle:archive', 'toggle:status'])
 
 const NAME_SPACE = 'course-card'
 const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			markDone: 'Mark as Done',
+			markInProgress: 'Mark as In Progress',
+			markArchived: 'Archive',
+			markUnarchived: 'Unarchive'
+		},
+		'zh-Hans': {
+			markDone: '标记为完成',
+			markInProgress: '标记为进行中',
+			markArchived: '归档',
+			markUnarchived: '撤销归档'
+		}
+	},
+	sharedMessages: messages
+})
 
 const isInProgress = computed(
 	() => props.course.status === CourseStatus['In Progress']
@@ -33,11 +53,7 @@ const { createdTime } = useCreatedTime(props.course.createdAt)
 	>
 		<li grid grid-rows-2 grid-cols-5 gap-2 items-center>
 			<el-tooltip
-				:content="
-					isArchived
-						? $t('components.course.courseCard.markUnarchived')
-						: $t('components.course.courseCard.markArchived')
-				"
+				:content="isArchived ? t('markUnarchived') : t('markArchived')"
 				placement="top"
 			>
 				<!-- Archive Button -->
@@ -48,9 +64,7 @@ const { createdTime } = useCreatedTime(props.course.createdAt)
 					cursor-pointer
 					hover:text-lime-500
 					:aria-label="
-						isArchived
-							? $t('components.course.courseCard.markUnarchived')
-							: $t('components.course.courseCard.markArchived')
+						isArchived ? t('markUnarchived') : t('markArchived')
 					"
 					data-testid="course-card-toggle-archive"
 				>
@@ -72,11 +86,7 @@ const { createdTime } = useCreatedTime(props.course.createdAt)
 			<el-tooltip
 				v-if="!isArchived"
 				class="box-item"
-				:content="
-					isInProgress
-						? $t('components.course.courseCard.markDone')
-						: $t('components.course.courseCard.markInProgress')
-				"
+				:content="isInProgress ? t('markDone') : t('markInProgress')"
 				placement="top"
 			>
 				<!-- Toggle Status Button -->
@@ -87,9 +97,7 @@ const { createdTime } = useCreatedTime(props.course.createdAt)
 					cursor-pointer
 					hover:text-lime-500
 					:aria-label="
-						isInProgress
-							? $t('components.course.courseCard.markDone')
-							: $t('components.course.courseCard.markInProgress')
+						isInProgress ? t('markDone') : t('markInProgress')
 					"
 					data-testid="course-card-toggle-status"
 				>
