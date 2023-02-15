@@ -8,7 +8,7 @@ const { get } = createGetter(NAME_SPACE)
 
 vi.mock('vue-i18n', () => {
 	return {
-		useI18n: () => ({ t: () => '' })
+		useI18n: () => ({ t: () => 'i18n' })
 	}
 })
 
@@ -39,7 +39,7 @@ describe.each([
 	})
 
 	test(`emit ok event when click confirm`, async () => {
-		const $t = () => ''
+		const $t = () => 'i18n'
 		const typed = 'good'
 
 		const wrapper = mount(CreateForm, {
@@ -61,7 +61,7 @@ describe.each([
 	test.each([[''], ['1'.repeat(61)]])(
 		`Emit nothing, show error when type '' `,
 		async (typed) => {
-			const $t = () => ''
+			const $t = () => 'i18n'
 
 			const wrapper = mount(CreateForm, {
 				props: {

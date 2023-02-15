@@ -1,4 +1,4 @@
-import { mount } from '@vue/test-utils'
+import { mount, RouterLinkStub } from '@vue/test-utils'
 import { describe, test, vi, beforeEach, expect } from 'vitest'
 import { createGetter } from './utils'
 import { course1 as course } from './dummyData'
@@ -7,10 +7,16 @@ import CourseCard from '@/components/Course/CourseCard.vue'
 const NAME_SPACE = 'course-card'
 const { get } = createGetter(NAME_SPACE)
 
-vi.mock('@/composables/useApi', () => {
+vi.mock('vue-i18n', () => {
 	return {
-		update: vi.fn(() => {}),
-		del: vi.fn(() => {})
+		useI18n: () => ({ t: () => 'i18n' }),
+		createI18n: () => ({
+			global: {
+				locale: {
+					value: 'en'
+				}
+			}
+		})
 	}
 })
 
@@ -19,33 +25,13 @@ describe('Rendered', () => {
 		vi.restoreAllMocks()
 	})
 
-	test('Rendered', async () => {
-		const $t = () => ''
-
-		const wrapper = mount(CourseCard, {
-			props: {
-				course
-			},
-			global: {
-				mocks: {
-					$t
-				}
-			},
-			stubs: { RouterLink: true }
-		})
-
-		await get(wrapper, 'wrapper')
-		await get(wrapper, 'archive')
-		await get(wrapper, 'done')
-	})
-
 	test.each([
 		{ course, element: 'archive' },
 		{ course: { ...course, archived: true }, element: 'unarchive' }
 	])(
 		'emit toggle:archive when click archive button',
 		async ({ course, element }) => {
-			const $t = () => ''
+			const $t = () => 'i18n'
 
 			const wrapper = mount(CourseCard, {
 				props: {
@@ -54,9 +40,9 @@ describe('Rendered', () => {
 				global: {
 					mocks: {
 						$t
-					}
-				},
-				stubs: { RouterLink: true }
+					},
+					stubs: { RouterLink: RouterLinkStub }
+				}
 			})
 
 			await get(wrapper, element).trigger('click')
@@ -80,7 +66,8 @@ describe('Rendered', () => {
 				global: {
 					mocks: {
 						$t
-					}
+					},
+					stubs: { RouterLink: RouterLinkStub }
 				}
 			})
 
@@ -100,7 +87,8 @@ describe('Rendered', () => {
 			global: {
 				mocks: {
 					$t
-				}
+				},
+				stubs: { RouterLink: RouterLinkStub }
 			}
 		})
 
