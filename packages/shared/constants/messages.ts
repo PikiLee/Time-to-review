@@ -22,6 +22,7 @@ export const messages = {
 			setting: '@:course.cap Settings',
 			edit: '@:actions.edit @:course.cap',
 			stage: 'Stage',
+			dueDate: 'Due Date',
 			lastReviewDate: 'Last Review Date',
 			nextReviewDate: 'Next Review Date',
 			nextStage: 'Update to Next Stage'
@@ -90,6 +91,7 @@ export const messages = {
 			edit: '@:actions.edit@:course.cap',
 			setting: '课程设置',
 			stage: '阶段',
+			dueDate: '下次复习时间',
 			lastReviewDate: '上次复习时间',
 			nextReviewDate: '下次复习时间',
 			nextStage: '修改为下一阶段'

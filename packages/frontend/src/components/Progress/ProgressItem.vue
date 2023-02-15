@@ -106,7 +106,9 @@ const percentage = computed(
 			<!-- Due Date -->
 			<div m-0 flex items-center justify-between>
 				<div flex items-center gap-2 v-if="!isDone">
-					<h4 m-0 text-xs font-thin text-warmgray-400>Due Date</h4>
+					<h4 m-0 text-xs font-thin text-warmgray-400>
+						{{ $t('course.dueDate') }}
+					</h4>
 					<time
 						m-0
 						text-xs
