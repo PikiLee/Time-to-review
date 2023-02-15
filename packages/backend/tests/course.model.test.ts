@@ -1,8 +1,5 @@
-import {
-	CourseWithProgress,
-	CourseWithDueProgresses
-} from './../../shared/dist/types/course.type.d'
-import { beforeAll, expect, describe, test } from 'vitest'
+import { CourseWithProgress, CourseWithDueProgresses } from 'shared'
+import { beforeAll, expect, describe, test, afterAll } from 'vitest'
 import { createApp } from '../src/app'
 import request from 'supertest'
 import {
@@ -13,6 +10,21 @@ import {
 	NewCourse
 } from 'shared'
 import lodash from 'lodash-es'
+
+import { MongoMemoryReplSet } from 'mongodb-memory-server'
+import { createDb } from '../src/models/db'
+
+const replset = await MongoMemoryReplSet.create({ replSet: { count: 4 } }) // This will create an ReplSet with 4 members
+beforeAll(async () => {
+	// This will create an new instance of "MongoMemoryReplSet" and automatically start all Servers
+
+	const uri = replset.getUri()
+	await createDb(uri)
+})
+
+afterAll(() => {
+	replset.stop()
+})
 
 function expectToBeTypeOfCourse(
 	course: CourseType,
@@ -82,7 +94,6 @@ describe('', () => {
 		const newCourse: NewCourse = {
 			name: 'test',
 			owner: userId,
-			order: 3,
 			status: 0,
 			archived: false
 		}
