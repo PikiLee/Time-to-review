@@ -66,7 +66,7 @@ export const messages = {
 				required: 'Please input {0}',
 				existUsername: 'The username has existed.',
 				invalidPassword:
-					'Should be 12 to 24 long and contain at least one of !@#$%^&*, one number',
+					"Should be 12 to 24 long and contain at least one of !{'@'}#{'$'}%^&*, one number",
 				fail: '{0} failed.'
 			}
 		}
@@ -133,7 +133,7 @@ export const messages = {
 				required: '请输入{0}',
 				existUsername: '用户名已存在',
 				invalidPassword:
-					'长度应在{0}至{1}之间, 并至少包含!@#$%^&*的其中一个和一个数字',
+					"长度应在{0}至{1}之间, 并至少包含!{'@'}#{'$'}%^&*的其中一个和一个数字",
 				fail: '{0}失败'
 			}
 		}
