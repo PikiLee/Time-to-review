@@ -1,5 +1,5 @@
 import { Types } from 'mongoose'
-import type { Progress } from './progress.type.js'
+import type { Progress } from './progress.type'
 
 export enum CourseStatus {
 	'In Progress',

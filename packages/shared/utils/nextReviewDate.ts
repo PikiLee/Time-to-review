@@ -1,4 +1,4 @@
-import { type ProgressStage } from '../types/progress.type.js'
+import { type ProgressStage } from '../types/progress.type'
 import dayjs from 'dayjs'
 
 export function getNextDate(

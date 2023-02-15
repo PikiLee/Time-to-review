@@ -1,3 +1,3 @@
-export * from './course.type.js'
-export * from './progress.type.js'
-export * from './user.type.js'
+export * from './course.type'
+export * from './progress.type'
+export * from './user.type'
