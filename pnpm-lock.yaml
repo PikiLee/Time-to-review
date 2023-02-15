@@ -21,7 +21,6 @@ importers:
       '@types/express-serve-static-core': ^4.17.33
       '@types/express-session': ^1.17.5
       '@types/lodash-es': ^4.17.6
-      '@types/mongodb-memory-server': ^2.3.0
       '@types/morgan': ^1.9.4
       '@types/passport': ^1.0.11
       '@types/passport-local': ^1.0.35
@@ -81,7 +80,6 @@ importers:
       '@types/express-serve-static-core': 4.17.33
       '@types/express-session': 1.17.5
       '@types/lodash-es': 4.17.6
-      '@types/mongodb-memory-server': 2.3.0
       '@types/morgan': 1.9.4
       '@types/passport': 1.0.11
       '@types/passport-local': 1.0.35
@@ -1689,16 +1687,6 @@ packages:
 
   /@types/mime/3.0.1:
     resolution: {integrity: sha512-Y4XFY5VJAuw0FgAqPNd6NNoV44jbq9Bz2L7Rh/J6jLTiHBSBJa9fxqQIvkIld4GsoDOcCbvzOUAbLPsSKKg+uA==}
-    dev: true
-
-  /@types/mongodb-memory-server/2.3.0:
-    resolution: {integrity: sha512-nveg+f78qRwudPRFVfw2flEdEkhKJIr4rSyQFKagSMb4sGhjFQi0GEKi7zKXgkKkwIlMcLthM1G93vsXgtDxGQ==}
-    deprecated: This is a stub types definition. mongodb-memory-server provides its own type definitions, so you do not need this installed.
-    dependencies:
-      mongodb-memory-server: 8.11.4
-    transitivePeerDependencies:
-      - aws-crt
-      - supports-color
     dev: true
 
   /@types/morgan/1.9.4:
@@ -5327,18 +5315,6 @@ packages:
       tslib: 2.5.0
       uuid: 9.0.0
       yauzl: 2.10.0
-    transitivePeerDependencies:
-      - aws-crt
-      - supports-color
-    dev: true
-
-  /mongodb-memory-server/8.11.4:
-    resolution: {integrity: sha512-DI6iXKsZBpMFAPxj/+35jl2s1LxVTpBc+VUpMzEe9Mvm73XIzIzPdU5Aa3asO7RfRSeR5l5wn0qpVAkvP1BScg==}
-    engines: {node: '>=12.22.0'}
-    requiresBuild: true
-    dependencies:
-      mongodb-memory-server-core: 8.11.4
-      tslib: 2.5.0
     transitivePeerDependencies:
       - aws-crt
       - supports-color
