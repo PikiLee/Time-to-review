@@ -22,23 +22,23 @@ export function isIdEqual(id1: ID, id2: ID) {
 }
 
 export function errorIfIdNotEqual(id1: ID, id2: ID) {
-	if (!isIdEqual(id1, id2)) throw Error('Not authorized.')
+	if (!isIdEqual(id1, id2)) throw Error('3')
 }
 
 export async function errorIfUserNotExist(id: ID) {
 	const user = await User.findById(toObjectId(id))
-	if (!user) throw Error('User not found.')
+	if (!user) throw Error('4')
 	return user
 }
 
 export async function errorIfCourseNotExist(id: ID) {
 	const course = await Course.findById(toObjectId(id))
-	if (!course) throw Error('Course not found.')
+	if (!course) throw Error('0')
 	return course
 }
 
 export async function errorIfProgressNotExist(id: ID) {
 	const progress = await Progress.findById(toObjectId(id))
-	if (!progress) throw Error('Progress not found.')
+	if (!progress) throw Error('1')
 	return progress
 }

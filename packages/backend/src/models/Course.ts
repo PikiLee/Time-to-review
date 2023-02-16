@@ -12,12 +12,7 @@ import {
 } from 'shared'
 import mongoose, { Schema, Types } from 'mongoose'
 import lodash from 'lodash-es'
-import { User } from './User.js'
-import {
-	errorIfCourseNotExist,
-	errorIfIdNotEqual,
-	toObjectId
-} from '../utils/id.js'
+import { errorIfCourseNotExist, errorIfIdNotEqual } from '../utils/id.js'
 
 const courseSchema = new Schema<CourseSchemaType>(
 	{
@@ -142,56 +137,51 @@ const sortStage = {
 } as const
 
 export async function create(
-	newCourse: NewCourse,
-	options?: {
-		currentUserId?: Types.ObjectId
-	}
+	rawCourse: NewCourse,
+	currentUserId: Types.ObjectId
 ) {
-	const user = await User.findById(newCourse.owner)
-	if (options?.currentUserId && !user._id.equals(options?.currentUserId))
-		throw new Error('Not authorized.')
+	const session = await mongoose.startSession()
 
-	if (user) {
-		const session = await mongoose.startSession()
+	session.startTransaction()
+	try {
+		const count = await Course.find({
+			owner: currentUserId
+		}).countDocuments({})
 
-		session.startTransaction()
-		try {
-			const count = await Course.find({
-				owner: newCourse.owner
-			}).countDocuments({})
-			const course = new Course({ ...newCourse, order: count })
-			await course.save()
+		const newCourse = lodash.assign(
+			{},
+			{
+				owner: currentUserId,
+				status: CourseStatus['In Progress'],
+				archived: false,
+				intervals: [1, 7, 14, 28],
+				order: count
+			},
+			rawCourse
+		)
 
-			await session.commitTransaction()
+		const course = new Course(newCourse)
+		await course.save()
 
-			return (await fetch({ _id: course._id }))[0]
-		} catch (error) {
-			await session.abortTransaction()
+		await session.commitTransaction()
 
-			throw error
-		} finally {
-			session.endSession()
-		}
-	} else {
-		throw Error('User not found.')
+		return (await fetch({ _id: course._id }))[0]
+	} catch (error) {
+		await session.abortTransaction()
+
+		throw error
+	} finally {
+		session.endSession()
 	}
 }
 
 export async function update(
-	courseId: Types.ObjectId | string,
+	courseId: Types.ObjectId,
 	updateCourse: UpdateCourse,
-	options?: {
-		withProgresses?: boolean
-		withDueProgresses?: boolean
-		currentUserId?: Types.ObjectId // for check whether the owner of the course is the same as current user
-	}
+	currentUserId: Types.ObjectId
 ) {
-	courseId = toObjectId(courseId)
-	const course = await Course.findById(courseId)
-	if (!course) throw new Error('Course not found.')
-
-	if (options?.currentUserId && !course.owner.equals(options?.currentUserId))
-		throw new Error('Not authorized.')
+	const course = await errorIfCourseNotExist(courseId)
+	errorIfIdNotEqual(course.owner, currentUserId)
 
 	const session = await mongoose.startSession()
 
@@ -252,7 +242,7 @@ export async function update(
 
 		await session.commitTransaction()
 
-		return (await fetch({ _id: course._id }, options))[0]
+		return (await fetch({ _id: course._id }))[0]
 	} catch (error) {
 		await session.abortTransaction()
 
@@ -264,13 +254,10 @@ export async function update(
 
 export async function del(
 	courseId: Types.ObjectId,
-	options?: {
-		currentUserId?: Types.ObjectId // for check whether the owner of the course is the same as current user
-	}
+	currentUserId: Types.ObjectId
 ) {
 	const course = await errorIfCourseNotExist(courseId)
-	if (options?.currentUserId)
-		errorIfIdNotEqual(course.owner, options.currentUserId)
+	errorIfIdNotEqual(course.owner, currentUserId)
 
 	const session = await mongoose.startSession()
 
@@ -301,27 +288,15 @@ export async function del(
 /**
  * fetch a course by id
  */
-export async function fetch(
-	filter: Partial<CourseSchemaType>,
-	options?: {
-		withProgresses?: boolean
-		withDueProgresses?: boolean
-	}
-) {
-	const { withProgresses, withDueProgresses } = lodash.assign(
-		{},
-		{ withProgresses: false, withDueProgresses: false },
-		options
-	)
-
+export async function fetch(filter: Partial<CourseSchemaType>) {
 	const result = await Course.aggregate([
 		{ $match: filter },
 		lookupStage,
-		createProjectStage({ withProgresses, withDueProgresses }),
+		createProjectStage(),
 		sortStage
 	])
 
-	if (result.length === 0) throw Error('Not found.')
+	if (result.length === 0) throw Error('0')
 
 	return result
 }

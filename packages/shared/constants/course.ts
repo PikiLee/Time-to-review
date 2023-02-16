@@ -1,1 +1,1 @@
-export const COURSE_URL = '/course'
+export const COURSE_URL = '/courses'

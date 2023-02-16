@@ -1,1 +1,1 @@
-export const PROGRESS_URL = '/progress'
+export const PROGRESS_URL = '/progresses'

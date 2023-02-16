@@ -1,7 +1,6 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
 
-import express from 'express'
 import bodyParser from 'body-parser'
 import passport from 'passport'
 import expressSession from 'express-session'
@@ -10,16 +9,16 @@ import cors from 'cors'
 import fs from 'node:fs'
 import path from 'node:path'
 import url from 'node:url'
-import { AUTH_URL, COURSE_URL, PROGRESS_URL } from 'shared'
+import { AUTH_URL } from 'shared'
 
 import { User } from './models/User.js'
 import { router as authRouter } from './routes/auth.js'
 import { router as courseRouter } from './routes/course.js'
-import { router as progressRouter } from './routes/progress.js'
 import { createDb } from './models/db.js'
 // @ts-expect-error better-sqlite3-session-store has no types
 import sessionStore from 'better-sqlite3-session-store'
 import sqlite from 'better-sqlite3'
+import { ctx } from './ctx'
 
 export const IS_DEV = process.env.NODE_ENV === 'development'
 
@@ -46,14 +45,14 @@ if (IS_DEV) {
 	])
 }
 
-export function createApp(
+export async function createApp(
 	options = {
 		port: 3000
 	}
 ) {
-	createDb(IS_DEV ? undefined : process.env.DATABASE_PRODUCTION!)
+	await createDb(IS_DEV ? undefined : process.env.DATABASE_PRODUCTION!)
 
-	const app = express()
+	const app = ctx.app()
 
 	app.use(
 		cors({
@@ -130,8 +129,7 @@ export function createApp(
 		next()
 	})
 	app.use(AUTH_URL, authRouter)
-	app.use(COURSE_URL, courseRouter)
-	app.use(PROGRESS_URL, progressRouter)
+	app.use(courseRouter)
 
 	app.post('/', (_req, res) => {
 		res.sendStatus(200)

@@ -1,111 +1,170 @@
-import express from 'express'
+import { assign } from 'lodash-es'
 import { create, fetch, del, update } from '../models/Course.js'
 import { printDebugInfo } from '../utils/debug.js'
 import { toObjectId } from '../utils/id.js'
+import { ctx } from '../ctx'
+import { courseEndpointDescription } from '../endpoint/course.endpoint'
+import { findError } from '../endpoint/errors'
+import * as progressHandlers from '../models/Progress'
 
-export const router = express.Router()
+export const router = ctx.router(courseEndpointDescription)
 
-router.post('/', async (req, res) => {
+router.post('/courses', async (req, res) => {
 	try {
-		res.status(200).json(
-			await create(req.body, {
-				currentUserId: toObjectId((req.user as any)._id)
-			})
-		)
+		res.status(200).json(await create(req.body, toObjectId(req.user._id)))
 	} catch (err) {
 		printDebugInfo(req)
 		console.trace({ err })
-		res.status(400).send(err)
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
 	}
 })
 
-router.put('/:courseId', async (req, res) => {
+router.put('/courses/:courseId', async (req, res) => {
 	try {
 		const updatedCourse = await update(
 			toObjectId(req.params.courseId),
 			req.body,
-			{
-				currentUserId: toObjectId((req.user as any)._id),
-				...req.query
-			}
+			toObjectId(req.user._id)
 		)
 		res.status(200).json(updatedCourse)
 	} catch (err) {
 		printDebugInfo(req)
 		console.trace({ err })
-		res.status(400).send(err)
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
 	}
 })
 
-router.delete('/:courseId', async (req, res) => {
+router.delete('/courses/:courseId', async (req, res) => {
 	try {
-		await del(toObjectId(req.params.courseId), {
-			currentUserId: toObjectId((req.user as any)._id)
-		})
-
-		res.sendStatus(200)
+		await del(toObjectId(req.params.courseId), toObjectId(req.user._id))
+		res.status(200).json({ deleted: true })
 	} catch (err) {
 		printDebugInfo(req)
 		console.trace({ err })
-		res.status(400).send(err)
-	}
-})
-
-/**
- * get due courses
- */
-router.get('/due', async (req, res) => {
-	try {
-		const courses = await fetch(
-			{
-				owner: toObjectId((req.user as any)._id)
-			},
-			req.query
-		)
-		res.status(200).json(courses.filter((course) => course.isDue === true))
-	} catch (err) {
-		printDebugInfo(req)
-		console.trace({ err })
-		res.status(200).json([])
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
 	}
 })
 
 /**
  * get a course
  */
-router.get('/:courseId', async (req, res) => {
+router.get('/courses/:courseId', async (req, res) => {
 	try {
-		const course = await fetch(
-			{
-				_id: toObjectId(req.params.courseId),
-				owner: toObjectId((req.user as any)._id)
-			},
-			req.query
-		)
+		const course = await fetch({
+			_id: toObjectId(req.params.courseId),
+			owner: toObjectId(req.user._id)
+		})
 		res.status(200).json(course[0])
 	} catch (err) {
 		printDebugInfo(req)
 		console.trace({ err })
-		res.status(404).send(err)
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
 	}
 })
 
 /**
  * get all courses for a user
  */
-router.get('/', async (req, res) => {
+router.get('/courses', async (req, res) => {
 	try {
-		if (!req.user) throw new Error('login first')
-		const course = await fetch(
+		const { isDue } = req.query
+		const filter = assign(
+			{},
 			{
-				owner: toObjectId((req.user as any)._id)
+				owner: toObjectId(req.user._id)
 			},
-			req.query
+			{ isDue }
 		)
-		res.status(200).json(course)
+		const courses = await fetch(filter)
+		res.status(200).json(courses)
 	} catch (err) {
-		printDebugInfo(err)
+		printDebugInfo(req)
 		console.log(err)
-		res.status(200).json([])
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
+	}
+})
+
+router.post('/courses/:courseId/progresses', async (req, res) => {
+	try {
+		const progress = await progressHandlers.create(
+			toObjectId(req.params.courseId),
+			req.body,
+			toObjectId(req.user._id)
+		)
+		res.json(progress)
+	} catch (err) {
+		printDebugInfo(req)
+		console.log(err)
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
+	}
+})
+
+router.get('/courses/:courseId/progresses', async (req, res) => {
+	try {
+		res.status(200).json(
+			await progressHandlers.fetch({
+				owner: toObjectId(req.user._id),
+				course: toObjectId(req.params.courseId)
+			})
+		)
+	} catch (err) {
+		printDebugInfo(req)
+		console.log(err)
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
+	}
+})
+
+router.get('/courses/:courseId/progresses/:progressId', async (req, res) => {
+	try {
+		const filter = {
+			_id: toObjectId(req.params.progressId),
+			course: toObjectId(req.params.courseId),
+			owner: toObjectId(req.user._id)
+		}
+		const progress = (await progressHandlers.fetch(filter))[0]
+		res.json(progress)
+	} catch (err) {
+		printDebugInfo(req)
+		console.log(err)
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
+	}
+})
+
+router.delete('/courses/:courseId/progresses/:progressId', async (req, res) => {
+	try {
+		await progressHandlers.del(
+			toObjectId(req.params.progressId),
+			toObjectId(req.user._id)
+		)
+		res.json({ deleted: true })
+	} catch (err) {
+		printDebugInfo(req)
+		console.log(err)
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
+	}
+})
+
+router.put('/courses/:courseId/progresses/:progressId', async (req, res) => {
+	try {
+		const updatedProgress = await progressHandlers.update(
+			toObjectId(req.params.progressId),
+			req.body,
+			toObjectId(req.user._id)
+		)
+		return res.json(updatedProgress)
+	} catch (err) {
+		printDebugInfo(req)
+		console.log(err)
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
 	}
 })

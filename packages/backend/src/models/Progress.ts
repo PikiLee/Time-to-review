@@ -1,13 +1,11 @@
 import { NewProgress, UpdateProgress } from 'shared'
 import mongoose, { Types } from 'mongoose'
 import { ProgressSchema as ProgressSchemaType } from 'shared'
-import lodash from 'lodash-es'
-import dayjs from 'dayjs'
+import lodash, { assign } from 'lodash-es'
 import {
 	errorIfCourseNotExist,
 	errorIfIdNotEqual,
-	errorIfProgressNotExist,
-	errorIfUserNotExist
+	errorIfProgressNotExist
 } from '../utils/id.js'
 
 const { Schema } = mongoose
@@ -36,10 +34,7 @@ const progressSchema = new Schema<ProgressSchemaType>(
 		},
 		lastDate: {
 			type: Date,
-			required: true,
-			set(lastDate: string) {
-				return dayjs(lastDate).toDate()
-			}
+			required: true
 		},
 		order: {
 			type: Number,
@@ -152,40 +147,42 @@ export async function fetch(filter: Partial<ProgressSchemaType>) {
 		createSortStage()
 	])
 
-	if (doc.length === 0) throw Error('Not found')
+	if (doc.length === 0) throw Error('1')
 	return doc
 }
 
 export async function create(
-	newProgress: NewProgress,
-	options?: {
-		currentUserId?: Types.ObjectId // for check whether the owner of the course is the same as current user
-	}
+	courseId: Types.ObjectId,
+	rawProgress: NewProgress,
+	currentUserId: Types.ObjectId
 ) {
-	const user = await errorIfUserNotExist(newProgress.owner)
-	// check if the owner is the same as current user
-	if (options?.currentUserId)
-		errorIfIdNotEqual(user._id, options.currentUserId)
-
-	const course = await errorIfCourseNotExist(newProgress.course)
+	const course = await errorIfCourseNotExist(courseId)
 	// check if the owner of the course is the same as the one in newProgress
-	errorIfIdNotEqual(course.owner, user._id)
+	errorIfIdNotEqual(course.owner, currentUserId)
 
-	const count = await Progress.find({ owner: user._id }).count()
-	const progress = new Progress({ ...newProgress, order: count })
+	const count = await Progress.find({ owner: currentUserId }).count()
+	const newProgress = assign(
+		{},
+		{
+			course: courseId,
+			owner: currentUserId,
+			stage: 0,
+			order: count
+		},
+		rawProgress
+	)
+
+	const progress = new Progress(newProgress)
 	await progress.save()
 	return (await fetch({ _id: progress._id }))[0]
 }
 
 export async function del(
 	progressId: Types.ObjectId,
-	options?: {
-		currentUserId?: Types.ObjectId
-	}
+	currentUserId: Types.ObjectId
 ) {
 	const progress = await errorIfProgressNotExist(progressId)
-	if (options?.currentUserId)
-		errorIfIdNotEqual(progress.owner, options.currentUserId)
+	errorIfIdNotEqual(progress.owner, currentUserId)
 
 	const session = await mongoose.startSession()
 	session.startTransaction()
@@ -215,13 +212,10 @@ export async function del(
 export async function update(
 	progressId: Types.ObjectId,
 	updateProgress: UpdateProgress,
-	options?: {
-		currentUserId?: Types.ObjectId
-	}
+	currentUserId: Types.ObjectId
 ) {
 	const progress = await errorIfProgressNotExist(progressId)
-	if (options?.currentUserId)
-		errorIfIdNotEqual(progress.owner, options.currentUserId)
+	errorIfIdNotEqual(progress.owner, currentUserId)
 
 	const session = await mongoose.startSession()
 

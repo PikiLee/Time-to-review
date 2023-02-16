@@ -1,48 +1,58 @@
 import { Types } from 'mongoose'
+import { z } from 'zod'
 
 export type ProgressStage = number
 
-export interface Progress {
-	_id: string
-	type: 'progress'
-	course: string
-	owner: string
-	name: string
-	stage: number
-	lastDate: string
-	createdAt: string
-	updatedAt: string
-	order: number
-	nextDate: string
-	isDue: boolean
-}
+export const progressZodSchema = z.object({
+	_id: z.string(),
+	type: z.literal('progress'),
+	course: z.string(),
+	owner: z.string(),
+	name: z.string(),
+	stage: z.number().positive(),
+	lastDate: z.string().datetime(),
+	createdAt: z.string().datetime(),
+	updatedAt: z.string().datetime(),
+	order: z.number().positive(),
+	nextDate: z.string().datetime(),
+	isDue: z.boolean()
+})
 
-export type NewProgress = Omit<
-	Progress,
-	'_id' | 'createdAt' | 'nextDate' | 'isDue' | 'updatedAt' | 'type' | 'order'
->
+export type Progress = z.infer<typeof progressZodSchema>
 
-export type UpdateProgress = Partial<
-	Omit<
-		Progress,
-		| '_id'
-		| 'course'
-		| 'owner'
-		| 'createdAt'
-		| 'nextDate'
-		| 'isDue'
-		| 'updatedAt'
-		| 'type'
-	>
->
+export const newProgressZodSchema = progressZodSchema.pick({
+	name: true,
+	lastDate: true
+})
 
-export interface ProgressSchema
-	extends Omit<
-		Progress,
-		'course' | 'owner' | '_id' | 'lastDate' | 'nextDate' | 'isDue' | 'type'
-	> {
-	_id: Types.ObjectId
-	owner: Types.ObjectId
-	course: Types.ObjectId
-	lastDate: Date
-}
+export type NewProgress = z.infer<typeof newProgressZodSchema>
+
+export const udpateProgressZodSchema = progressZodSchema
+	.pick({
+		name: true,
+		stage: true,
+		lastDate: true,
+		order: true
+	})
+	.partial()
+
+export type UpdateProgress = z.infer<typeof udpateProgressZodSchema>
+
+const progressSchema = progressZodSchema
+	.pick({
+		name: true,
+		stage: true,
+		createdAt: true,
+		updatedAt: true,
+		order: true
+	})
+	.extend({
+		_id: z.custom<Types.ObjectId>((val) => val instanceof Types.ObjectId),
+		owner: z.custom<Types.ObjectId>((val) => val instanceof Types.ObjectId),
+		course: z.custom<Types.ObjectId>(
+			(val) => val instanceof Types.ObjectId
+		),
+		lastDate: z.custom<Date>((val) => val instanceof Date)
+	})
+
+export type ProgressSchema = z.infer<typeof progressSchema>

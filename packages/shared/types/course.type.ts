@@ -1,71 +1,67 @@
 import { Types } from 'mongoose'
 import type { Progress } from './progress.type'
+import z from 'zod'
 
 export enum CourseStatus {
 	'In Progress',
 	'Done'
 }
+export const courseStatus = z.nativeEnum(CourseStatus)
+
+export const courseZodSchema = z.object({
+	_id: z.string(),
+	type: z.literal('course'),
+	owner: z.string(),
+	name: z.string(),
+	status: courseStatus,
+	archived: z.boolean(),
+	intervals: z.array(z.number().gte(1)),
+	createdAt: z.string().datetime(),
+	updatedAt: z.string().datetime(),
+	dueCount: z.number().positive(),
+	isDue: z.boolean(),
+	order: z.number().positive(),
+	progressCount: z.number().positive()
+})
 
 export const courseStatusIndices = [0, 1]
 
-export interface Course {
-	_id: string
-	type: 'course'
-	owner: string
-	name: string
-	status: CourseStatus
-	archived: boolean
-	intervals: number[]
-	createdAt: string
-	updatedAt: string
-	dueCount: number
-	isDue: boolean
-	order: number
-	progressCount: number
-}
+export type Course = z.infer<typeof courseZodSchema>
 
-export interface CourseSchema
-	extends Omit<
-		Course,
-		'_id' | 'owner' | 'dueCount' | 'isDue' | 'progressCount' | 'type'
-	> {
-	_id: Types.ObjectId
-	owner: Types.ObjectId
-}
+export const newCourseZodSchema = courseZodSchema.pick({
+	name: true
+})
 
-export interface NewCourse
-	extends Omit<
-		Course,
-		| '_id'
-		| 'owner'
-		| 'createdAt'
-		| 'progresses'
-		| 'updatedAt'
-		| 'isDue'
-		| 'progressCount'
-		| 'dueCount'
-		| 'intervals'
-		| 'type'
-		| 'order'
-	> {
-	owner: string
-	intervals?: number[]
-}
+export type NewCourse = z.infer<typeof newCourseZodSchema>
 
-export type UpdateCourse = Partial<
-	Omit<
-		Course,
-		| '_id'
-		| 'owner'
-		| 'createdAt'
-		| 'progresses'
-		| 'updatedAt'
-		| 'isDue'
-		| 'progressCount'
-		| 'dueCount'
-		| 'type'
-	>
->
+export const updateCourseZodSchema = courseZodSchema
+	.pick({
+		name: true,
+		status: true,
+		archived: true,
+		intervals: true,
+		order: true
+	})
+	.partial()
+
+export type UpdateCourse = z.infer<typeof updateCourseZodSchema>
+
+export const courseSchema = courseZodSchema
+	.pick({
+		name: true,
+		status: true,
+		archived: true,
+		intervals: true,
+		createdAt: true,
+		updatedAt: true,
+		order: true
+	})
+	.extend({
+		_id: z.custom<Types.ObjectId>((val) => val instanceof Types.ObjectId),
+		owner: z.custom<Types.ObjectId>((val) => val instanceof Types.ObjectId)
+	})
+
+export type CourseSchema = z.infer<typeof courseSchema>
 
 export interface CourseWithDueProgresses extends Course {
 	dueProgresses: Progress[]

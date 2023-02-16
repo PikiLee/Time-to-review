@@ -27,6 +27,9 @@ importers:
       '@types/supertest': ^2.0.12
       '@typescript-eslint/eslint-plugin': ^5.48.2
       '@typescript-eslint/parser': ^5.48.2
+      '@zodios/core': ^10.7.7
+      '@zodios/express': ^10.5.1
+      axios: ^1.2.6
       better-sqlite3: ^8.1.0
       better-sqlite3-session-store: ^0.1.0
       body-parser: ^1.20.1
@@ -54,7 +57,11 @@ importers:
       typescript: ^4.9.4
       vite: ^4.0.4
       vitest: ^0.27.2
+      zod: ^3.20.6
     dependencies:
+      '@zodios/core': 10.7.7_axios@1.2.6+zod@3.20.6
+      '@zodios/express': 10.5.1_em7uqks55qis7efkt4rt4dkhna
+      axios: 1.2.6
       better-sqlite3: 8.1.0
       better-sqlite3-session-store: 0.1.0
       body-parser: 1.20.1
@@ -72,6 +79,7 @@ importers:
       passport-local: 1.0.0
       passport-local-mongoose: 7.1.2
       shared: link:../shared
+      zod: 3.20.6
     devDependencies:
       '@types/better-sqlite3': 7.6.3
       '@types/body-parser': 1.19.2
@@ -213,11 +221,13 @@ importers:
       typescript: ^4.9.4
       vite: ^4.0.4
       vitest: ^0.27.2
+      zod: ^3.20.6
     dependencies:
       '@vueuse/core': 9.12.0
       dayjs: 1.11.7
       lodash-es: 4.17.21
       mongoose: 6.9.0
+      zod: 3.20.6
     devDependencies:
       '@types/lodash-es': 4.17.6
       '@typescript-eslint/eslint-plugin': 5.49.0_rsaczafy73x3xqauzesvzbsgzy
@@ -2475,6 +2485,28 @@ packages:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
+
+  /@zodios/core/10.7.7_axios@1.2.6+zod@3.20.6:
+    resolution: {integrity: sha512-Lc9HJM1n3zMcJUQ4+4649sH77V+juZRC66k5YD1gxhKRayucguXvSj05M5wBOYXdvcvSQ1Ac1A/wQ5dFJyH26A==}
+    peerDependencies:
+      axios: ^0.x || ^1.0.0
+      zod: ^3.x
+    dependencies:
+      axios: 1.2.6
+      zod: 3.20.6
+    dev: false
+
+  /@zodios/express/10.5.1_em7uqks55qis7efkt4rt4dkhna:
+    resolution: {integrity: sha512-VoVzEsld4YRr0ulB87hKYTdJonVAacYIK/P6TH1HbvgRnNdSNmRIJ6r+jdWunAiyrqRY1ePTV7pgeMmxTHpTJg==}
+    peerDependencies:
+      '@zodios/core': '>=10.4.4 <11.0.0'
+      express: 4.x
+      zod: ^3.x
+    dependencies:
+      '@zodios/core': 10.7.7_axios@1.2.6+zod@3.20.6
+      express: 4.18.2
+      zod: 3.20.6
+    dev: false
 
   /abab/2.0.6:
     resolution: {integrity: sha512-j2afSsaIENvHZN2B8GOpF566vZ5WVk5opAiMTvWgaQT8DkbOqsTfvNAvHoRGU2zzP8cPoqys+xHTRDWW8L+/BA==}
@@ -7754,3 +7786,7 @@ packages:
     resolution: {integrity: sha512-9bnSc/HEW2uRy67wc+T8UwauLuPJVn28jb+GtJY16iiKWyvmYJRXVT4UamsAEGQfPohgr2q4Tq0sQbQlxTfi1g==}
     engines: {node: '>=12.20'}
     dev: true
+
+  /zod/3.20.6:
+    resolution: {integrity: sha512-oyu0m54SGCtzh6EClBVqDDlAYRz4jrVtKwQ7ZnsEmMI9HnzuZFj8QFwAY1M5uniIYACdGvv0PBWPF2kO0aNofA==}
+    dev: false
