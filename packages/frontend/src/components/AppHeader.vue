@@ -4,8 +4,22 @@ import { useDark, useElementBounding, useToggle } from '@vueuse/core'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as authApi from '@/database/auth'
+import { useI18n } from 'vue-i18n'
+import { messages } from 'shared'
 
 const emit = defineEmits(['updateHeight'])
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			search: 'Search'
+		},
+		'zh-Hans': {
+			search: '搜索'
+		}
+	},
+	sharedMessages: messages
+})
 
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
@@ -65,6 +79,12 @@ onMounted(() => {
 
 		<!-- Home Course Link -->
 		<div flex-grow-3 flex flex-row gap-4 items-center justify-end>
+			<el-button text>
+				<div text-lg gap-1 font-600 flex flex-row items-center>
+					<div i-mdi-search></div>
+					<div>{{ t('search') }}</div>
+				</div>
+			</el-button>
 			<RouterLink
 				v-if="!isIntroPage || userStore.isLogin"
 				font-600

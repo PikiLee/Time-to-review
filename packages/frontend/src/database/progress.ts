@@ -62,3 +62,26 @@ export async function fetchAllDue(courseId: string) {
 		}
 	})
 }
+
+export async function search(courseId: string, phrase: string) {
+	return await api.getAllProgress({
+		params: {
+			courseId
+		},
+		queries: {
+			search: phrase
+		}
+	})
+}
+
+export async function searchAll(phrase: string) {
+	return await api.getAllProgress({
+		params: {
+			courseId: '1'.repeat(24)
+		},
+		queries: {
+			search: phrase,
+			searchAll: true
+		}
+	})
+}

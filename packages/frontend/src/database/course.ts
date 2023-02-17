@@ -1,5 +1,5 @@
 import { keys } from 'lodash-es'
-import type { NewCourse, UpdateCourse, Course } from 'shared'
+import type { NewCourse, UpdateCourse } from 'shared'
 import { api } from './api'
 
 export async function create(newCourse: NewCourse) {
@@ -33,14 +33,22 @@ export async function fetch(courseId: string) {
 	})
 }
 
-export async function fetchAll(): Promise<Course[]> {
+export async function fetchAll() {
 	return await api.getAllCourses()
 }
 
-export async function fetchDue(): Promise<Course[]> {
+export async function fetchDue() {
 	return await api.getAllCourses({
 		queries: {
 			isDue: true
+		}
+	})
+}
+
+export async function search(phrase: string) {
+	return await api.getAllCourses({
+		queries: {
+			search: phrase
 		}
 	})
 }

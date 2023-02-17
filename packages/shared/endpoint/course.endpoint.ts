@@ -31,7 +31,8 @@ export const courseEndpointDescription = makeApi([
 		alias: 'getAllCourses',
 		description: 'Get all courses',
 		parameters: [
-			{ name: 'isDue', type: 'Query', schema: z.boolean().optional() }
+			{ name: 'isDue', type: 'Query', schema: z.boolean().optional() },
+			{ name: 'search', type: 'Query', schema: z.string().optional() }
 		],
 		status: 200,
 		response: z.array(courseZodSchema),
@@ -96,7 +97,9 @@ export const courseEndpointDescription = makeApi([
 		description: 'Get all progresses',
 		parameters: [
 			{ name: 'courseId', type: 'Path', schema: z.string() },
-			{ name: 'isDue', type: 'Query', schema: z.boolean().optional() }
+			{ name: 'isDue', type: 'Query', schema: z.boolean().optional() },
+			{ name: 'search', type: 'Query', schema: z.string().optional() },
+			{ name: 'searchAll', type: 'Query', schema: z.boolean().optional() }
 		],
 		status: 200,
 		response: z.array(progressZodSchema),

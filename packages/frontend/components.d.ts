@@ -43,6 +43,8 @@ declare module '@vue/runtime-core' {
 		ProgressItem: typeof import('./src/components/Progress/ProgressItem.vue')['default']
 		RouterLink: typeof import('vue-router')['RouterLink']
 		RouterView: typeof import('vue-router')['RouterView']
+		SearchCompnent: typeof import('./src/components/Others/SearchCompnent.vue')['default']
+		SearchComponent: typeof import('./src/components/Others/SearchComponent.vue')['default']
 	}
 	export interface ComponentCustomProperties {
 		vLoading: typeof import('element-plus/es')['ElLoadingDirective']

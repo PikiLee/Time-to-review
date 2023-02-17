@@ -1,3 +1,4 @@
+import { assign, escapeRegExp } from 'lodash-es'
 import { create, fetch, del, update } from '../models/Course.js'
 import { printDebugInfo } from '../utils/debug.js'
 import { errorIfCourseNotExist, toObjectId } from '../utils/id.js'
@@ -71,9 +72,20 @@ router.get('/courses/:courseId', async (req, res) => {
  */
 router.get('/courses', async (req, res) => {
 	try {
-		let courses = await fetch({
-			owner: toObjectId(req.user._id)
-		})
+		let filter
+		if (req.query.search) {
+			filter = {
+				owner: toObjectId(req.user._id),
+				name: {
+					$regex: escapeRegExp(req.query.search)
+				}
+			}
+		} else {
+			filter = {
+				owner: toObjectId(req.user._id)
+			}
+		}
+		let courses = await fetch(filter)
 		if (req.query.isDue) courses = courses.filter((c) => c.isDue)
 		res.status(200).json(courses)
 	} catch (err) {
@@ -102,10 +114,31 @@ router.post('/courses/:courseId/progresses', async (req, res) => {
 
 router.get('/courses/:courseId/progresses', async (req, res) => {
 	try {
-		let progresses = await progressHandlers.fetch({
-			owner: toObjectId(req.user._id),
-			course: toObjectId(req.params.courseId)
-		})
+		let filter
+		if (req.query.search) {
+			if (req.query.searchAll) {
+				filter = {
+					owner: toObjectId(req.user._id),
+					name: {
+						$regex: escapeRegExp(req.query.search)
+					}
+				}
+			} else {
+				filter = {
+					owner: toObjectId(req.user._id),
+					course: toObjectId(req.params.courseId),
+					name: {
+						$regex: escapeRegExp(req.query.search)
+					}
+				}
+			}
+		} else {
+			filter = {
+				owner: toObjectId(req.user._id),
+				course: toObjectId(req.params.courseId)
+			}
+		}
+		let progresses = await progressHandlers.fetch(filter)
 		if (req.query.isDue) progresses = progresses.filter((p) => p.isDue)
 		res.status(200).json(progresses)
 	} catch (err) {

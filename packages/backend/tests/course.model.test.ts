@@ -23,6 +23,7 @@ interface Context {
 	sampleCourses: any[]
 	newCourse: NewCourse
 	parentId: Types.ObjectId
+	parentId2: Types.ObjectId
 	newProgress: NewProgress
 	sampleProgresses: any[]
 }
@@ -115,6 +116,20 @@ describe('coures', () => {
 				status: CourseStatus['In Progress'],
 				archived: false,
 				order: 7
+			},
+			{
+				name: 'sample course 8 .',
+				owner: context.userId,
+				status: CourseStatus['In Progress'],
+				archived: false,
+				order: 8
+			},
+			{
+				name: 'sample course 9 *',
+				owner: context.userId,
+				status: CourseStatus['In Progress'],
+				archived: false,
+				order: 8
 			}
 		]
 
@@ -194,6 +209,23 @@ describe('coures', () => {
 			courseZodSchema.parse(res.body[i])
 		}
 	})
+
+	test.each(['5', '0', '7', '.', '*'])(
+		'search course by name',
+		async (searchPhrase) => {
+			const res = await client.get(`${COURSE_URL}`).query({
+				search: searchPhrase
+			})
+
+			console.log({ body: res.body })
+			expect(res.status).toBe(200)
+
+			for (let i = 0; i < res.body.length; i++) {
+				expect(res.body[i].name).toContain(searchPhrase)
+				courseZodSchema.parse(res.body[i])
+			}
+		}
+	)
 
 	test<Context>('delete', async (context) => {
 		const res = await client.delete(
@@ -291,28 +323,37 @@ test('get an empty array if the course do not have progresses', async () => {
 	expect(res.body).toEqual([])
 })
 
+async function register() {
+	const { username, password } = generateAuthInfo()
+	const res = await client.post(`${AUTH_URL}`).send({
+		username,
+		password
+	})
+	console.log({ body: res.body })
+	expect(res.status).toBe(200)
+
+	return res.body._id
+}
+
+async function createCourse(name: string, owner: Types.ObjectId) {
+	const newCourse = new Course({
+		name,
+		owner: owner,
+		status: CourseStatus['In Progress'],
+		archived: false,
+		intervals: [1, 7, 14, 28],
+		order: 0
+	})
+	await newCourse.save()
+	return newCourse._id
+}
+
 describe('progress', () => {
 	beforeEach<Context>(async (context) => {
-		const { username, password } = generateAuthInfo()
-		const res = await client.post(`${AUTH_URL}`).send({
-			username,
-			password
-		})
-		console.log({ body: res.body })
-		context.userId = res.body._id
-		expect(res.status).toBe(200)
+		context.userId = await register()
 
-		const newCourse = new Course({
-			name: 'new course',
-			owner: context.userId,
-			status: CourseStatus['In Progress'],
-			archived: false,
-			intervals: [1, 7, 14, 28],
-			order: 0
-		})
-		await newCourse.save()
-
-		context.parentId = newCourse._id
+		context.parentId = await createCourse('new course', context.userId)
+		context.parentId2 = await createCourse('new course 2', context.userId)
 
 		context.newProgress = {
 			name: 'new progress',
@@ -383,6 +424,38 @@ describe('progress', () => {
 				stage: 0,
 				lastDate: new Date(123123).toISOString(),
 				order: 7
+			},
+			{
+				name: 'sample progress 8.*',
+				owner: context.userId,
+				course: context.parentId,
+				stage: 0,
+				lastDate: new Date(123123).toISOString(),
+				order: 8
+			},
+			{
+				name: 'sample progress 9 **',
+				owner: context.userId,
+				course: context.parentId,
+				stage: 0,
+				lastDate: new Date(123123).toISOString(),
+				order: 9
+			},
+			{
+				name: 'sample progress 10 **',
+				owner: context.userId,
+				course: context.parentId2,
+				stage: 0,
+				lastDate: new Date(123123).toISOString(),
+				order: 10
+			},
+			{
+				name: 'sample progress 11 ..',
+				owner: context.userId,
+				course: context.parentId2,
+				stage: 0,
+				lastDate: new Date(123123).toISOString(),
+				order: 11
 			}
 		]
 
@@ -470,10 +543,50 @@ describe('progress', () => {
 		console.log({ body: res.body })
 		expect(res.status).toBe(200)
 
-		for (let i = 0; i < context.sampleProgresses.length; i++) {
-			expect(res.body[i].name).toBe(context.sampleProgresses[i].name)
+		const shouldFetchedCourses = context.sampleProgresses.filter(
+			(p) => p.course === context.parentId
+		)
+		for (let i = 0; i < shouldFetchedCourses.length; i++) {
+			expect(res.body[i].name).toBe(shouldFetchedCourses[i].name)
 			progressZodSchema.parse(res.body[i])
 		}
+	})
+
+	describe.each(['5', '0', '7', '.', '*'])(' %s', (searchPhrase) => {
+		test<Context>('search progress by name', async (context) => {
+			const res = await client
+				.get(`${COURSE_URL}/${context.parentId}/progresses/`)
+				.query({
+					search: searchPhrase
+				})
+
+			console.log({ body: res.body })
+			expect(res.status).toBe(200)
+
+			for (let i = 0; i < res.body.length; i++) {
+				expect(res.body[i].name).toContain(searchPhrase)
+				progressZodSchema.parse(res.body[i])
+			}
+		})
+
+		test<Context>('search progress by name belongs to differnet courses', async (context) => {
+			const res = await client
+				.get(`${COURSE_URL}/${context.parentId}/progresses/`)
+				.query({
+					search: '*',
+					searchAll: true
+				})
+
+			console.log({ body: res.body })
+			expect(res.status).toBe(200)
+
+			expect(res.body[0].name).toContain(context.sampleProgresses[8].name)
+			expect(res.body[1].name).toContain(context.sampleProgresses[9].name)
+			expect(res.body[2].name).toContain(
+				context.sampleProgresses[10].name
+			)
+			progressZodSchema.parse(res.body[0])
+		})
 	})
 
 	test<Context>('get all due progresses', async (context) => {

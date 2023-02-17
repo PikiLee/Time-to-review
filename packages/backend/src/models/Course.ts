@@ -20,7 +20,8 @@ const courseSchema = new Schema<CourseSchemaType>(
 			type: String,
 			required: true,
 			minlength: 1,
-			maxlength: 60
+			maxlength: 60,
+			index: true
 		},
 		owner: {
 			type: mongoose.SchemaTypes.ObjectId,
@@ -288,7 +289,7 @@ export async function del(
 /**
  * fetch a course by id
  */
-export async function fetch(filter: Partial<CourseSchemaType>) {
+export async function fetch(filter: any) {
 	const result = await Course.aggregate([
 		{ $match: filter },
 		lookupStage,

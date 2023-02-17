@@ -16,7 +16,8 @@ const progressSchema = new Schema<ProgressSchemaType>(
 			type: String,
 			required: true,
 			minlength: 1,
-			maxlength: 60
+			maxlength: 60,
+			index: true
 		},
 		owner: {
 			type: mongoose.SchemaTypes.ObjectId,
@@ -132,7 +133,7 @@ export function createSortStage() {
 	} as const
 }
 
-export async function fetch(filter: Partial<ProgressSchemaType>) {
+export async function fetch(filter: any) {
 	const doc = await Progress.aggregate([
 		{ $match: filter },
 		{
