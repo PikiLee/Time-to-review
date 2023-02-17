@@ -3,8 +3,7 @@ import { create, fetch, del, update } from '../models/Course.js'
 import { printDebugInfo } from '../utils/debug.js'
 import { toObjectId } from '../utils/id.js'
 import { ctx } from '../ctx'
-import { courseEndpointDescription } from '../endpoint/course.endpoint'
-import { findError } from '../endpoint/errors'
+import { findError, courseEndpointDescription } from 'shared'
 import * as progressHandlers from '../models/Progress'
 
 export const router = ctx.router(courseEndpointDescription)

@@ -1,9 +1,8 @@
-import { userEndpointDescription } from '../endpoint/auth.endpoint'
 import passport from 'passport'
 import { ctx } from '../ctx'
 import { User, fetch } from '../models/User.js'
 import { printDebugInfo } from '../utils/debug'
-import { findError } from '../endpoint/errors'
+import { findError, userEndpointDescription } from 'shared'
 
 export const router = ctx.router(userEndpointDescription)
 

@@ -18,7 +18,7 @@ import { createDb } from './models/db.js'
 import sessionStore from 'better-sqlite3-session-store'
 import sqlite from 'better-sqlite3'
 import { ctx } from './ctx'
-import { findError } from './endpoint/errors'
+import { findError } from 'shared'
 import { printDebugInfo } from './utils/debug'
 
 export const IS_DEV = process.env.NODE_ENV === 'development'
