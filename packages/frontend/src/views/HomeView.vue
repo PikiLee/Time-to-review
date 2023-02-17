@@ -3,21 +3,27 @@ import FetchComponent from '@/components/Others/FetchComponent.vue'
 import ListItems from '@/components/Others/ListItems.vue'
 import ProgressItem from '@/components/Progress/ProgressItem.vue'
 import { useFetchData } from '@/composables/useFetchData'
-import { fetchDue } from '@/database/course'
+import * as courseApi from '@/database/course'
 import * as progressApi from '@/database/progress'
 import {
 	findById,
 	findByIdAndDelete,
 	findByIdAndDeleteAndCalcOrder,
 	findByIdAndUpdate,
-	findByIdOrError
+	findByIdOrError,
+	findIndexById
 } from '@/utils/query'
 import { errorMsg } from '@/utils/useMessage'
-import type { CourseWithDueProgresses, Progress, UpdateProgress } from 'shared'
+import type { Course, Progress, UpdateProgress } from 'shared'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { messages } from 'shared'
+
+interface CourseAndProgressesList {
+	courseList: Course[]
+	dueProgressesList: Progress[][]
+}
 
 const { t } = useI18n({
 	messages: {
@@ -37,13 +43,22 @@ const { t } = useI18n({
 
 const router = useRouter()
 
+async function fetchFunction() {
+	const courses = await courseApi.fetchDue()
+	const dueProgressesList = await Promise.all(
+		courses.map((course) => progressApi.fetchAllDue(course._id))
+	)
+	return {
+		courseList: courses,
+		dueProgressesList
+	}
+}
+
 const {
-	data: courses,
+	data: courseAndProgressesList,
 	loading,
 	error
-} = useFetchData<CourseWithDueProgresses[]>(() =>
-	fetchDue({ withDueProgresses: true })
-)
+} = useFetchData<CourseAndProgressesList>(fetchFunction)
 
 function goAddCourse() {
 	router.push({ name: 'courses', query: { openAddButton: 'true' } })
@@ -51,7 +66,7 @@ function goAddCourse() {
 
 // form
 const activeProgress = ref<Progress | null>(null)
-const activeCourse = ref<CourseWithDueProgresses | null>(null)
+const activeCourse = ref<Course | null>(null)
 const progressFormVisible = computed({
 	get() {
 		return activeProgress.value !== null && activeCourse.value !== null
@@ -64,28 +79,47 @@ const progressFormVisible = computed({
 })
 
 function handleOpenForm(courseId: string, progressId: string) {
-	if (!courses.value) return
-	const course = findById(courses.value, courseId)
+	if (!courseAndProgressesList.value) return
+	const course = findById(courseAndProgressesList.value.courseList, courseId)
 
 	if (!course) return
 	activeCourse.value = course
-	activeProgress.value = findById(course.dueProgresses, progressId) ?? null
+	const index = findIndexById(
+		courseAndProgressesList.value.courseList,
+		courseId
+	)
+	activeProgress.value =
+		findById(
+			courseAndProgressesList.value.dueProgressesList[index],
+			progressId
+		) ?? null
 }
 
 async function handleProgressDel() {
 	try {
-		if (!courses.value) throw Error()
+		if (!courseAndProgressesList.value) throw Error()
 		if (!activeCourse.value) throw Error()
 		if (!activeProgress.value) throw Error()
-		await progressApi.del(activeProgress.value._id)
+		await progressApi.del(
+			activeProgress.value.course,
+			activeProgress.value._id
+		)
+
+		const index = findIndexById(
+			courseAndProgressesList.value.courseList,
+			activeCourse.value._id
+		)
 		findByIdAndDeleteAndCalcOrder(
-			activeCourse.value.dueProgresses,
+			courseAndProgressesList.value.dueProgressesList[index],
 			activeProgress.value._id
 		)
 		activeCourse.value.dueCount--
 
-		if (activeCourse.value.dueProgresses.length === 0)
-			findByIdAndDelete(courses.value, activeCourse.value._id)
+		if (courseAndProgressesList.value.dueProgressesList[index].length === 0)
+			findByIdAndDelete(
+				courseAndProgressesList.value.courseList,
+				activeCourse.value._id
+			)
 		progressFormVisible.value = false
 	} catch {
 		errorMsg(t('message.fail'))
@@ -98,19 +132,36 @@ async function handleProgressUpdate(
 	update: UpdateProgress
 ) {
 	try {
-		if (!courses.value) throw Error()
-		const course = findByIdOrError(courses.value, courseId)
-		const progress = findByIdOrError(course.dueProgresses, progressId)
-		const updatedProgress = await progressApi.update(progress._id, update)
+		if (!courseAndProgressesList.value) throw Error()
+		const course = findByIdOrError(
+			courseAndProgressesList.value.courseList,
+			courseId
+		)
+		const index = findIndexById(
+			courseAndProgressesList.value.courseList,
+			courseId
+		)
+		const dueProgresses =
+			courseAndProgressesList.value.dueProgressesList[index]
+		const progress = findByIdOrError(dueProgresses, progressId)
+
+		const updatedProgress = await progressApi.update(
+			courseId,
+			progress._id,
+			update
+		)
 
 		if (!updatedProgress.isDue) {
-			findByIdAndDeleteAndCalcOrder(course.dueProgresses, progress._id)
+			findByIdAndDeleteAndCalcOrder(dueProgresses, progress._id)
 			course.dueCount--
 
-			if (course.dueProgresses.length === 0)
-				findByIdAndDelete(courses.value, course._id)
+			if (dueProgresses.length === 0)
+				findByIdAndDelete(
+					courseAndProgressesList.value.courseList,
+					course._id
+				)
 		} else {
-			findByIdAndUpdate(course.dueProgresses, updatedProgress)
+			findByIdAndUpdate(dueProgresses, updatedProgress)
 		}
 
 		progressFormVisible.value = false
@@ -144,11 +195,15 @@ async function handleProgressUpdate(
 		</BaseDialog>
 		<FetchComponent :loading="loading" :error="error">
 			<template #data>
-				<div flex flex-col gap-8>
+				<div flex flex-col gap-8 v-if="courseAndProgressesList">
 					<ListItems
-						v-for="course in courses"
+						v-for="(
+							course, index
+						) in courseAndProgressesList.courseList"
 						:key="course._id"
-						:items="course.dueProgresses"
+						:items="
+							courseAndProgressesList.dueProgressesList[index]
+						"
 						:title="course.name"
 						:badge="course.dueCount"
 						item-key="_id"
@@ -168,7 +223,12 @@ async function handleProgressUpdate(
 				</div>
 			</template>
 		</FetchComponent>
-		<div v-if="courses && courses.length === 0">
+		<div
+			v-if="
+				courseAndProgressesList &&
+				courseAndProgressesList.courseList.length === 0
+			"
+		>
 			<el-empty :description="t('congradulation')" />
 			<div flex items-center justify-center>
 				<el-button type="primary" @click="goAddCourse">{{

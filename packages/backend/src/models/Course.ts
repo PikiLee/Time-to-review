@@ -296,7 +296,5 @@ export async function fetch(filter: Partial<CourseSchemaType>) {
 		sortStage
 	])
 
-	if (result.length === 0) throw Error('0')
-
 	return result
 }

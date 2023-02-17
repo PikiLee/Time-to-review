@@ -1,7 +1,6 @@
-import { assign } from 'lodash-es'
 import { create, fetch, del, update } from '../models/Course.js'
 import { printDebugInfo } from '../utils/debug.js'
-import { toObjectId } from '../utils/id.js'
+import { errorIfCourseNotExist, toObjectId } from '../utils/id.js'
 import { ctx } from '../ctx'
 import { findError, courseEndpointDescription } from 'shared'
 import * as progressHandlers from '../models/Progress'
@@ -57,6 +56,7 @@ router.get('/courses/:courseId', async (req, res) => {
 			_id: toObjectId(req.params.courseId),
 			owner: toObjectId(req.user._id)
 		})
+		if (course.length === 0) throw Error('0')
 		res.status(200).json(course[0])
 	} catch (err) {
 		printDebugInfo(req)
@@ -71,15 +71,10 @@ router.get('/courses/:courseId', async (req, res) => {
  */
 router.get('/courses', async (req, res) => {
 	try {
-		const { isDue } = req.query
-		const filter = assign(
-			{},
-			{
-				owner: toObjectId(req.user._id)
-			},
-			{ isDue }
-		)
-		const courses = await fetch(filter)
+		let courses = await fetch({
+			owner: toObjectId(req.user._id)
+		})
+		if (req.query.isDue) courses = courses.filter((c) => c.isDue)
 		res.status(200).json(courses)
 	} catch (err) {
 		printDebugInfo(req)
@@ -107,12 +102,12 @@ router.post('/courses/:courseId/progresses', async (req, res) => {
 
 router.get('/courses/:courseId/progresses', async (req, res) => {
 	try {
-		res.status(200).json(
-			await progressHandlers.fetch({
-				owner: toObjectId(req.user._id),
-				course: toObjectId(req.params.courseId)
-			})
-		)
+		let progresses = await progressHandlers.fetch({
+			owner: toObjectId(req.user._id),
+			course: toObjectId(req.params.courseId)
+		})
+		if (req.query.isDue) progresses = progresses.filter((p) => p.isDue)
+		res.status(200).json(progresses)
 	} catch (err) {
 		printDebugInfo(req)
 		console.log(err)
@@ -123,13 +118,15 @@ router.get('/courses/:courseId/progresses', async (req, res) => {
 
 router.get('/courses/:courseId/progresses/:progressId', async (req, res) => {
 	try {
+		errorIfCourseNotExist(req.params.courseId)
 		const filter = {
 			_id: toObjectId(req.params.progressId),
 			course: toObjectId(req.params.courseId),
 			owner: toObjectId(req.user._id)
 		}
-		const progress = (await progressHandlers.fetch(filter))[0]
-		res.json(progress)
+		const progress = await progressHandlers.fetch(filter)
+		if (progress.length === 0) throw Error('1')
+		res.json(progress[0])
 	} catch (err) {
 		printDebugInfo(req)
 		console.log(err)

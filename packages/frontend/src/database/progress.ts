@@ -1,46 +1,64 @@
-import { useUserStore } from '@/store/user.store'
 import { getStartOfDay } from '@/utils/progress.utils'
-import { assign } from 'lodash-es'
-import { PROGRESS_URL, type NewProgress, type UpdateProgress } from 'shared'
+import type { NewProgress, UpdateProgress } from 'shared'
 import { api } from './api'
 
-export function withProgressDefaults(name: string, course: string) {
-	const userStore = useUserStore()
-	if (!userStore.user) throw new Error('Please login first.')
-
-	const DEFAULT_PROGRESS = {
-		owner: userStore.user._id,
-		stage: 0,
-		lastDate: getStartOfDay(Date.now())
-	}
-	return assign({}, DEFAULT_PROGRESS, { name, course })
-}
-
-export async function create(newProgress: NewProgress) {
-	const res = await api.post(PROGRESS_URL, {
-		data: newProgress
+export async function create(courseId: string, newProgress: NewProgress) {
+	return api.createProgress(newProgress, {
+		params: {
+			courseId
+		}
 	})
-	return res.data
 }
 
 export async function update(
+	courseId: string,
 	progressId: string,
 	updateProgress: UpdateProgress
 ) {
 	if (updateProgress.lastDate)
 		updateProgress.lastDate = getStartOfDay(updateProgress.lastDate)
 
-	const res = await api.put(`${PROGRESS_URL}/${progressId}`, {
-		data: updateProgress
+	return api.updateProgress(updateProgress, {
+		params: {
+			courseId,
+			progressId
+		}
 	})
-	return res.data
 }
 
-export async function del(progressId: string) {
-	return await api.delete(`${PROGRESS_URL}/${progressId}`)
+export async function del(courseId: string, progressId: string) {
+	return await api.deleteProgress(undefined, {
+		params: {
+			courseId,
+			progressId
+		}
+	})
+}
+
+export async function fetch(courseId: string, progressId: string) {
+	return await api.getProgress({
+		params: {
+			courseId,
+			progressId
+		}
+	})
 }
 
 export async function fetchAll(courseId: string) {
-	const res = await api.get(`${PROGRESS_URL}/all/${courseId}`)
-	return res.data
+	return await api.getAllProgress({
+		params: {
+			courseId
+		}
+	})
+}
+
+export async function fetchAllDue(courseId: string) {
+	return await api.getAllProgress({
+		params: {
+			courseId
+		},
+		queries: {
+			isDue: true
+		}
+	})
 }

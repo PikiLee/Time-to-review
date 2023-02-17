@@ -147,7 +147,6 @@ export async function fetch(filter: Partial<ProgressSchemaType>) {
 		createSortStage()
 	])
 
-	if (doc.length === 0) throw Error('1')
 	return doc
 }
 

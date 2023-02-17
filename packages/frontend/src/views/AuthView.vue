@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
 import { computed, reactive, ref } from 'vue'
-import { AUTH_URL, getPasswordValidationRegex } from 'shared'
-import { api } from '@/database/api'
 import { useRoute, useRouter } from 'vue-router'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user.store'
+import * as authApi from '@/database/auth'
+import { passwordZodSchema } from 'shared'
 
 const router = useRouter()
 const route = useRoute()
@@ -41,9 +41,16 @@ const rules = computed<FormRules>(() => {
 					{
 						asyncValidator(_, username) {
 							return new Promise((resolve, reject) => {
-								api.get(`${AUTH_URL}/${username}`)
-									.then(() => {
-										resolve()
+								authApi
+									.checkUsername(username)
+									.then((res) => {
+										if (res.exist) {
+											reject(
+												t('auth.errors.existUsername')
+											)
+										} else {
+											resolve()
+										}
 									})
 									.catch((error) => {
 										reject(error)
@@ -69,8 +76,8 @@ const rules = computed<FormRules>(() => {
 					},
 					{
 						validator(_, password) {
-							const { regex } = getPasswordValidationRegex()
-							if (!regex.test(password)) {
+							const res = passwordZodSchema.safeParse(password)
+							if (!res.success) {
 								return [
 									new Error(
 										t(
@@ -114,12 +121,11 @@ async function onSubmit(formEl: FormInstance | undefined) {
 	await formEl.validate((valid) => {
 		if (valid) {
 			if (isRegister.value) {
-				api.post(`${AUTH_URL}/register`, {
-					data: form
-				})
+				authApi
+					.register(form)
 					.then((res) => {
-						userStore.user = res.data
-						localStorage.setItem('user', res.data)
+						userStore.user = res
+						localStorage.setItem('user', JSON.stringify(res))
 						successMsg(t('auth.success', [t('auth.register')]))
 						router.push({ name: 'home' })
 					})
@@ -127,12 +133,11 @@ async function onSubmit(formEl: FormInstance | undefined) {
 						errorMsg(t('auth.errors.fail', [t('auth.register')]))
 					)
 			} else {
-				api.post(`${AUTH_URL}/login`, {
-					data: form
-				})
+				authApi
+					.login(form)
 					.then((res) => {
-						userStore.user = res.data
-						localStorage.setItem('user', res.data)
+						userStore.user = res
+						localStorage.setItem('user', JSON.stringify(res))
 						successMsg(t('auth.success', [t('auth.login')]))
 						router.push({ name: 'home' })
 					})

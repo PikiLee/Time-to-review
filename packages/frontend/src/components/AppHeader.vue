@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { api } from '@/database/api'
 import { useUserStore } from '@/store/user.store'
 import { useDark, useElementBounding, useToggle } from '@vueuse/core'
-import { AUTH_URL } from 'shared'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import * as authApi from '@/database/auth'
 
 const emit = defineEmits(['updateHeight'])
 
@@ -17,7 +16,7 @@ const route = useRoute()
 const isIntroPage = computed(() => route.name === 'intro')
 
 function logout() {
-	api.post(`${AUTH_URL}/logout`).finally(() => {
+	authApi.logout().finally(() => {
 		userStore.user = null
 		localStorage.removeItem('user')
 		router.push({ name: 'login' })

@@ -2,9 +2,9 @@ import passport from 'passport'
 import { ctx } from '../ctx'
 import { User, fetch } from '../models/User.js'
 import { printDebugInfo } from '../utils/debug'
-import { findError, userEndpointDescription } from 'shared'
+import { findError, authEndpointDescription } from 'shared'
 
-export const router = ctx.router(userEndpointDescription)
+export const router = ctx.router(authEndpointDescription)
 
 router.get('/auth/:username', async function (req, res) {
 	try {

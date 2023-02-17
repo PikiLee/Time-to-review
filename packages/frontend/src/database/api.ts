@@ -1,13 +1,16 @@
 import { useUserStore } from '@/store/user.store'
-import axios from 'axios'
+import { Zodios } from '@zodios/core'
+import { authEndpointDescription, courseEndpointDescription } from 'shared'
 
-export const api = axios.create({
-	baseURL: import.meta.env.VITE_BACKEND_BASEURL,
-	headers: { 'Content-Type': 'application/json' },
-	withCredentials: true
-})
+export const api = new Zodios(
+	import.meta.env.VITE_BACKEND_BASEURL,
+	[...authEndpointDescription, ...courseEndpointDescription],
+	{
+		axiosConfig: { withCredentials: true }
+	}
+)
 
-api.interceptors.response.use(
+api.axios.interceptors.response.use(
 	function (response) {
 		// Any status code that lie within the range of 2xx cause this function to trigger
 		// Do something with response data

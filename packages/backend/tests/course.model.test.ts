@@ -27,6 +27,22 @@ interface Context {
 	sampleProgresses: any[]
 }
 
+test('get an empty array if the user do not have courses', async () => {
+	const { username, password } = generateAuthInfo()
+	const registerRes = await client.post(`${AUTH_URL}`).send({
+		username,
+		password
+	})
+	console.log({ body: registerRes.body })
+	expect(registerRes.status).toBe(200)
+
+	const res = await client.get(`${COURSE_URL}`)
+
+	console.log({ body: res.body })
+	expect(res.status).toBe(200)
+	expect(res.body).toEqual([])
+})
+
 describe('coures', () => {
 	beforeEach<Context>(async (context) => {
 		const { username, password } = generateAuthInfo()
@@ -249,6 +265,32 @@ describe('coures', () => {
 	})
 })
 
+test('get an empty array if the course do not have progresses', async () => {
+	const { username, password } = generateAuthInfo()
+	const registerRes = await client.post(`${AUTH_URL}`).send({
+		username,
+		password
+	})
+	console.log({ body: registerRes.body })
+	expect(registerRes.status).toBe(200)
+
+	const newCourse = new Course({
+		name: 'new course',
+		owner: registerRes.body._id,
+		status: CourseStatus['In Progress'],
+		archived: false,
+		intervals: [1, 7, 14, 28],
+		order: 0
+	})
+	await newCourse.save()
+
+	const res = await client.get(`${COURSE_URL}/${newCourse._id}/progresses`)
+
+	console.log({ body: res.body })
+	expect(res.status).toBe(200)
+	expect(res.body).toEqual([])
+})
+
 describe('progress', () => {
 	beforeEach<Context>(async (context) => {
 		const { username, password } = generateAuthInfo()
@@ -331,7 +373,7 @@ describe('progress', () => {
 				owner: context.userId,
 				course: context.parentId,
 				stage: 0,
-				lastDate: new Date().toISOString(),
+				lastDate: new Date(12312).toISOString(),
 				order: 6
 			},
 			{
@@ -339,7 +381,7 @@ describe('progress', () => {
 				owner: context.userId,
 				course: context.parentId,
 				stage: 0,
-				lastDate: new Date().toISOString(),
+				lastDate: new Date(123123).toISOString(),
 				order: 7
 			}
 		]
@@ -432,6 +474,22 @@ describe('progress', () => {
 			expect(res.body[i].name).toBe(context.sampleProgresses[i].name)
 			progressZodSchema.parse(res.body[i])
 		}
+	})
+
+	test<Context>('get all due progresses', async (context) => {
+		const res = await client
+			.get(`${COURSE_URL}/${context.parentId}/progresses/`)
+			.query({
+				isDue: true
+			})
+
+		console.log({ body: res.body })
+		expect(res.status).toBe(200)
+
+		expect(res.body[0].name).toBe(context.sampleProgresses[6].name)
+		progressZodSchema.parse(res.body[0])
+		expect(res.body[1].name).toBe(context.sampleProgresses[7].name)
+		progressZodSchema.parse(res.body[1])
 	})
 
 	test<Context>('delete', async (context) => {

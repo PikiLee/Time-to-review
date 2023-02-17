@@ -1,9 +1,9 @@
-import { userZodSchema, usernameZodSchema, newUserZodSchema } from 'shared'
+import { userZodSchema, usernameZodSchema, newUserZodSchema } from '../types'
 import { makeApi } from '@zodios/core'
 import { z } from 'zod'
 import { errorZodSchemas } from './errors'
 
-export const userEndpointDescription = makeApi([
+export const authEndpointDescription = makeApi([
 	{
 		method: 'post',
 		path: '/auth',
@@ -17,6 +17,7 @@ export const userEndpointDescription = makeApi([
 	{
 		method: 'get',
 		path: '/auth/:username',
+		alias: 'checkUsername',
 		description: 'Check if a username already exists',
 		parameters: [
 			{ name: 'username', type: 'Path', schema: usernameZodSchema }

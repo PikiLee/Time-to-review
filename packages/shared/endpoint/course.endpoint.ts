@@ -5,7 +5,7 @@ import {
 	newProgressZodSchema,
 	udpateProgressZodSchema,
 	newCourseZodSchema
-} from 'shared'
+} from '../types'
 import { makeApi } from '@zodios/core'
 import { z } from 'zod'
 import { errorZodSchemas } from './errors'
@@ -14,7 +14,7 @@ export const courseEndpointDescription = makeApi([
 	{
 		method: 'post',
 		path: '/courses',
-		alias: 'create',
+		alias: 'createCourse',
 		description: 'Create a Course',
 		parameters: [
 			{ name: 'body', type: 'Body', schema: newCourseZodSchema },
@@ -28,7 +28,7 @@ export const courseEndpointDescription = makeApi([
 	{
 		method: 'get',
 		path: '/courses',
-		alias: 'getAll',
+		alias: 'getAllCourses',
 		description: 'Get all courses',
 		parameters: [
 			{ name: 'isDue', type: 'Query', schema: z.boolean().optional() }
@@ -40,7 +40,7 @@ export const courseEndpointDescription = makeApi([
 	{
 		method: 'get',
 		path: '/courses/:courseId',
-		alias: 'get',
+		alias: 'getCourse',
 		description: 'Get a courses',
 		parameters: [{ name: 'courseId', type: 'Path', schema: z.string() }],
 		status: 200,
@@ -50,7 +50,7 @@ export const courseEndpointDescription = makeApi([
 	{
 		method: 'put',
 		path: '/courses/:courseId',
-		alias: 'udpate',
+		alias: 'updateCourse',
 		description: 'Update a courses',
 		parameters: [
 			{ name: 'courseId', type: 'Path', schema: z.string() },
@@ -67,7 +67,7 @@ export const courseEndpointDescription = makeApi([
 	{
 		method: 'delete',
 		path: '/courses/:courseId',
-		alias: 'delete',
+		alias: 'deleteCourse',
 		description: 'Delete a courses',
 		parameters: [{ name: 'courseId', type: 'Path', schema: z.string() }],
 		status: 200,
@@ -94,7 +94,10 @@ export const courseEndpointDescription = makeApi([
 		path: '/courses/:courseId/progresses',
 		alias: 'getAllProgress',
 		description: 'Get all progresses',
-		parameters: [{ name: 'courseId', type: 'Path', schema: z.string() }],
+		parameters: [
+			{ name: 'courseId', type: 'Path', schema: z.string() },
+			{ name: 'isDue', type: 'Query', schema: z.boolean().optional() }
+		],
 		status: 200,
 		response: z.array(progressZodSchema),
 		errors: [errorZodSchemas.default]
@@ -115,7 +118,7 @@ export const courseEndpointDescription = makeApi([
 	{
 		method: 'put',
 		path: '/courses/:courseId/progresses/:progressId',
-		alias: 'udpateProgress',
+		alias: 'updateProgress',
 		description: 'Update a progress',
 		parameters: [
 			{ name: 'courseId', type: 'Path', schema: z.string() },

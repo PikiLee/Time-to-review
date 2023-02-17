@@ -9,12 +9,13 @@ export const userZodSchema = z.object({
 })
 export type User = z.infer<typeof userZodSchema>
 
+export const passwordZodSchema = z.custom<string>(
+	(val) =>
+		typeof val === 'string' &&
+		/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{12,24}$/.test(val)
+)
 export const newUserZodSchema = userZodSchema.pick({ username: true }).extend({
-	password: z.custom<string>(
-		(val) =>
-			typeof val === 'string' &&
-			/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{12,24}$/.test(val)
-	)
+	password: passwordZodSchema
 })
 export type NewUser = z.infer<typeof newUserZodSchema>
 

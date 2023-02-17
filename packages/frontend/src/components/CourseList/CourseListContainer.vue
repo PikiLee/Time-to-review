@@ -78,8 +78,7 @@ const courseByCatogry = computed(() => [
 
 async function handleCreate(name: string) {
 	try {
-		const newCourse = courseApi.withCourseDefaults(name)
-		courses.value.push(await courseApi.create(newCourse))
+		courses.value.push(await courseApi.create({ name }))
 		formVisible.value = false
 	} catch {
 		errorMsg(t('message.fail'))

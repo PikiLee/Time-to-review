@@ -6,19 +6,13 @@ import * as progressApi from '@/database/progress'
 import CourseSetting from '@/components/Course/CourseSetting.vue'
 import FetchComponent from '@/components/Others/FetchComponent.vue'
 import { useCustomRouter } from '@/utils/useCustomRouter'
-import { fetch } from '@/database/course'
+import * as courseApi from '@/database/course'
 import ListItems from '@/components/Others/ListItems.vue'
 import { useFetchData } from '@/composables/useFetchData'
 import { errorMsg } from '@/utils/useMessage'
-import type {
-	CourseWithProgress,
-	Progress,
-	UpdateCourse,
-	UpdateProgress
-} from 'shared'
+import type { Course, Progress, UpdateCourse, UpdateProgress } from 'shared'
 import router from '@/router'
 import BaseDialog from '../components/Others/BaseDialog.vue'
-import * as courseApi from '../database/course'
 import {
 	findByIdAndDeleteAndCalcOrder,
 	findByIdAndUpdate,
@@ -42,31 +36,45 @@ const { t } = useI18n({
 	sharedMessages: messages
 })
 
+interface CourseAndProgresses {
+	course: Course
+	progresses: Progress[]
+}
+
 const settingVisible = ref(false)
 const { id: courseId } = useCustomRouter()
 
-const fetchCourse = () => {
-	return fetch(courseId.value, { withProgresses: true })
+const fetchCourseAndProgresses = () => {
+	return Promise.all([
+		courseApi.fetch(courseId.value),
+		progressApi.fetchAll(courseId.value)
+	]).then(([course, progresses]) => {
+		return {
+			course,
+			progresses
+		}
+	})
 }
 
 const {
 	loading,
 	error,
-	data: course
-} = useFetchData<CourseWithProgress>(fetchCourse)
+	data: courseAndProgresses
+} = useFetchData<CourseAndProgresses>(fetchCourseAndProgresses)
 
 async function handleDelCourse() {
-	if (course.value === undefined) return
-	await courseApi.del(course.value._id)
+	if (courseAndProgresses.value === undefined) return
+	await courseApi.del(courseAndProgresses.value.course._id)
 	router.push({ name: 'courses' })
 }
 
 async function handleUpdateCourse(update: UpdateCourse) {
 	try {
-		if (course.value === undefined) return
-		course.value = await courseApi.update(course.value._id, update, {
-			withProgresses: true
-		})
+		if (courseAndProgresses.value === undefined) return
+		courseAndProgresses.value.course = await courseApi.update(
+			courseAndProgresses.value.course._id,
+			update
+		)
 		settingVisible.value = false
 	} catch {
 		errorMsg('Updation failed.')
@@ -78,12 +86,13 @@ const createFormVisible = ref(false)
 
 async function handleProgressCreate(name: string) {
 	try {
-		if (course.value === undefined) return
-		const newProgress = progressApi.withProgressDefaults(
-			name,
-			course.value._id
+		if (courseAndProgresses.value === undefined) return
+		courseAndProgresses.value.progresses.push(
+			await progressApi.create(courseAndProgresses.value.course._id, {
+				name,
+				lastDate: new Date().toISOString()
+			})
 		)
-		course.value.progresses.push(await progressApi.create(newProgress))
 		createFormVisible.value = false
 	} catch {
 		errorMsg(`Creation Failed.`)
@@ -103,8 +112,9 @@ const progressFormVisible = computed({
 })
 
 function handleOpenForm(_id: string) {
-	if (course.value === undefined) return
-	activeProgress.value = findById(course.value.progresses, _id) ?? null
+	if (courseAndProgresses.value === undefined) return
+	activeProgress.value =
+		findById(courseAndProgresses.value.progresses, _id) ?? null
 }
 
 async function handleProgressUpdate(
@@ -112,11 +122,15 @@ async function handleProgressUpdate(
 	updateProgress: UpdateProgress
 ) {
 	try {
-		if (course.value === undefined) return
-		const res = await progressApi.update(progressId, updateProgress)
-		findByIdAndUpdate(course.value.progresses, res)
+		if (courseAndProgresses.value === undefined) return
+		const res = await progressApi.update(
+			courseAndProgresses.value.course._id,
+			progressId,
+			updateProgress
+		)
+		findByIdAndUpdate(courseAndProgresses.value.progresses, res)
 
-		if (!res.isDue) course.value.dueCount--
+		if (!res.isDue) courseAndProgresses.value.course.dueCount--
 		progressFormVisible.value = false
 	} catch {
 		errorMsg('Updation failed.')
@@ -125,10 +139,13 @@ async function handleProgressUpdate(
 
 async function handleProgressDel(progressId: string) {
 	try {
-		if (course.value === undefined) return
-		await progressApi.del(progressId)
-		findByIdAndDeleteAndCalcOrder(course.value.progresses, progressId)
-		course.value.progressCount--
+		if (courseAndProgresses.value === undefined) return
+		await progressApi.del(courseAndProgresses.value.course._id, progressId)
+		findByIdAndDeleteAndCalcOrder(
+			courseAndProgresses.value.progresses,
+			progressId
+		)
+		courseAndProgresses.value.course.progressCount--
 
 		progressFormVisible.value = false
 	} catch {
@@ -137,9 +154,18 @@ async function handleProgressDel(progressId: string) {
 }
 
 async function handleProgressSort(evt: SortableEvent) {
-	if (course.value === undefined) return
 	try {
-		await handleSort(course.value?.progresses, evt, progressApi.update)
+		if (!courseAndProgresses.value) return
+		await handleSort(
+			courseAndProgresses.value.progresses,
+			evt,
+			(progressId: string, updateProgress: UpdateProgress) =>
+				progressApi.update(
+					courseAndProgresses.value!.course._id,
+					progressId,
+					updateProgress
+				)
+		)
 	} catch {
 		errorMsg('Deletion failed.')
 	}
@@ -161,9 +187,9 @@ async function handleProgressSort(evt: SortableEvent) {
 
 	<BaseDialog v-model="progressFormVisible" :title="$t('progress.update')">
 		<ProgressForm
-			v-if="course"
+			v-if="courseAndProgresses"
 			:progress="activeProgress"
-			:intervals="course.intervals"
+			:intervals="courseAndProgresses.course.intervals"
 			@update="
 				(progressId: string, _courseId: string, updateProgress: UpdateProgress) =>
 					handleProgressUpdate(progressId, updateProgress)
@@ -180,31 +206,35 @@ async function handleProgressSort(evt: SortableEvent) {
 		</ProgressForm>
 	</BaseDialog>
 	<div data-testid="course-view">
-		<FetchComponent :loading="loading" :error="error" :data="course">
+		<FetchComponent
+			:loading="loading"
+			:error="error"
+			:data="courseAndProgresses"
+		>
 			<!-- todo implement a generic typed component so data here has the correct type  -->
-			<template #data="{ data: course }">
+			<template #data="{ data: courseAndProgresses }">
 				<BaseDialog
 					v-model="settingVisible"
 					:title="$t('course.setting')"
 				>
 					<CourseSetting
-						:course="course"
+						:course="courseAndProgresses.course"
 						@update="handleUpdateCourse"
 						@cancel="settingVisible = false"
 					>
 						<template #actions>
 							<DeleteButton
-								:name="course.name"
+								:name="courseAndProgresses.course.name"
 								@delete="handleDelCourse"
 							/>
 						</template>
 					</CourseSetting>
 				</BaseDialog>
 				<ListItems
-					:items="course.progresses"
+					:items="courseAndProgresses.progresses"
 					item-key="_id"
-					:title="course.name"
-					:badge="course.progresses.length"
+					:title="courseAndProgresses.course.name"
+					:badge="courseAndProgresses.progresses.length"
 					sortable
 					@dragend="handleProgressSort"
 				>
@@ -224,7 +254,7 @@ async function handleProgressSort(evt: SortableEvent) {
 					<template #item="{ item }">
 						<ProgressItem
 							:progress="item"
-							:intervals="course.intervals"
+							:intervals="courseAndProgresses.course.intervals"
 							@open:form="handleOpenForm"
 							@update="(progressId: string, _courseId: string, updateProgress: UpdateProgress) =>
 							handleProgressUpdate(progressId, updateProgress)"
