@@ -8,41 +8,7 @@ import {
 } from 'shared'
 import { makeApi } from '@zodios/core'
 import { z } from 'zod'
-
-const errors = {
-	default: {
-		status: 'default',
-		schema: z.object({
-			_id: z.number(),
-			code: z.number(),
-			message: z.string()
-		})
-	},
-	400: {
-		status: 400,
-		schema: z.object({
-			_id: z.number(),
-			code: z.number(),
-			message: z.string()
-		})
-	},
-	401: {
-		status: 401,
-		schema: z.object({
-			_id: z.number(),
-			code: z.number(),
-			message: z.string()
-		})
-	},
-	404: {
-		status: 404,
-		schema: z.object({
-			_id: z.number(),
-			code: z.number(),
-			message: z.string()
-		})
-	}
-} as const
+import { errorZodSchemas } from './errors'
 
 export const courseEndpointDescription = makeApi([
 	{
@@ -56,7 +22,7 @@ export const courseEndpointDescription = makeApi([
 		status: 200,
 		response: courseZodSchema,
 		responseDescription: 'Course Created.',
-		errors: [errors[400], errors.default]
+		errors: [errorZodSchemas[400], errorZodSchemas.default]
 	},
 	{
 		method: 'get',
@@ -68,7 +34,7 @@ export const courseEndpointDescription = makeApi([
 		],
 		status: 200,
 		response: z.array(courseZodSchema),
-		errors: [errors.default]
+		errors: [errorZodSchemas.default]
 	},
 	{
 		method: 'get',
@@ -78,7 +44,7 @@ export const courseEndpointDescription = makeApi([
 		parameters: [{ name: 'courseId', type: 'Path', schema: z.string() }],
 		status: 200,
 		response: courseZodSchema,
-		errors: [errors[404], errors.default]
+		errors: [errorZodSchemas[404], errorZodSchemas.default]
 	},
 	{
 		method: 'put',
@@ -91,7 +57,11 @@ export const courseEndpointDescription = makeApi([
 		],
 		status: 200,
 		response: courseZodSchema,
-		errors: [errors[400], errors[404], errors.default]
+		errors: [
+			errorZodSchemas[400],
+			errorZodSchemas[404],
+			errorZodSchemas.default
+		]
 	},
 	{
 		method: 'delete',
@@ -103,7 +73,7 @@ export const courseEndpointDescription = makeApi([
 		response: z.object({
 			deleted: z.boolean()
 		}),
-		errors: [errors[404], errors.default]
+		errors: [errorZodSchemas[404], errorZodSchemas.default]
 	},
 	{
 		method: 'post',
@@ -116,7 +86,7 @@ export const courseEndpointDescription = makeApi([
 		],
 		status: 200,
 		response: progressZodSchema,
-		errors: [errors[404], errors.default]
+		errors: [errorZodSchemas[404], errorZodSchemas.default]
 	},
 	{
 		method: 'get',
@@ -126,7 +96,7 @@ export const courseEndpointDescription = makeApi([
 		parameters: [{ name: 'courseId', type: 'Path', schema: z.string() }],
 		status: 200,
 		response: z.array(progressZodSchema),
-		errors: [errors.default]
+		errors: [errorZodSchemas.default]
 	},
 	{
 		method: 'get',
@@ -139,7 +109,7 @@ export const courseEndpointDescription = makeApi([
 		],
 		status: 200,
 		response: progressZodSchema,
-		errors: [errors[404], errors.default]
+		errors: [errorZodSchemas[404], errorZodSchemas.default]
 	},
 	{
 		method: 'put',
@@ -153,7 +123,11 @@ export const courseEndpointDescription = makeApi([
 		],
 		status: 200,
 		response: progressZodSchema,
-		errors: [errors[400], errors[404], errors.default]
+		errors: [
+			errorZodSchemas[400],
+			errorZodSchemas[404],
+			errorZodSchemas.default
+		]
 	},
 	{
 		method: 'delete',
@@ -168,6 +142,6 @@ export const courseEndpointDescription = makeApi([
 		response: z.object({
 			deleted: z.boolean()
 		}),
-		errors: [errors[404], errors.default]
+		errors: [errorZodSchemas[404], errorZodSchemas.default]
 	}
 ])

@@ -115,12 +115,12 @@ export async function createApp(
 	}
 
 	// auth guard
-	app.use(['/course', '/progress'], (req, res, next) => {
-		if (IS_DEV && !req.user)
-			console.debug('Auth guard triggered. Not login.')
-		if (!req.user) res.sendStatus(401)
-		else next()
-	})
+	// app.use(['/course', '/progress'], (req, res, next) => {
+	// 	if (IS_DEV && !req.user)
+	// 		console.debug('Auth guard triggered. Not login.')
+	// 	if (!req.user) res.sendStatus(401)
+	// 	else next()
+	// })
 
 	app.use((req, _res, next) => {
 		if (req.body.data && Object.keys(req.body).length === 1) {
@@ -128,7 +128,7 @@ export async function createApp(
 		}
 		next()
 	})
-	app.use(AUTH_URL, authRouter)
+	app.use(authRouter)
 	app.use(courseRouter)
 
 	app.post('/', (_req, res) => {

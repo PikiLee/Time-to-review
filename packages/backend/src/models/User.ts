@@ -1,9 +1,9 @@
-import mongoose from 'mongoose'
+import { UserSchema } from 'shared'
+import mongoose, { Types } from 'mongoose'
 const Schema = mongoose.Schema
 import passportLocalMongoose from 'passport-local-mongoose'
-import { getPasswordValidationRegex } from 'shared'
 
-const schema = new Schema(
+const schema = new Schema<UserSchema>(
 	{},
 	{
 		id: false,
@@ -11,29 +11,24 @@ const schema = new Schema(
 	}
 )
 
-schema.plugin(passportLocalMongoose, {
-	passwordValidator(password: string, cb: any) {
-		const { regex, errorMsg } = getPasswordValidationRegex()
-		if (!regex.test(password))
-			cb({
-				name: 'PasswordInvalidError',
-				message: errorMsg
-			})
-		return cb()
-	}
-})
-
-schema.set('toJSON', {
-	versionKey: false,
-	transform: (_, ret) => {
-		return {
-			_id: ret._id,
-			username: ret.username
-		}
-	}
-})
+schema.plugin(passportLocalMongoose)
 
 export const User = mongoose.model('User', schema)
 ;(async function () {
 	await User.createCollection()
 })()
+
+export async function fetch(userId: Types.ObjectId) {
+	const res = await User.aggregate([
+		{ $match: { _id: userId } },
+		{
+			$project: {
+				username: 1
+			}
+		}
+	])
+
+	if (res.length === 0) throw Error('4')
+
+	return res
+}

@@ -1,54 +1,81 @@
-import express from 'express'
+import { userEndpointDescription } from '../endpoint/auth.endpoint'
 import passport from 'passport'
-import { User } from '../models/User.js'
+import { ctx } from '../ctx'
+import { User, fetch } from '../models/User.js'
+import { printDebugInfo } from '../utils/debug'
+import { findError } from '../endpoint/errors'
 
-export const router = express.Router()
+export const router = ctx.router(userEndpointDescription)
 
-router.get('/:username', async function (req, res) {
+router.get('/auth/:username', async function (req, res) {
 	try {
 		const user = await User.findByUsername(req.params.username, false)
-		if (!user) {
-			res.sendStatus(200)
-		} else {
-			res.sendStatus(400)
-		}
+		res.json({ exist: !!user })
 	} catch (err) {
-		res.status(500).send(err)
+		printDebugInfo(req)
+		console.trace({ err })
+		const error = findError(Number((err as Error).message))
+		res.status(error.code).send(error)
 	}
 })
 
-router.post('/register', function (req, res) {
-	User.register(
-		new User({ username: req.body.username }),
-		req.body.password,
-		function (err) {
-			if (err) {
-				return res.status(400).send({ error: err })
+router.post(
+	'/auth',
+	function (req, res, next) {
+		User.register(
+			new User({ username: req.body.username }),
+			req.body.password,
+			function (err) {
+				if (err) {
+					printDebugInfo(req)
+					console.trace({ err })
+					const error = findError(7)
+					return res
+						.status(error.code)
+						.json({ ...error, message: err })
+				}
+
+				passport.authenticate('local')(req, res, next)
 			}
-
-			passport.authenticate('local')(req, res, function () {
-				loginHandler(req, res)
-			})
+		)
+	},
+	async function loginHandler(req, res) {
+		try {
+			const user = (await fetch(req.user._id))[0]
+			res.status(200).json(user)
+		} catch (err) {
+			printDebugInfo(req)
+			console.trace({ err })
+			const error = findError(3)
+			return res.status(error.code).json(error)
 		}
-	)
-})
+	}
+)
 
-router.post('/login', passport.authenticate('local'), loginHandler)
+router.put(
+	'/auth',
+	passport.authenticate('local'),
+	async function loginHandler(req, res) {
+		try {
+			const user = (await fetch(req.user._id))[0]
+			res.status(200).json(user)
+		} catch (err) {
+			printDebugInfo(req)
+			console.trace({ err })
+			const error = findError(3)
+			return res.status(error.code).json(error)
+		}
+	}
+)
 
-router.post('/logout', function (req, res) {
+router.delete('/auth', function (req, res) {
 	req.logout(function (err) {
 		if (err) {
-			res.status(400).send('Please login first.')
+			printDebugInfo(req)
+			console.trace({ err })
+			const error = findError(3)
+			return res.status(error.code).json(error)
 		}
-		res.sendStatus(200)
+		res.json({ loggedout: true })
 	})
 })
-
-function loginHandler(req: express.Request, res: express.Response) {
-	if (req.user) {
-		const user = req.user
-		res.status(200).json(user)
-	} else {
-		res.sendStatus(400)
-	}
-}
