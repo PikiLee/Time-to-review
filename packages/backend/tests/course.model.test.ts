@@ -1,21 +1,22 @@
+import { courseZodSchema } from 'shared'
 import { CourseStatus, NewProgress } from 'shared'
-import { expect, test, afterAll, beforeEach, afterEach, describe } from 'vitest'
+import { expect, test, beforeEach, afterEach, describe } from 'vitest'
 import { createApp } from '../src/app'
 import request from 'supertest'
-import { AUTH_URL, COURSE_URL, generateAuthInfo, NewCourse } from 'shared'
+import {
+	AUTH_URL,
+	COURSE_URL,
+	generateAuthInfo,
+	NewCourse,
+	progressZodSchema
+} from 'shared'
 
-import { MongoMemoryReplSet } from 'mongodb-memory-server-core'
 import mongoose, { Types } from 'mongoose'
 import { Course } from '../src/models/Course'
 import { Progress } from '../src/models/Progress'
 
-const replset = await MongoMemoryReplSet.create({ replSet: { count: 4 } }) // This will create an ReplSet with 4 members
 const app = await createApp({ port: 3004 })
 const client = request.agent(app)
-
-afterAll(() => {
-	replset.stop()
-})
 
 interface Context {
 	userId: Types.ObjectId
@@ -29,10 +30,7 @@ interface Context {
 describe('coures', () => {
 	beforeEach<Context>(async (context) => {
 		const { username, password } = generateAuthInfo()
-		// const user = new User({ username, password })
-		// await user.save()
-		// login
-		const res = await client.post(`${AUTH_URL}/register`).send({
+		const res = await client.post(`${AUTH_URL}`).send({
 			username,
 			password
 		})
@@ -124,6 +122,7 @@ describe('coures', () => {
 		console.log({ body: res.body })
 		expect(res.status).toBe(200)
 		expect(res.body).toMatchObject(context.newCourse)
+		courseZodSchema.parse(res.body)
 		expect(await Course.findById(res.body._id)).toBeTruthy()
 	})
 
@@ -145,6 +144,7 @@ describe('coures', () => {
 
 		console.log({ body: res.body })
 		expect(res.status).toBe(200)
+		courseZodSchema.parse(res.body)
 		expect(res.body).toMatchObject(udpateCourse)
 	})
 
@@ -163,6 +163,7 @@ describe('coures', () => {
 
 		console.log({ body: res.body })
 		expect(res.status).toBe(200)
+		courseZodSchema.parse(res.body)
 		expect(res.body.name).toBe(context.sampleCourses[2].name)
 	})
 
@@ -174,6 +175,7 @@ describe('coures', () => {
 
 		for (let i = 0; i < context.sampleCourses.length; i++) {
 			expect(res.body[i].name).toBe(context.sampleCourses[i].name)
+			courseZodSchema.parse(res.body[i])
 		}
 	})
 
@@ -212,10 +214,7 @@ describe('coures', () => {
 describe('progress', () => {
 	beforeEach<Context>(async (context) => {
 		const { username, password } = generateAuthInfo()
-		// const user = new User({ username, password })
-		// await user.save()
-		// login
-		const res = await client.post(`${AUTH_URL}/register`).send({
+		const res = await client.post(`${AUTH_URL}`).send({
 			username,
 			password
 		})
@@ -328,6 +327,7 @@ describe('progress', () => {
 
 		console.log({ body: res.body })
 		expect(res.status).toBe(200)
+		progressZodSchema.parse(res.body)
 		expect(res.body).toMatchObject(context.newProgress)
 		expect(await Progress.findById(res.body._id)).toBeTruthy()
 	})
@@ -354,6 +354,7 @@ describe('progress', () => {
 
 		console.log({ body: res.body })
 		expect(res.status).toBe(200)
+		progressZodSchema.parse(res.body)
 		expect(res.body).toMatchObject(udpateProgress)
 	})
 
@@ -377,6 +378,7 @@ describe('progress', () => {
 
 		console.log({ body: res.body })
 		expect(res.status).toBe(200)
+		progressZodSchema.parse(res.body)
 		expect(res.body.name).toBe(context.sampleProgresses[2].name)
 	})
 
@@ -390,6 +392,7 @@ describe('progress', () => {
 
 		for (let i = 0; i < context.sampleProgresses.length; i++) {
 			expect(res.body[i].name).toBe(context.sampleProgresses[i].name)
+			progressZodSchema.parse(res.body[i])
 		}
 	})
 

@@ -9,7 +9,6 @@ import cors from 'cors'
 import fs from 'node:fs'
 import path from 'node:path'
 import url from 'node:url'
-import { AUTH_URL } from 'shared'
 
 import { User } from './models/User.js'
 import { router as authRouter } from './routes/auth.js'

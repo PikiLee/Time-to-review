@@ -18,10 +18,10 @@ export const courseZodSchema = z.object({
 	intervals: z.array(z.number().gte(1)),
 	createdAt: z.string().datetime(),
 	updatedAt: z.string().datetime(),
-	dueCount: z.number().positive(),
+	dueCount: z.number().nonnegative(),
 	isDue: z.boolean(),
-	order: z.number().positive(),
-	progressCount: z.number().positive()
+	order: z.number().nonnegative(),
+	progressCount: z.number().nonnegative()
 })
 
 export const courseStatusIndices = [0, 1]

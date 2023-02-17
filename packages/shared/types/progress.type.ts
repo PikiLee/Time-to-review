@@ -9,11 +9,11 @@ export const progressZodSchema = z.object({
 	course: z.string(),
 	owner: z.string(),
 	name: z.string(),
-	stage: z.number().positive(),
+	stage: z.number().nonnegative(),
 	lastDate: z.string().datetime(),
 	createdAt: z.string().datetime(),
 	updatedAt: z.string().datetime(),
-	order: z.number().positive(),
+	order: z.number().nonnegative(),
 	nextDate: z.string().datetime(),
 	isDue: z.boolean()
 })
