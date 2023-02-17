@@ -1,5 +1,4 @@
 import { Types } from 'mongoose'
-import type { Progress } from './progress.type'
 import z from 'zod'
 
 export enum CourseStatus {
@@ -62,11 +61,3 @@ export const courseSchema = courseZodSchema
 	})
 
 export type CourseSchema = z.infer<typeof courseSchema>
-
-export interface CourseWithDueProgresses extends Course {
-	dueProgresses: Progress[]
-}
-
-export interface CourseWithProgress extends Course {
-	progresses: Progress[]
-}
