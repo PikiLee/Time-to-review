@@ -10,41 +10,30 @@ import {
 } from 'shared'
 import { api } from './api'
 
-export function withCourseDefaults(name: string) {
-	const userStore = useUserStore()
-	if (!userStore.user) throw new Error('Please login first.')
+// export function withCourseDefaults(name: string) {
+// 	const userStore = useUserStore()
+// 	if (!userStore.user) throw new Error('Please login first.')
 
-	const DEFAULT_COURSE = {
-		owner: userStore.user._id,
-		status: 0,
-		archived: false,
-		intervals: [1, 7, 14, 28]
-	}
-	const newCourse = assign({}, DEFAULT_COURSE, { name })
+// 	const DEFAULT_COURSE = {
+// 		owner: userStore.user._id,
+// 		status: 0,
+// 		archived: false,
+// 		intervals: [1, 7, 14, 28]
+// 	}
+// 	const newCourse = assign({}, DEFAULT_COURSE, { name })
 
-	return newCourse
-}
+// 	return newCourse
+// }
 
 export async function create(newCourse: NewCourse) {
 	const res = await api.post(COURSE_URL, newCourse)
 	return res.data
 }
 
-export async function update(
-	courseId: string,
-	updateCourse: UpdateCourse,
-	options?: Options
-) {
+export async function update(courseId: string, updateCourse: UpdateCourse) {
 	if (keys(updateCourse).length === 0) throw Error('Nothing need to updated.')
 
-	const { withProgresses, withDueProgresses } = buildOptions(options)
-
-	const res = await api.put(`${COURSE_URL}/${courseId}`, updateCourse, {
-		params: {
-			withProgresses,
-			withDueProgresses
-		}
-	})
+	const res = await api.put(`${COURSE_URL}/${courseId}`, updateCourse)
 	return res.data
 }
 
@@ -52,37 +41,20 @@ export async function del(_id: string) {
 	return await api.delete(`${COURSE_URL}/${_id}`)
 }
 
-export async function fetch(courseId: string, options?: Options) {
-	const { withProgresses, withDueProgresses } = buildOptions(options)
-
-	const res = await api.get(`${COURSE_URL}/${courseId}`, {
-		params: {
-			withProgresses,
-			withDueProgresses
-		}
-	})
+export async function fetch(courseId: string) {
+	const res = await api.get(`${COURSE_URL}/${courseId}`)
 	return res.data
 }
 
-export async function fetchAll(options?: Options): Promise<Course[]> {
-	const { withProgresses, withDueProgresses } = buildOptions(options)
-
-	const res = await api.get(`${COURSE_URL}/`, {
-		params: {
-			withProgresses,
-			withDueProgresses
-		}
-	})
+export async function fetchAll(): Promise<Course[]> {
+	const res = await api.get(`${COURSE_URL}`)
 	return res.data
 }
 
-export async function fetchDue(options?: Options): Promise<Course[]> {
-	const { withProgresses, withDueProgresses } = buildOptions(options)
-
-	const res = await api.get(`${COURSE_URL}/due`, {
+export async function fetchDue(): Promise<Course[]> {
+	const res = await api.get(`${COURSE_URL}`, {
 		params: {
-			withProgresses,
-			withDueProgresses
+			isDue: true
 		}
 	})
 	return res.data
