@@ -17,6 +17,7 @@ export const courseEndpointDescription = makeApi([
 		alias: 'create',
 		description: 'Create a Course',
 		parameters: [
+			{ name: 'body', type: 'Body', schema: newCourseZodSchema },
 			{ name: 'body', type: 'Body', schema: newCourseZodSchema }
 		],
 		status: 200,

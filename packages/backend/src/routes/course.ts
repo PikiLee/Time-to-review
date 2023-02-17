@@ -11,6 +11,7 @@ export const router = ctx.router(courseEndpointDescription)
 
 router.post('/courses', async (req, res) => {
 	try {
+		console.log({ user: req.user })
 		res.status(200).json(await create(req.body, toObjectId(req.user._id)))
 	} catch (err) {
 		printDebugInfo(req)

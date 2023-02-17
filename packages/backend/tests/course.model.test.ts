@@ -209,6 +209,44 @@ describe('coures', () => {
 		console.log({ body: res.body })
 		expect(res.status).toBe(404)
 	})
+
+	describe('auth guard', () => {
+		test<Context>('create course without login', async (context) => {
+			const res = await request(app)
+				.post(`${COURSE_URL}`)
+				.send(context.newCourse)
+
+			console.log({ body: res.body })
+			expect(res.status).toBe(401)
+		})
+
+		test<Context>('udpate course without login', async (context) => {
+			const res = await request(app)
+				.put(`${COURSE_URL}`)
+				.send(context.newCourse)
+
+			console.log({ body: res.body })
+			expect(res.status).toBe(401)
+		})
+
+		test<Context>('delete course without login', async (context) => {
+			const res = await request(app)
+				.delete(`${COURSE_URL}`)
+				.send(context.newCourse)
+
+			console.log({ body: res.body })
+			expect(res.status).toBe(401)
+		})
+
+		test<Context>('get course without login', async (context) => {
+			const res = await request(app)
+				.get(`${COURSE_URL}`)
+				.send(context.newCourse)
+
+			console.log({ body: res.body })
+			expect(res.status).toBe(401)
+		})
+	})
 })
 
 describe('progress', () => {

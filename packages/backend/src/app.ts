@@ -18,6 +18,8 @@ import { createDb } from './models/db.js'
 import sessionStore from 'better-sqlite3-session-store'
 import sqlite from 'better-sqlite3'
 import { ctx } from './ctx'
+import { findError } from './endpoint/errors'
+import { printDebugInfo } from './utils/debug'
 
 export const IS_DEV = process.env.NODE_ENV === 'development'
 
@@ -91,6 +93,8 @@ export async function createApp(
 	app.use(passport.initialize())
 	app.use(passport.session())
 	passport.use(User.createStrategy())
+	// todo
+	// @ts-expect-error need correct type
 	passport.serializeUser(User.serializeUser())
 	passport.deserializeUser(User.deserializeUser())
 
@@ -114,12 +118,18 @@ export async function createApp(
 	}
 
 	// auth guard
-	// app.use(['/course', '/progress'], (req, res, next) => {
-	// 	if (IS_DEV && !req.user)
-	// 		console.debug('Auth guard triggered. Not login.')
-	// 	if (!req.user) res.sendStatus(401)
-	// 	else next()
-	// })
+	app.use('/courses', (req, res, next) => {
+		if (IS_DEV && !req.user)
+			console.debug('Auth guard triggered. Not login.')
+
+		if (!req.user) {
+			printDebugInfo(req)
+			const error = findError(3)
+			res.status(error.code).send(error)
+		} else {
+			next()
+		}
+	})
 
 	app.use((req, _res, next) => {
 		if (req.body.data && Object.keys(req.body).length === 1) {
