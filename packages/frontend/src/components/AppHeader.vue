@@ -6,6 +6,7 @@ import { useRoute, useRouter } from 'vue-router'
 import * as authApi from '@/database/auth'
 import { useI18n } from 'vue-i18n'
 import { messages } from 'shared'
+import SearchComponent from './Others/SearchComponent.vue'
 
 const emit = defineEmits(['updateHeight'])
 
@@ -50,9 +51,20 @@ onMounted(() => {
 		{ immediate: true }
 	)
 })
+
+// search dialog
+const searchDialogVisible = ref(false)
+function goToCourse(courseId: string) {
+	searchDialogVisible.value = false
+	router.push({ name: 'course', params: { id: courseId } })
+}
 </script>
 
 <template>
+	<el-dialog v-model="searchDialogVisible" :title="t('search')">
+		<SearchComponent @click="goToCourse" />
+	</el-dialog>
+
 	<div flex py-4 gap-8 ref="wrapperEl">
 		<div flex-grow-1></div>
 
@@ -79,7 +91,11 @@ onMounted(() => {
 
 		<!-- Home Course Link -->
 		<div flex-grow-3 flex flex-row gap-4 items-center justify-end>
-			<el-button text>
+			<el-button
+				v-if="userStore.isLogin"
+				text
+				@click="searchDialogVisible = true"
+			>
 				<div text-lg gap-1 font-600 flex flex-row items-center>
 					<div i-mdi-search></div>
 					<div>{{ t('search') }}</div>

@@ -7,17 +7,25 @@ export function useFetchData<T>(fetchFunc: Function, rawData?: MaybeRef<T>) {
 	const error = ref(false)
 	const data = rawData ? resolveMaybeRef(rawData) : ref<T>()
 
-	loading.value = true
-	fetchFunc()
-		.then((d: any) => {
-			data.value = d
-		})
-		.catch(() => {
-			error.value = true
-		})
-		.finally(() => {
-			loading.value = false
-		})
+	function runFetchFunc() {
+		loading.value = true
+		fetchFunc()
+			.then((d: any) => {
+				data.value = d
+			})
+			.catch(() => {
+				error.value = true
+			})
+			.finally(() => {
+				loading.value = false
+			})
+	}
 
-	return { loading, error, data }
+	function rerun() {
+		runFetchFunc()
+	}
+
+	rerun()
+
+	return { loading, error, data, rerun }
 }

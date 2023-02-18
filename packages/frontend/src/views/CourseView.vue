@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import AddButton from '../components/AddButton.vue'
 import ProgressItem from '@/components/Progress/ProgressItem.vue'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import * as progressApi from '@/database/progress'
 import CourseSetting from '@/components/Course/CourseSetting.vue'
 import FetchComponent from '@/components/Others/FetchComponent.vue'
@@ -59,8 +59,10 @@ const fetchCourseAndProgresses = () => {
 const {
 	loading,
 	error,
-	data: courseAndProgresses
+	data: courseAndProgresses,
+	rerun
 } = useFetchData<CourseAndProgresses>(fetchCourseAndProgresses)
+watch(courseId, rerun)
 
 async function handleDelCourse() {
 	if (courseAndProgresses.value === undefined) return

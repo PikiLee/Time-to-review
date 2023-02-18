@@ -19,7 +19,6 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { messages } from 'shared'
-import SearchCompnent from '@/components/Others/SearchComponent.vue'
 
 interface CourseAndProgressesList {
 	courseList: Course[]
@@ -174,7 +173,6 @@ async function handleProgressUpdate(
 
 <template>
 	<main>
-		<SearchCompnent />
 		<h2 text-center text-3xl data-testid="home-view-title">
 			{{ t('title') }}
 		</h2>
