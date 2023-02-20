@@ -97,13 +97,17 @@ function move(direction: 'up' | 'down') {
 			)
 	}
 }
+
 useEventListener(document, 'keydown', (e: KeyboardEvent) => {
 	if (selectedResultIndex.value >= 0 && searchResults.value) {
 		if (e.key === 'ArrowDown') {
+			e.preventDefault()
 			move('down')
 		} else if (e.key === 'ArrowUp') {
+			e.preventDefault()
 			move('up')
 		} else if (e.key === 'Enter') {
+			e.preventDefault()
 			emit(
 				'click',
 				searchResults.value[selectedResultIndex.value].course._id
@@ -121,6 +125,9 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
 			:placeholder="t('placeholder')"
 			@input="search"
 			autofocus
+			@keydown.enter.prevent
+			@keydown.arrow-up.prevent
+			@keydown.arrow-down.prevent
 		>
 			<template #prefix>
 				<div i-mdi-search></div>
@@ -128,7 +135,15 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
 		</el-input>
 		<FetchComponent :error="error" :loading="loading">
 			<template #data>
-				<ul list-none p-0 grid gap-4 m-0 mt-4>
+				<ul
+					v-if="searchResults && searchResults.length > 0"
+					list-none
+					p-0
+					grid
+					gap-4
+					m-0
+					mt-4
+				>
 					<li
 						v-for="(item, index) in searchResults"
 						:key="item.course._id"
@@ -168,7 +183,7 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
 						</el-card>
 					</li>
 				</ul>
-				<el-empty :description="t('description')" />
+				<el-empty v-else :description="t('description')" />
 			</template>
 		</FetchComponent>
 	</div>
