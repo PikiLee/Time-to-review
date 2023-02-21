@@ -160,7 +160,7 @@ async function handleCourseSort(items: Course[], evt: SortableEvent) {
 }
 
 // tabs
-const activeName = ref('In Progress')
+const activeName = ref(t('inProgress'))
 </script>
 <template>
 	<AddButton
