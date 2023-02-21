@@ -10,6 +10,69 @@ import { makeApi } from '@zodios/core'
 import { z } from 'zod'
 import { errorZodSchemas } from './errors'
 
+export const getCourseEndpoints = {
+	createCourse() {
+		return {
+			method: 'post',
+			path: '/courses'
+		} as const
+	},
+	getCourse() {
+		return {
+			method: 'get',
+			path: '/courses/:courseId'
+		} as const
+	},
+	getAllCourses() {
+		return {
+			method: 'get',
+			path: '/courses'
+		} as const
+	},
+	getAllProgress() {
+		return {
+			method: 'get',
+			path: '/courses/:courseId/progresses'
+		} as const
+	},
+	deleteCourse() {
+		return {
+			method: 'delete',
+			path: `/courses/:courseId`
+		} as const
+	},
+	updateCourse() {
+		return {
+			method: 'put',
+			path: `/courses/:courseId`
+		} as const
+	},
+	createProgress() {
+		return {
+			method: 'post',
+			path: '/courses/:courseId/progresses'
+		} as const
+	},
+	updateProgress() {
+		return {
+			method: 'put',
+			path: '/courses/:courseId/progresses/:progressId'
+		} as const
+	},
+	deleteProgress() {
+		return {
+			method: 'delete',
+			path: '/courses/:courseId/progresses/:progressId'
+		} as const
+	},
+	getProgress() {
+		return {
+			method: 'get',
+			path: '/courses/:courseId/progresses/:progressId'
+		} as const
+	}
+}
+
 export const courseEndpointDescription = makeApi([
 	{
 		method: 'post',

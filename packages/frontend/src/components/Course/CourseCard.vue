@@ -21,9 +21,9 @@ const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
 const { t } = useI18n({
 	messages: {
 		en: {
-			markDone: 'Mark as Done',
-			markInProgress: 'Mark as In Progress',
-			markArchived: 'Archive',
+			markDone: 'Mark As Done',
+			markInProgress: 'Mark As In Progress',
+			markArchived: 'Mark As Archived',
 			markUnarchived: 'Unarchive'
 		},
 		'zh-Hans': {
@@ -50,6 +50,8 @@ const { createdTime } = useCreatedTime(props.course.createdAt)
 		data-testid="course-card"
 		:data-test-unit="getUnitTestId('wrapper')"
 		select-none
+		role="course"
+		:aria-label="course.name"
 	>
 		<li grid grid-rows-2 grid-cols-5 gap-2 items-center>
 			<el-tooltip

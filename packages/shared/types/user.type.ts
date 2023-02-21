@@ -1,7 +1,7 @@
 import { Types } from 'mongoose'
 import z from 'zod'
 
-export const usernameZodSchema = z.string().min(1).max(12)
+export const usernameZodSchema = z.string().min(2).max(12)
 
 export const userZodSchema = z.object({
 	_id: z.string(),

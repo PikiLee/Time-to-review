@@ -27,7 +27,7 @@ import { messages } from 'shared'
 const { t } = useI18n({
 	messages: {
 		en: {
-			name: 'Name'
+			name: 'Progress Name'
 		},
 		'zh-Hans': {
 			name: '进度名'
@@ -66,8 +66,14 @@ watch(courseId, rerun)
 
 async function handleDelCourse() {
 	if (courseAndProgresses.value === undefined) return
-	await courseApi.del(courseAndProgresses.value.course._id)
-	router.push({ name: 'courses' })
+	try {
+		await courseApi.del(courseAndProgresses.value.course._id)
+		router.push({ name: 'courses' })
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('course.cap')]))
+		}
+	}
 }
 
 async function handleUpdateCourse(update: UpdateCourse) {
@@ -78,8 +84,12 @@ async function handleUpdateCourse(update: UpdateCourse) {
 			update
 		)
 		settingVisible.value = false
-	} catch {
-		errorMsg('Updation failed.')
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('course.cap')]))
+		} else if (err.response.status === 400) {
+			errorMsg(t('errors.updateFail', [t('course.name')]))
+		}
 	}
 }
 
@@ -89,15 +99,22 @@ const createFormVisible = ref(false)
 async function handleProgressCreate(name: string) {
 	try {
 		if (courseAndProgresses.value === undefined) return
-		courseAndProgresses.value.progresses.push(
-			await progressApi.create(courseAndProgresses.value.course._id, {
+		const res = await progressApi.create(
+			courseAndProgresses.value.course._id,
+			{
 				name,
 				lastDate: new Date().toISOString()
-			})
+			}
 		)
+		courseAndProgresses.value.progresses.push(res)
+
 		createFormVisible.value = false
-	} catch {
-		errorMsg(`Creation Failed.`)
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('course.cap')]))
+		} else if (err.response.status === 400) {
+			errorMsg(t('errors.createFail', [t('progress.name')]))
+		}
 	}
 }
 
@@ -134,8 +151,12 @@ async function handleProgressUpdate(
 
 		if (!res.isDue) courseAndProgresses.value.course.dueCount--
 		progressFormVisible.value = false
-	} catch {
-		errorMsg('Updation failed.')
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('progress.cap')]))
+		} else if (err.response.status === 400) {
+			errorMsg(t('errors.updateFail', [t('progress.name')]))
+		}
 	}
 }
 
@@ -150,8 +171,10 @@ async function handleProgressDel(progressId: string) {
 		courseAndProgresses.value.course.progressCount--
 
 		progressFormVisible.value = false
-	} catch {
-		errorMsg('Deletion failed.')
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('progress.cap')]))
+		}
 	}
 }
 
@@ -168,8 +191,12 @@ async function handleProgressSort(evt: SortableEvent) {
 					updateProgress
 				)
 		)
-	} catch {
-		errorMsg('Deletion failed.')
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('progress.cap')]))
+		} else if (err.response.status === 400) {
+			errorMsg(t('errors.udpateFail', [t('progress.name')]))
+		}
 	}
 }
 </script>
@@ -248,6 +275,7 @@ async function handleProgressSort(evt: SortableEvent) {
 						>
 							<button
 								i-mdi-edit
+								aria-label="Edit Course"
 								@click="settingVisible = true"
 							></button>
 						</el-tooltip>

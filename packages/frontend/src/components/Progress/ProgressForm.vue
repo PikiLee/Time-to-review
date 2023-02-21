@@ -4,12 +4,26 @@ import type { Progress } from 'shared'
 import { ref, reactive } from 'vue'
 import { getStageString } from '../../utils/progress.utils'
 import { createUnitTestIdGetter } from '@/unit/utils'
+import { useI18n } from 'vue-i18n'
+import { messages } from 'shared'
 
 const props = defineProps<{
 	progress: Progress
 	intervals: number[]
 }>()
 const emit = defineEmits(['update', 'cancel'])
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			name: 'Progress Name'
+		},
+		'zh-Hans': {
+			name: '进度名'
+		}
+	},
+	sharedMessages: messages
+})
 const NAME_SPACE = 'progress-form'
 const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
 
@@ -85,7 +99,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 		data-testid="progress-form"
 		:data-test-unit="getUnitTestId('wrapper')"
 	>
-		<el-form-item :label="$t('course.name')" prop="name">
+		<el-form-item :label="t('name')" prop="name">
 			<el-input
 				v-model="ruleForm.name"
 				data-testid="progress-list-item-name-input"
@@ -123,6 +137,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 				<el-button
 					type="primary"
 					@click="submitForm(ruleFormRef)"
+					aria-label="Update"
 					data-testid="progress-form-confirm"
 					:data-test-unit="`${NAME_SPACE}-confirm`"
 				>

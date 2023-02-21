@@ -3,6 +3,33 @@ import { makeApi } from '@zodios/core'
 import { z } from 'zod'
 import { errorZodSchemas } from './errors'
 
+export const getAuthEndpoints = {
+	register() {
+		return {
+			method: 'post',
+			path: '/auth'
+		} as const
+	},
+	checkUsername() {
+		return {
+			method: 'get',
+			path: '/auth/:username'
+		} as const
+	},
+	login() {
+		return {
+			method: 'put',
+			path: '/auth'
+		} as const
+	},
+	logout() {
+		return {
+			method: 'delete',
+			path: '/auth'
+		} as const
+	}
+}
+
 export const authEndpointDescription = makeApi([
 	{
 		method: 'post',

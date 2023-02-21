@@ -19,6 +19,7 @@ defineEmits(['click'])
 			size="large"
 			@click="$emit('click')"
 			data-testid="add-button"
+			:aria-label="toolTip"
 		>
 			<template #icon>
 				<div i-mdi-add></div>

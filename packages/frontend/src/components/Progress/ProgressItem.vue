@@ -42,6 +42,8 @@ const percentage = computed(
 		:body-style="{ height: '100%' }"
 		data-testid="progress-list-item"
 		:data-test-unit="getUnitTestId('wrapper')"
+		role="progress"
+		:aria-label="progress.name"
 	>
 		<div flex flex-col justify-start h-full class="body">
 			<!-- Stage -->
@@ -135,6 +137,7 @@ const percentage = computed(
 							@click="toNextStage"
 							size="small"
 							:data-test-unit="getUnitTestId('next-stage')"
+							aria-label="Next Stage"
 							><span i-material-symbols-next-plan text-lg></span
 						></el-button>
 					</el-tooltip>
@@ -148,6 +151,7 @@ const percentage = computed(
 							size="small"
 							data-testid="progress-list-item-edit"
 							:data-test-unit="getUnitTestId('edit')"
+							aria-label="Edit"
 							><span i-material-symbols-edit text-lg></span
 						></el-button>
 					</el-tooltip>

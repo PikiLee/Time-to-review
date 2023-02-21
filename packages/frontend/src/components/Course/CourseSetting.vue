@@ -17,8 +17,8 @@ const getUnitTestId = createUnitTestIdGetter(NAME_SPACE)
 const { t } = useI18n({
 	messages: {
 		en: {
-			name: 'name',
-			interval: 'interval | intervals',
+			name: 'Course Name',
+			interval: 'Interval | Intervals',
 			required: 'Please input {0}',
 			add: 'Add Interval',
 			remove: 'Remove Interval',
@@ -156,6 +156,7 @@ function removeInterval() {
 			<el-button
 				type="primary"
 				@click="() => submitForm(ruleFormRef)"
+				aria-label="Update"
 				:data-test-unit="getUnitTestId('confirm')"
 			>
 				{{ $t('actions.confirm') }}

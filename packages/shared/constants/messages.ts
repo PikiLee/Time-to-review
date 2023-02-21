@@ -4,8 +4,7 @@ export const messages = {
 			hello: 'hello world',
 			created: '{0} has been created.',
 			updated: '{0} has been updated.',
-			deleted: '{0} has been deleted.',
-			fail: 'Action failed.'
+			deleted: '{0} has been deleted.'
 		},
 		actions: {
 			confirm: 'Confirm',
@@ -42,7 +41,11 @@ export const messages = {
 		},
 		errors: {
 			required: 'Please input a value.',
-			length: 'Length should be {0} to {1}'
+			length: 'Length should be {0} to {1}.',
+			serverDown: 'Server is down.',
+			updateFail: 'Failed to update {0}.',
+			createFail: 'Failed to create {0}.',
+			notExist: '{0} does not exist.'
 		},
 		stages: {
 			learned: 'Learned',
@@ -63,18 +66,21 @@ export const messages = {
 			logout: 'Logout',
 			success: '{0} succeeded.',
 			errors: {
-				length: 'Length should be {0} to {1}',
+				length: 'Length should be {0} to {1}.',
 				required: 'Please input {0}',
 				existUsername: 'The username has existed.',
 				invalidPassword:
-					"Should be 12 to 24 long and contain at least one of !{'@'}#{'$'}%^&*, one number",
+					"Should contain at least one of !{'@'}#{'$'}%^&*, one number",
 				fail: '{0} failed.'
 			}
 		}
 	},
 	'zh-Hans': {
 		message: {
-			hello: '你好，世界'
+			hello: '你好，世界',
+			created: '{0}已创建',
+			updated: '{0}已更新',
+			deleted: '{0}已删除'
 		},
 		actions: {
 			confirm: '确认',
@@ -110,7 +116,11 @@ export const messages = {
 
 		errors: {
 			required: '请输入一个值',
-			length: '长度应在{0}至{1}之间'
+			length: '长度应在{0}至{1}之间',
+			serverDown: '服务器不在线。',
+			updateFail: '更新{0}失败',
+			createFail: '创建{0}失败',
+			notExist: '{0}不存在'
 		},
 		stages: {
 			learned: '已学习',

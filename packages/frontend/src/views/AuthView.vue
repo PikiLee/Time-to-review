@@ -57,7 +57,7 @@ const rules = computed<FormRules>(() => {
 									})
 							})
 						},
-						trigger: 'blur'
+						trigger: 'change'
 					}
 				],
 				password: [
@@ -129,9 +129,11 @@ async function onSubmit(formEl: FormInstance | undefined) {
 						successMsg(t('auth.success', [t('auth.register')]))
 						router.push({ name: 'home' })
 					})
-					.catch(() =>
-						errorMsg(t('auth.errors.fail', [t('auth.register')]))
-					)
+					.catch((err) => {
+						errorMsg(t('auth.errors.fail', [t('auth.login')]))
+						if (err.response.status === 500)
+							errorMsg(t('errors.serverDown'))
+					})
 			} else {
 				authApi
 					.login(form)
@@ -141,9 +143,11 @@ async function onSubmit(formEl: FormInstance | undefined) {
 						successMsg(t('auth.success', [t('auth.login')]))
 						router.push({ name: 'home' })
 					})
-					.catch(() =>
+					.catch((err) => {
 						errorMsg(t('auth.errors.fail', [t('auth.login')]))
-					)
+						if (err.response.status === 500)
+							errorMsg(t('errors.serverDown'))
+					})
 			}
 		}
 	})

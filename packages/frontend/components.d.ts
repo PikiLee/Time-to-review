@@ -31,6 +31,8 @@ declare module '@vue/runtime-core' {
 		ElPopover: typeof import('element-plus/es')['ElPopover']
 		ElResult: typeof import('element-plus/es')['ElResult']
 		ElSelect: typeof import('element-plus/es')['ElSelect']
+		ElTabPane: typeof import('element-plus/es')['ElTabPane']
+		ElTabs: typeof import('element-plus/es')['ElTabs']
 		ElTag: typeof import('element-plus/es')['ElTag']
 		ElTooltip: typeof import('element-plus/es')['ElTooltip']
 		FetchComponent: typeof import('./src/components/Others/FetchComponent.vue')['default']

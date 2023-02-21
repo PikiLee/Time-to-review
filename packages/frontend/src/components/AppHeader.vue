@@ -171,7 +171,10 @@ function goToCourse(courseId: string) {
 						>
 					</div>
 					<template #reference>
-						<div data-testid="app-header-username">
+						<div
+							data-testid="app-header-username"
+							role="logginedUsername"
+						>
 							{{ userStore.user.username }}
 						</div>
 					</template>

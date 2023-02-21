@@ -24,7 +24,7 @@ const { t } = useI18n({
 			inProgress: 'In Progress',
 			done: 'Done',
 			archived: 'Archived',
-			name: 'Name'
+			name: 'Course Name'
 		},
 		'zh-Hans': {
 			title: '所有课程',
@@ -81,7 +81,7 @@ async function handleCreate(name: string) {
 		courses.value.push(await courseApi.create({ name }))
 		formVisible.value = false
 	} catch {
-		errorMsg(t('message.fail'))
+		errorMsg(t('errors.createFail', [t('course.name')]))
 	}
 }
 
@@ -90,7 +90,7 @@ async function handleDel(_id: string) {
 		await courseApi.del(_id)
 		findByIdAndDeleteAndCalcOrder(courses.value, _id)
 	} catch {
-		errorMsg(t('message.fail'))
+		errorMsg(t('errors.notExist', [t('course.cap')]))
 	}
 }
 
@@ -108,8 +108,12 @@ async function handleToggleStatus(_id: string) {
 				: CourseStatus['In Progress']
 		await courseApi.update(item._id, { status: newStatus, order })
 		item.status = newStatus
-	} catch {
-		errorMsg(t('message.fail'))
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('course.cap')]))
+		} else if (err.response.status === 400) {
+			errorMsg(t('errors.updateFail', [t('course.name')]))
+		}
 	}
 }
 
@@ -126,8 +130,12 @@ async function handleToggleArchive(_id: string) {
 			order
 		})
 		item.archived = !item.archived
-	} catch (err) {
-		errorMsg(t('message.fail'))
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('course.cap')]))
+		} else if (err.response.status === 400) {
+			errorMsg(t('errors.updateFail', [t('course.name')]))
+		}
 	}
 }
 
@@ -147,9 +155,12 @@ async function handleCourseSort(items: Course[], evt: SortableEvent) {
 			calcOrder(fromInex, toIndex, courses.value)
 		}
 	} catch {
-		errorMsg(t('message.fail'))
+		errorMsg(t('errors.updateFail'))
 	}
 }
+
+// tabs
+const activeName = ref('In Progress')
 </script>
 <template>
 	<AddButton
@@ -163,28 +174,32 @@ async function handleCourseSort(items: Course[], evt: SortableEvent) {
 	<h2 text-center text-3xl>{{ t('title') }}</h2>
 	<FetchComponent :loading="loading" :error="error">
 		<template #data>
-			<div grid gap-8>
-				<Items
+			<el-tabs v-model="activeName" type="card">
+				<el-tab-pane
+					:label="coursesCategoried.title"
+					:name="coursesCategoried.title"
 					v-for="coursesCategoried in courseByCatogry"
 					:key="coursesCategoried.title"
-					:items="coursesCategoried.items"
-					item-key="_id"
-					:title="coursesCategoried.title"
-					sortable
-					@dragend="
-						(evt) => handleCourseSort(coursesCategoried.items, evt)
-					"
-				>
-					<template #item="{ item: course }">
-						<CourseCard
-							:course="course"
-							@delete="handleDel"
-							@toggle:archive="handleToggleArchive"
-							@toggle:status="handleToggleStatus"
-						/>
-					</template>
-				</Items>
-			</div>
+					><Items
+						:items="coursesCategoried.items"
+						item-key="_id"
+						:title="coursesCategoried.title"
+						sortable
+						@dragend="
+							(evt) =>
+								handleCourseSort(coursesCategoried.items, evt)
+						"
+					>
+						<template #item="{ item: course }">
+							<CourseCard
+								:course="course"
+								@delete="handleDel"
+								@toggle:archive="handleToggleArchive"
+								@toggle:status="handleToggleStatus"
+							/>
+						</template> </Items
+				></el-tab-pane>
+			</el-tabs>
 		</template>
 	</FetchComponent>
 </template>

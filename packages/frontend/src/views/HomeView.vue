@@ -121,8 +121,10 @@ async function handleProgressDel() {
 				activeCourse.value._id
 			)
 		progressFormVisible.value = false
-	} catch {
-		errorMsg(t('message.fail'))
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('progress.cap')]))
+		}
 	}
 }
 
@@ -165,8 +167,12 @@ async function handleProgressUpdate(
 		}
 
 		progressFormVisible.value = false
-	} catch {
-		errorMsg(t('message.fail'))
+	} catch (err: any) {
+		if (err.response.status === 404) {
+			errorMsg(t('errors.notExist', [t('progress.cap')]))
+		} else if (err.response.status === 400) {
+			errorMsg(t('errors.updateFail', [t('progress.name')]))
+		}
 	}
 }
 </script>
