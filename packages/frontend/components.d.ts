@@ -14,7 +14,6 @@ declare module '@vue/runtime-core' {
 		AppTitle: typeof import('./src/components/Others/AppTitle.vue')['default']
 		BaseDialog: typeof import('./src/components/Others/BaseDialog.vue')['default']
 		CourseCard: typeof import('./src/components/Course/CourseCard.vue')['default']
-		CourseLink: typeof import('./src/components/Links/CourseLink.vue')['default']
 		CourseListContainer: typeof import('./src/components/CourseList/CourseListContainer.vue')['default']
 		CourseSetting: typeof import('./src/components/Course/CourseSetting.vue')['default']
 		CreateForm: typeof import('./src/components/CreateForm.vue')['default']
@@ -52,10 +51,8 @@ declare module '@vue/runtime-core' {
 		RouterLink: typeof import('vue-router')['RouterLink']
 		RouterView: typeof import('vue-router')['RouterView']
 		SearchButton: typeof import('./src/components/Buttons/SearchButton.vue')['default']
-		SearchCompnent: typeof import('./src/components/Others/SearchCompnent.vue')['default']
 		SearchComponent: typeof import('./src/components/Others/SearchComponent.vue')['default']
 		ToggleDark: typeof import('./src/components/Others/ToggleDark.vue')['default']
-		TogglerDark: typeof import('./src/components/Others/TogglerDark.vue')['default']
 		UserInfo: typeof import('./src/components/Others/UserInfo.vue')['default']
 	}
 	export interface ComponentCustomProperties {

@@ -1,4 +1,4 @@
-import { assign, escapeRegExp } from 'lodash-es'
+import { escapeRegExp } from 'lodash-es'
 import { create, fetch, del, update } from '../models/Course.js'
 import { printDebugInfo } from '../utils/debug.js'
 import { errorIfCourseNotExist, toObjectId } from '../utils/id.js'
