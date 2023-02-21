@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AddButton from '../components/AddButton.vue'
+import AddButton from '../components/Buttons/AddButton.vue'
 import ProgressItem from '@/components/Progress/ProgressItem.vue'
 import { computed, ref, watch } from 'vue'
 import * as progressApi from '@/database/progress'
@@ -20,7 +20,7 @@ import {
 } from '@/utils/query'
 import type { SortableEvent } from 'sortablejs'
 import { handleSort } from '@/composables/useSort'
-import DeleteButton from '@/components/Others/DeleteButton.vue'
+import DeleteButton from '@/components/Buttons/DeleteButton.vue'
 import { useI18n } from 'vue-i18n'
 import { messages } from 'shared'
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
-import AppHeader from './components/AppHeader.vue'
+import AppHeader from './components/AppHeader/AppHeader.vue'
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core'
 import IntroView from './views/IntroView.vue'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'

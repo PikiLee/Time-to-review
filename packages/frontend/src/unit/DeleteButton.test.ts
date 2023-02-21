@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, test, vi } from 'vitest'
-import DeleteButton from '@/components/Others/DeleteButton.vue'
+import DeleteButton from '@/components/Buttons/DeleteButton.vue'
 import { createGetter } from './utils'
 
 const NAME_SPACE = 'delete-button'
