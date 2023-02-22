@@ -48,7 +48,7 @@ if (IS_DEV) {
 
 export async function createApp(
 	options = {
-		port: 3000
+		port: 13000
 	}
 ) {
 	await createDb(IS_DEV ? undefined : process.env.DATABASE_PRODUCTION!)

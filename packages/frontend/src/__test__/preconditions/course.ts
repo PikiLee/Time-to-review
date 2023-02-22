@@ -1,10 +1,5 @@
 import { assign } from 'lodash-es'
-import {
-	getCourseEndpoints,
-	type Progress,
-	type UpdateCourse,
-	type UpdateProgress
-} from 'shared'
+import { getCourseEndpoints, type Progress, type UpdateCourse } from 'shared'
 import type { MockEndPoint } from '../mock-endpoint'
 import * as courseData from './courseData'
 
