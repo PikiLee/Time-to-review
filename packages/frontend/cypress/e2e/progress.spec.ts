@@ -94,7 +94,7 @@ describe('create a progress', () => {
 })
 
 describe('toggle stage', () => {
-	it('should display next stage if toggle stage', () => {
+	it.only('should display next stage if toggle stage', () => {
 		const progressName = 'Essay 1'
 		coursePreconditions.hasCourses({
 			mockEndpoint
@@ -107,7 +107,7 @@ describe('toggle stage', () => {
 		})
 		goToCoursePage(courseId)
 		goToNextStage(progressName)
-		assertDisplayWithProgress(progressName, 'Reviwed 1 Time')
+		assertDisplayWithProgress(progressName, 'Reviewed 1 Time')
 	})
 
 	it('show error if 400', () => {

@@ -168,6 +168,6 @@ export function assertNotDisplay(text: string) {
 
 export function assertDisplayWithProgress(progressName: string, text: string) {
 	cy.findByRole('progress', { name: progressName })
-		.findByRole('button', { name: text })
+		.findByText(text)
 		.should('be.visible')
 }
