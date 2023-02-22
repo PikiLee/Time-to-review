@@ -30,7 +30,7 @@ const rules = computed<FormRules>(() => {
 						message: t('auth.errors.required', [
 							t('auth.username')
 						]),
-						trigger: 'blur'
+						trigger: 'change'
 					},
 					{
 						min: 2,
@@ -66,7 +66,7 @@ const rules = computed<FormRules>(() => {
 						message: t('auth.errors.required', [
 							t('auth.password')
 						]),
-						trigger: 'blur'
+						trigger: 'change'
 					},
 					{
 						min: 12,
@@ -101,7 +101,7 @@ const rules = computed<FormRules>(() => {
 						message: t('auth.errors.required', [
 							t('auth.username')
 						]),
-						trigger: 'blur'
+						trigger: 'change'
 					}
 				],
 				password: [
@@ -110,7 +110,7 @@ const rules = computed<FormRules>(() => {
 						message: t('auth.errors.required', [
 							t('auth.password')
 						]),
-						trigger: 'blur'
+						trigger: 'change'
 					}
 				]
 		  }
