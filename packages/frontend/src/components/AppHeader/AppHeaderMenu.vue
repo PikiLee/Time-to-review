@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import AppLink from '../Links/AppLink.vue'
 
 const props = defineProps<{
 	flexDirection: 'row' | 'column'

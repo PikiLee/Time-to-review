@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from 'vue-router'
+
 defineProps<{
 	/**
 	 * The link text
@@ -7,7 +9,7 @@ defineProps<{
 	/**
 	 * The link route name
 	 */
-	to: string
+	to: RouteLocationRaw
 }>()
 </script>
 
