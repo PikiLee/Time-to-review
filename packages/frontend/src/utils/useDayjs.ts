@@ -1,9 +1,11 @@
 import en from 'dayjs/locale/en'
 import zhHans from 'dayjs/locale/zh-cn'
 import dayjs from 'dayjs/esm'
+import relativeTime from 'dayjs/plugin/relativeTime'
 import { ref, watch, watchEffect } from 'vue'
 import { i18n } from '../i18n'
 import { resolveRef, type MaybeComputedRef } from '@vueuse/shared'
+dayjs.extend(relativeTime)
 
 const dayjsLocales = {
 	en,

@@ -1,9 +1,23 @@
 <script setup lang="ts">
 import type { Progress } from 'shared'
 import { computed } from 'vue'
-import dayjs from 'dayjs/esm'
+import { dayjs } from '@/utils/useDayjs'
 import { getStageString } from '../../utils/progress.utils'
 import { createUnitTestIdGetter } from '@/unit/utils'
+import { useI18n } from 'vue-i18n'
+import { messages } from 'shared'
+
+const { t } = useI18n({
+	messages: {
+		en: {
+			today: 'Today'
+		},
+		'zh-Hans': {
+			today: '今天'
+		}
+	},
+	sharedMessages: messages
+})
 
 const props = defineProps<{
 	progress: Progress
@@ -32,6 +46,20 @@ const percentage = computed(
 	() =>
 		`${((props.progress.stage + 1) / (props.intervals.length + 1)) * 100}%`
 )
+
+const nextDate = computed(() => {
+	if (isDone.value) return ''
+	const todayDayjs = dayjs().startOf('day')
+	const nextDateDayjs = dayjs(props.progress.nextDate).startOf('day')
+	const diff = nextDateDayjs.diff(todayDayjs)
+	if (diff < 0) {
+		return nextDateDayjs.from(todayDayjs)
+	} else if (diff > 0) {
+		return todayDayjs.to(nextDateDayjs)
+	} else {
+		return t('today')
+	}
+})
 </script>
 
 <template>
@@ -117,9 +145,7 @@ const percentage = computed(
 						font-normal
 						block
 						class="translate-y-[1px]"
-						>{{
-							dayjs(progress.nextDate).format('YYYY-MM-DD')
-						}}</time
+						>{{ nextDate }}</time
 					>
 				</div>
 			</div>

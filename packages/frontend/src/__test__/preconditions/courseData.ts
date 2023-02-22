@@ -163,7 +163,7 @@ export const progresses = [
 		order: 2,
 		stage: 3,
 		lastDate: '2021-04-24T13:45:00.000Z',
-		nextDate: '2021-05-05T15:30:00.000Z'
+		nextDate: new Date().toISOString()
 	},
 	{
 		course: 'f4e7a2df-4142-4c9e-ba44-bf6f5d6d5db6',
@@ -171,13 +171,13 @@ export const progresses = [
 		type: 'progress',
 		owner: '1',
 		name: 'Project Proposal',
-		createdAt: '2021-05-02T09:00:00.000Z',
+		createdAt: '2023-05-02T09:00:00.000Z',
 		updatedAt: '2021-05-04T11:00:00.000Z',
 		isDue: true,
 		order: 3,
 		stage: 2,
-		lastDate: '2021-05-04T11:00:00.000Z',
-		nextDate: '2021-05-09T09:00:00.000Z'
+		lastDate: '2023-05-04T11:00:00.000Z',
+		nextDate: '2023-05-09T09:00:00.000Z'
 	},
 	{
 		course: 'f4e7a2df-4142-4c9e-ba44-bf6f5d6d5db6',

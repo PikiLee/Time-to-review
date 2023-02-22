@@ -94,7 +94,7 @@ describe('create a progress', () => {
 })
 
 describe('toggle stage', () => {
-	it.only('should display next stage if toggle stage', () => {
+	it('should display next stage if toggle stage', () => {
 		const progressName = 'Essay 1'
 		coursePreconditions.hasCourses({
 			mockEndpoint
