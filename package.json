@@ -8,6 +8,7 @@
 		"lint:frontend": "cd ./packages/frontend && pnpm run lint",
 		"lint:shared": "cd ./packages/shared && pnpm run lint",
 		"test:backend": "cd ./packages/backend && pnpm run test",
+		"test:frontend": "cd ./packages/frontend && run-p dev test:e2e:open",
 		"build:backend": "cd ./packages/backend && pnpm run build",
 		"build:frontend": "cd ./packages/frontend && pnpm run build-only",
 		"watch:backend": "cd ./packages/backend && pnpm run watch",
@@ -18,7 +19,6 @@
 		"type-check:backend": "cd ./packages/backend && pnpm run type-check",
 		"type-check:shared": "cd ./packages/shared && pnpm run type-check",
 		"run:backend": "cd ./packages/backend && pnpm run run",
-		"dev": "run-p dev:*",
 		"lint": "run-p lint:*",
 		"type-check": "run-p type-check:*"
 	},
