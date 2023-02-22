@@ -1,4 +1,4 @@
-import { Types } from 'mongoose'
+import type { Types } from 'mongoose'
 import z from 'zod'
 
 export const usernameZodSchema = z.string().min(2).max(12)

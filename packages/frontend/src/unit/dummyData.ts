@@ -1,4 +1,4 @@
-import type { Course, Progress, CourseWithProgress } from 'shared'
+import type { Course, Progress } from 'shared'
 
 export const course1: Course = {
 	_id: 'test1',
@@ -95,7 +95,7 @@ export const progress3: Progress = {
 	isDue: true
 }
 
-export const course1WithProgresses: CourseWithProgress = {
+export const course1WithProgresses = {
 	_id: 'test33',
 	type: 'course',
 	owner: 'test',
