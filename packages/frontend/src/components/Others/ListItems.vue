@@ -49,6 +49,8 @@ onMounted(() => {
 	if (props.sortable) {
 		Sortable.create(wrapper.value!, {
 			group: props.group ?? Math.random().toString().slice(2, 8),
+			delay: 300,
+			delayOnTouchOnly: true,
 			draggable: '.' + draggableClass,
 			onEnd: function (/**Event*/ evt) {
 				emit('dragend', evt)
