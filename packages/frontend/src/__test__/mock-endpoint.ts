@@ -1,7 +1,9 @@
 import { rest, setupWorker, type DefaultBodyType } from 'msw'
 
 export const mockWorker = setupWorker()
-mockWorker.start()
+mockWorker.start({
+	onUnhandledRequest: `bypass`
+})
 
 const ENDPOINT_MOCKS_KEY = `__ENDPOINT_MOCKS__`
 

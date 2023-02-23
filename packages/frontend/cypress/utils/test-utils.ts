@@ -18,12 +18,14 @@ export function assertUserIsLogin(username: string) {
 export function register(username: string, password: string) {
 	inputUsername(username)
 	inputPassword(password)
+	cy.wait(2000)
 	cy.findByRole('button', { name: 'Register' }).click()
 }
 
 export function login(username: string, password: string) {
 	inputUsername(username)
 	inputPassword(password)
+	cy.wait(2000)
 	cy.findByRole('button', { name: 'Login' }).click()
 }
 

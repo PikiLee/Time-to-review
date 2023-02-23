@@ -15,8 +15,9 @@ import mongoose, { Types } from 'mongoose'
 import { Course } from '../src/models/Course'
 import { Progress } from '../src/models/Progress'
 
-const app = await createApp({ port: 3004 })
+const app = await createApp({ port: 13004 })
 const client = request.agent(app)
+const token = '123'
 
 interface Context {
 	userId: Types.ObjectId
@@ -30,10 +31,13 @@ interface Context {
 
 test('get an empty array if the user do not have courses', async () => {
 	const { username, password } = generateAuthInfo()
-	const registerRes = await client.post(`${AUTH_URL}`).send({
-		username,
-		password
-	})
+	const registerRes = await client
+		.post(`${AUTH_URL}`)
+		.send({
+			username,
+			password
+		})
+		.query({ token })
 	console.log({ body: registerRes.body })
 	expect(registerRes.status).toBe(200)
 
@@ -47,10 +51,13 @@ test('get an empty array if the user do not have courses', async () => {
 describe('coures', () => {
 	beforeEach<Context>(async (context) => {
 		const { username, password } = generateAuthInfo()
-		const res = await client.post(`${AUTH_URL}`).send({
-			username,
-			password
-		})
+		const res = await client
+			.post(`${AUTH_URL}`)
+			.send({
+				username,
+				password
+			})
+			.query({ token })
 		console.log({ body: res.body })
 		context.userId = res.body._id
 		expect(res.status).toBe(200)
@@ -299,10 +306,13 @@ describe('coures', () => {
 
 test('get an empty array if the course do not have progresses', async () => {
 	const { username, password } = generateAuthInfo()
-	const registerRes = await client.post(`${AUTH_URL}`).send({
-		username,
-		password
-	})
+	const registerRes = await client
+		.post(`${AUTH_URL}`)
+		.send({
+			username,
+			password
+		})
+		.query({ token })
 	console.log({ body: registerRes.body })
 	expect(registerRes.status).toBe(200)
 
@@ -325,10 +335,13 @@ test('get an empty array if the course do not have progresses', async () => {
 
 async function register() {
 	const { username, password } = generateAuthInfo()
-	const res = await client.post(`${AUTH_URL}`).send({
-		username,
-		password
-	})
+	const res = await client
+		.post(`${AUTH_URL}`)
+		.send({
+			username,
+			password
+		})
+		.query({ token })
 	console.log({ body: res.body })
 	expect(res.status).toBe(200)
 

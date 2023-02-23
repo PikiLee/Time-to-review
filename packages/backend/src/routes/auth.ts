@@ -3,6 +3,7 @@ import { ctx } from '../ctx'
 import { User, fetch } from '../models/User.js'
 import { printDebugInfo } from '../utils/debug'
 import { findError, authEndpointDescription } from 'shared'
+import axios from 'axios'
 
 export const router = ctx.router(authEndpointDescription)
 
@@ -20,6 +21,17 @@ router.get('/auth/:username', async function (req, res) {
 
 router.post(
 	'/auth',
+	async function (req, res, next) {
+		try {
+			await verifyTurnstileToken(req.query.token)
+			next()
+		} catch (err) {
+			printDebugInfo(req)
+			console.trace({ err })
+			const error = findError(Number((err as Error).message))
+			res.status(error.code).send(error)
+		}
+	},
 	function (req, res, next) {
 		User.register(
 			new User({ username: req.body.username }),
@@ -53,6 +65,17 @@ router.post(
 
 router.put(
 	'/auth',
+	async function (req, res, next) {
+		try {
+			await verifyTurnstileToken(req.query.token)
+			next()
+		} catch (err) {
+			printDebugInfo(req)
+			console.trace({ err })
+			const error = findError(Number((err as Error).message))
+			res.status(error.code).send(error)
+		}
+	},
 	passport.authenticate('local'),
 	async function loginHandler(req, res) {
 		try {
@@ -78,3 +101,14 @@ router.delete('/auth', function (req, res) {
 		res.json({ loggedout: true })
 	})
 })
+
+async function verifyTurnstileToken(token: string) {
+	const res = await axios.post(
+		'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+		{
+			response: token,
+			secret: '1x0000000000000000000000000000000AA'
+		}
+	)
+	if (!res.data.success) throw Error('2')
+}

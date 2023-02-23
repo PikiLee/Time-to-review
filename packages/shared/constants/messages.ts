@@ -71,7 +71,8 @@ export const messages = {
 				existUsername: 'The username has existed.',
 				invalidPassword:
 					"Should contain at least one of !{'@'}#{'$'}%^&*, one number",
-				fail: '{0} failed.'
+				fail: '{0} failed.',
+				notComplete: 'Please complete the chanllenge.'
 			}
 		}
 	},
@@ -146,7 +147,8 @@ export const messages = {
 				existUsername: '用户名已存在',
 				invalidPassword:
 					"长度应在{0}至{1}之间, 并至少包含!{'@'}#{'$'}%^&*的其中一个和一个数字",
-				fail: '{0}失败'
+				fail: '{0}失败',
+				notComplete: '请完成验证'
 			}
 		}
 	}

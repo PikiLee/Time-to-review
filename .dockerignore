@@ -3,7 +3,7 @@
 **/.eslintcache
 **/tests
 **/logs
-**/.env
+**/.env*
 **/sessions.db
 /packages/frontend
 .husky

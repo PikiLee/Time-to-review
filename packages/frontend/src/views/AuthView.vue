@@ -25,7 +25,7 @@ const turnstileTheme = computed(() => {
 onMounted(() => {
 	const onloadTurnstileCallback = function () {
 		window.turnstile.render('#turnstile', {
-			sitekey: '2x00000000000000000000AB',
+			sitekey: import.meta.env.VITE_TURNSTILE_SITEKEY,
 			theme: turnstileTheme.value,
 			callback: function (t: string) {
 				token.value = t
@@ -157,6 +157,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 	await formEl.validate((valid) => {
 		if (valid) {
 			if (!token.value) {
+				errorMsg(t('auth.errors.notComplete'))
 				return
 			}
 

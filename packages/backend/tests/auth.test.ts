@@ -7,8 +7,9 @@ import { AUTH_URL } from 'shared'
 import mongoose from 'mongoose'
 import { User } from '../src/models/User'
 
-const app = await createApp({ port: 3001 })
+const app = await createApp({ port: 13001 })
 const client = request.agent(app)
+const token = '123'
 
 afterEach(async () => {
 	await mongoose.connection.dropCollection('users')
@@ -23,10 +24,13 @@ test('check a username has been used', async () => {
 
 test('register', async () => {
 	const { username, password } = generateAuthInfo()
-	const res = await client.post(AUTH_URL).send({
-		username,
-		password
-	})
+	const res = await client
+		.post(AUTH_URL)
+		.send({
+			username,
+			password
+		})
+		.query({ token })
 	console.log({ body: res.body })
 	userZodSchema.parse(res.body)
 	expect(res.status).toBe(200)
@@ -44,10 +48,13 @@ test('register', async () => {
 	expect(reregisterRes.status).toBe(400)
 
 	// login
-	const loginRes = await client.put(AUTH_URL).send({
-		username,
-		password
-	})
+	const loginRes = await client
+		.put(AUTH_URL)
+		.send({
+			username,
+			password
+		})
+		.query({ token })
 
 	expect(loginRes.status).toBe(200)
 	userZodSchema.parse(loginRes.body)
@@ -68,10 +75,13 @@ describe('fail', () => {
 		async (username) => {
 			const { password } = generateAuthInfo()
 
-			const res = await request(app).put(AUTH_URL).send({
-				username: username,
-				password
-			})
+			const res = await request(app)
+				.put(AUTH_URL)
+				.send({
+					username: username,
+					password
+				})
+				.query({ token })
 
 			console.log({ body: res.body })
 			expect(res.status).toBe(400)
@@ -83,10 +93,13 @@ describe('fail', () => {
 		async (password) => {
 			const { username } = generateAuthInfo()
 
-			const res = await request(app).put(AUTH_URL).send({
-				username,
-				password
-			})
+			const res = await request(app)
+				.put(AUTH_URL)
+				.send({
+					username,
+					password
+				})
+				.query({ token })
 
 			console.log({ body: res.body })
 			expect(res.status).toBe(400)
@@ -98,10 +111,13 @@ describe('fail', () => {
 		async (username) => {
 			const { password } = generateAuthInfo()
 
-			const res = await request(app).put(AUTH_URL).send({
-				username: username,
-				password
-			})
+			const res = await request(app)
+				.put(AUTH_URL)
+				.send({
+					username: username,
+					password
+				})
+				.query({ token })
 
 			console.log({ body: res.body })
 			expect(res.status).toBe(400)
@@ -113,13 +129,26 @@ describe('fail', () => {
 		async (password) => {
 			const { username } = generateAuthInfo()
 
-			const res = await request(app).post(AUTH_URL).send({
-				username,
-				password
-			})
+			const res = await request(app)
+				.post(AUTH_URL)
+				.send({
+					username,
+					password
+				})
+				.query({ token })
 
 			console.log({ body: res.body })
 			expect(res.status).toBe(400)
 		}
 	)
+
+	test('return 400 when token is omitted', async () => {
+		const { username, password } = generateAuthInfo()
+		const res = await request(app).post(AUTH_URL).send({
+			username,
+			password
+		})
+		console.log({ body: res.body })
+		expect(res.status).toBe(400)
+	})
 })

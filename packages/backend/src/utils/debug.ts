@@ -7,6 +7,7 @@ export function printDebugInfo(req: any) {
 			'req.method': req.method,
 			'req.originalUrl': req.originalUrl,
 			'req.body': req.body,
-			'req.params': req.params
+			'req.params': req.params,
+			'req.query': req.query
 		})
 }

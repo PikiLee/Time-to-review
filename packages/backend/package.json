@@ -14,7 +14,7 @@
 		"prepack": "pnpm run build",
 		"type-check": "tsc --noEmit",
 		"run": "cross-env NODE_ENV=production tsx ./src/index.ts",
-		"dev": "cross-env NODE_ENV=development tsx ./src/index.ts"
+		"dev": "cross-env NODE_ENV=development tsx watch ./src/index.ts"
 	},
 	"files": [
 		"dist/src/*"
