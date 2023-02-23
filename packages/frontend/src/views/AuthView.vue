@@ -1,19 +1,43 @@
 <script setup lang="ts">
 import type { FormInstance, FormRules } from 'element-plus'
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { errorMsg, successMsg } from '@/utils/useMessage'
 import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/store/user.store'
 import * as authApi from '@/database/auth'
 import { passwordZodSchema } from 'shared'
+import { useDark } from '@vueuse/core'
 
 const router = useRouter()
 const route = useRoute()
 const { t } = useI18n()
 const userStore = useUserStore()
+const isDark = useDark()
 
 const isRegister = computed(() => route.name === 'register')
+
+// turnsite
+const token = ref('')
+const turnstileTheme = computed(() => {
+	return isDark.value ? 'dark' : 'light'
+})
+onMounted(() => {
+	const onloadTurnstileCallback = function () {
+		window.turnstile.render('#turnstile', {
+			sitekey: '2x00000000000000000000AB',
+			theme: turnstileTheme.value,
+			callback: function (t: string) {
+				token.value = t
+			}
+		})
+	}
+
+	window.turnstile.ready(onloadTurnstileCallback)
+	watch(isDark, () => {
+		onloadTurnstileCallback()
+	})
+})
 
 const ruleFormRef = ref<FormInstance>()
 const form = reactive({
@@ -25,6 +49,13 @@ const rules = computed<FormRules>(() => {
 	return isRegister.value
 		? {
 				username: [
+					{
+						required: true,
+						message: t('auth.errors.required', [
+							t('auth.username')
+						]),
+						trigger: 'change'
+					},
 					{
 						min: 2,
 						max: 12,
@@ -55,6 +86,13 @@ const rules = computed<FormRules>(() => {
 				],
 				password: [
 					{
+						required: true,
+						message: t('auth.errors.required', [
+							t('auth.password')
+						]),
+						trigger: 'change'
+					},
+					{
 						min: 12,
 						max: 24,
 						message: t('auth.errors.length', [12, 24]),
@@ -83,6 +121,13 @@ const rules = computed<FormRules>(() => {
 		: {
 				username: [
 					{
+						required: true,
+						message: t('auth.errors.required', [
+							t('auth.username')
+						]),
+						trigger: 'change'
+					},
+					{
 						min: 2,
 						max: 12,
 						message: t('auth.errors.length', [2, 12]),
@@ -90,6 +135,13 @@ const rules = computed<FormRules>(() => {
 					}
 				],
 				password: [
+					{
+						required: true,
+						message: t('auth.errors.required', [
+							t('auth.password')
+						]),
+						trigger: 'change'
+					},
 					{
 						min: 12,
 						max: 24,
@@ -104,9 +156,13 @@ async function onSubmit(formEl: FormInstance | undefined) {
 	if (!formEl) return
 	await formEl.validate((valid) => {
 		if (valid) {
+			if (!token.value) {
+				return
+			}
+
 			if (isRegister.value) {
 				authApi
-					.register(form)
+					.register(form, { token: token.value })
 					.then((res) => {
 						userStore.user = res
 						localStorage.setItem('user', JSON.stringify(res))
@@ -120,7 +176,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 					})
 			} else {
 				authApi
-					.login(form)
+					.login(form, { token: token.value })
 					.then((res) => {
 						userStore.user = res
 						localStorage.setItem('user', JSON.stringify(res))
@@ -169,7 +225,8 @@ async function onSubmit(formEl: FormInstance | undefined) {
 				>
 					<el-input type="password" v-model="form.password" />
 				</el-form-item>
-				<el-form-item mt-10>
+				<div id="turnstile" flex items-center justify-end w-full></div>
+				<el-form-item mt-5>
 					<div flex gap-10>
 						<el-button
 							type="primary"

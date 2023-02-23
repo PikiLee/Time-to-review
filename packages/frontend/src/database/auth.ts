@@ -1,8 +1,19 @@
 import type { NewUser } from 'shared'
 import { api } from './api'
 
-export async function register(newUser: NewUser) {
-	return await api.register(newUser)
+export async function register(
+	newUser: NewUser,
+	{
+		token
+	}: {
+		token: string
+	}
+) {
+	return await api.register(newUser, {
+		queries: {
+			token
+		}
+	})
 }
 
 export async function checkUsername(username: string) {
@@ -13,8 +24,19 @@ export async function checkUsername(username: string) {
 	})
 }
 
-export async function login(newUser: NewUser) {
-	return await api.login(newUser)
+export async function login(
+	newUser: NewUser,
+	{
+		token
+	}: {
+		token: string
+	}
+) {
+	return await api.login(newUser, {
+		queries: {
+			token
+		}
+	})
 }
 
 export async function logout() {

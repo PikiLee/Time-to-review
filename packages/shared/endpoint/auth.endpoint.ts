@@ -36,7 +36,10 @@ export const authEndpointDescription = makeApi([
 		path: '/auth',
 		alias: 'register',
 		description: 'Register a user',
-		parameters: [{ name: 'body', type: 'Body', schema: newUserZodSchema }],
+		parameters: [
+			{ name: 'body', type: 'Body', schema: newUserZodSchema },
+			{ name: 'token', type: 'Query', schema: z.string() }
+		],
 		status: 200,
 		response: userZodSchema,
 		errors: [errorZodSchemas[400], errorZodSchemas.default]
@@ -61,7 +64,10 @@ export const authEndpointDescription = makeApi([
 		path: '/auth',
 		alias: 'login',
 		description: 'login',
-		parameters: [{ name: 'body', type: 'Body', schema: newUserZodSchema }],
+		parameters: [
+			{ name: 'body', type: 'Body', schema: newUserZodSchema },
+			{ name: 'token', type: 'Query', schema: z.string() }
+		],
 		status: 200,
 		response: userZodSchema,
 		errors: [
