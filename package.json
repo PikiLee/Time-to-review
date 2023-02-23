@@ -11,6 +11,7 @@
 		"test:frontend": "cd ./packages/frontend && run-p dev test:e2e:open",
 		"build:backend": "cd ./packages/backend && pnpm run build",
 		"build:frontend": "cd ./packages/frontend && pnpm run build-only",
+		"build:docker:backend": "docker build -t pikilee/time-to-review-backend .",
 		"watch:backend": "cd ./packages/backend && pnpm run watch",
 		"dev:backend": "cd ./packages/backend && pnpm run dev",
 		"dev:frontend": "cd ./packages/frontend && pnpm run dev",

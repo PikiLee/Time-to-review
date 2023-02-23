@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/.eslintcache
+**/tests
+**/logs
+**/.env
+**/sessions.db
+/packages/frontend
+.husky
+**/session

@@ -70,7 +70,9 @@ export async function createApp(
 	// session
 	const ONE_DAY = 1000 * 60 * 60 * 24
 	const SqliteStore = sessionStore(expressSession)
-	const sessionDb = new sqlite('sessions.db', { verbose: console.log })
+	const sessionDb = new sqlite('./session/sessions.db', {
+		verbose: console.log
+	})
 	app.use(
 		expressSession({
 			store: new SqliteStore({
