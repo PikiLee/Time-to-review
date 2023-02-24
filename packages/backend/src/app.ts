@@ -20,30 +20,17 @@ import sqlite from 'better-sqlite3'
 import { ctx } from './ctx'
 import { findError } from 'shared'
 import { printDebugInfo } from './utils/debug'
+import { errorIfEnvVarNotExist } from './utils/error'
 
 export const IS_DEV = process.env.NODE_ENV === 'development'
 
-// throw error if enviorment variables do not exist
-function checkEnvVarExistence(
-	value: (string | undefined) | (string | undefined)[]
-) {
-	let error = false
-	if (typeof value === undefined) error = true
-	if (Array.isArray(value) && value.some((v) => v === undefined))
-		error = false
-	if (error) throw new Error('Enviornment variable not exist!')
-}
-if (IS_DEV) {
-	checkEnvVarExistence([
-		process.env.SESSION_SECRET_DEVELOPMRNT,
-		process.env.CORS_ORIGIN_DEVELOPMENT
-	])
-} else {
-	checkEnvVarExistence([
-		process.env.DATABASE_PRODUCTION,
-		process.env.SESSION_SECRET_PRODUCTION,
-		process.env.CORS_ORIGIN_PRODUCTION
-	])
+errorIfEnvVarNotExist([
+	process.env.SESSION_SECRET,
+	process.env.CORS_ORIGIN,
+	process.env.TURNSTILE_SECRET_KEY
+])
+if (!IS_DEV) {
+	errorIfEnvVarNotExist(process.env.DATABASE)
 }
 
 export async function createApp(
@@ -51,15 +38,13 @@ export async function createApp(
 		port: 13000
 	}
 ) {
-	await createDb(IS_DEV ? undefined : process.env.DATABASE_PRODUCTION!)
+	await createDb(IS_DEV ? undefined : process.env.DATABASE)
 
 	const app = ctx.app()
 
 	app.use(
 		cors({
-			origin: IS_DEV
-				? process.env.CORS_ORIGIN_DEVELOPMENT!
-				: process.env.CORS_ORIGIN_PRODUCTION!,
+			origin: process.env.CORS_ORIGIN,
 			credentials: true,
 			exposedHeaders: ['set-cookie']
 		})
@@ -82,9 +67,7 @@ export async function createApp(
 					intervalMs: 900000 //ms = 15min
 				}
 			}),
-			secret: IS_DEV
-				? process.env.SESSION_SECRET_DEVELOPMRNT!
-				: process.env.SESSION_SECRET_PRODUCITON!,
+			secret: process.env.SESSION_SECRET!,
 			resave: false,
 			saveUninitialized: false,
 			cookie: { httpOnly: false, secure: false, maxAge: 30 * ONE_DAY }

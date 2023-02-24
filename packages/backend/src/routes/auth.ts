@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv'
+dotenv.config()
+
 import passport from 'passport'
 import { ctx } from '../ctx'
 import { User, fetch } from '../models/User.js'
@@ -107,7 +110,7 @@ async function verifyTurnstileToken(token: string) {
 		'https://challenges.cloudflare.com/turnstile/v0/siteverify',
 		{
 			response: token,
-			secret: '1x0000000000000000000000000000000AA'
+			secret: process.env.TURNSTILE_SECRET_KEY
 		}
 	)
 	if (!res.data.success) throw Error('2')
