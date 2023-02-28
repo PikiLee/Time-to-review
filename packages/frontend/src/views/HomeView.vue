@@ -11,6 +11,7 @@ import {
 	findByIdAndDeleteAndCalcOrder,
 	findByIdAndUpdate,
 	findByIdOrError,
+	findByIndexAndDelete,
 	findIndexById
 } from '@/utils/query'
 import { errorMsg } from '@/utils/useMessage'
@@ -157,11 +158,16 @@ async function handleProgressUpdate(
 			findByIdAndDeleteAndCalcOrder(dueProgresses, progress._id)
 			course.dueCount--
 
-			if (dueProgresses.length === 0)
+			if (dueProgresses.length === 0) {
 				findByIdAndDelete(
 					courseAndProgressesList.value.courseList,
 					course._id
 				)
+				findByIndexAndDelete(
+					courseAndProgressesList.value.dueProgressesList,
+					index
+				)
+			}
 		} else {
 			findByIdAndUpdate(dueProgresses, updatedProgress)
 		}

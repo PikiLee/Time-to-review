@@ -27,6 +27,11 @@ export function findByIdAndDelete<T extends { _id: string }>(
 	list.splice(index, 1)
 }
 
+export function findByIndexAndDelete<T>(list: T[], index: number) {
+	if (index < 0) throw Error('Index must >= 0')
+	list.splice(index, 1)
+}
+
 export function findByIdAndDeleteAndCalcOrder<
 	T extends { _id: string; order: number }
 >(list: T[], _id: string) {
