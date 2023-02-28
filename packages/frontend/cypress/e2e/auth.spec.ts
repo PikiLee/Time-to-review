@@ -70,6 +70,7 @@ describe('Username validations', () => {
 	})
 
 	it('should show error message if username is longer than 12', () => {
+		authPreconditions.usernameNotExist({ mockEndpoint })
 		goToRegisterPage()
 		inputUsername('1'.repeat(13))
 		assertDisplay(LENGTH_ERROR)

@@ -1,27 +1,27 @@
+import type { DefaultBodyType, rest } from 'msw'
 import { cy } from 'local-cypress'
 
-const ENDPOINT_MOCKS_KEY = `__ENDPOINT_MOCKS__`
+export interface mockEndpointOptions {
+	body: DefaultBodyType
+	httpVerb?: keyof typeof rest
+	status?: number
+	header?: [string, string]
+}
 
-export const mockEndpoint = (endpoint, options) => {
-	cy.window().then(({ localStorage, mockEndpoint: windowMockEndpoint }) => {
-		// Immediately mock endpoint if possible.
-		if (windowMockEndpoint) {
-			windowMockEndpoint(endpoint, options)
+export type MockEndPoint = (
+	endpoint: string,
+	options: mockEndpointOptions
+) => void
+
+export const mockEndpoint: MockEndPoint = (
+	endpoint: string,
+	{ body, httpVerb = `get`, status = 200, header }: mockEndpointOptions
+) => {
+	cy.interceptRequest(httpVerb, endpoint, (req, res, ctx) => {
+		if (header) {
+			return res(ctx.status(status), ctx.json(body), ctx.set(...header))
+		} else {
+			return res(ctx.status(status), ctx.json(body))
 		}
-
-		// Store mocks in Local Storage so they're available after a reload.
-		const mocksRaw = localStorage.getItem(ENDPOINT_MOCKS_KEY)
-		const mocks = mocksRaw ? JSON.parse(mocksRaw) : []
-
-		localStorage.setItem(
-			ENDPOINT_MOCKS_KEY,
-			JSON.stringify([
-				...mocks,
-				{
-					endpoint,
-					options
-				}
-			])
-		)
 	})
 }
