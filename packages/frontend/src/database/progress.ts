@@ -3,6 +3,8 @@ import type { NewProgress, UpdateProgress } from 'shared'
 import { api } from './api'
 
 export async function create(courseId: string, newProgress: NewProgress) {
+	if (newProgress.lastDate)
+		newProgress.lastDate = getStartOfDay(newProgress.lastDate)
 	return api.createProgress(newProgress, {
 		params: {
 			courseId
