@@ -1,17 +1,8 @@
-import type { DefaultBodyType, rest } from 'msw'
 import { cy } from 'local-cypress'
-
-export interface mockEndpointOptions {
-	body: DefaultBodyType
-	httpVerb?: keyof typeof rest
-	status?: number
-	header?: [string, string]
-}
-
-export type MockEndPoint = (
-	endpoint: string,
-	options: mockEndpointOptions
-) => void
+import type {
+	MockEndPoint,
+	mockEndpointOptions
+} from '@/__test__/mock-enpoints.type'
 
 export const mockEndpoint: MockEndPoint = (
 	endpoint: string,

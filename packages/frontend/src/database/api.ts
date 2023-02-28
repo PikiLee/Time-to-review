@@ -1,3 +1,4 @@
+import { errorMsg } from '@/utils/useMessage'
 import { useUserStore } from '@/store/user.store'
 import { Zodios } from '@zodios/core'
 import { authEndpointDescription, courseEndpointDescription } from 'shared'
@@ -26,6 +27,9 @@ api.axios.interceptors.response.use(
 			const userStore = useUserStore()
 			userStore.user = null
 			localStorage.removeItem('user')
+		}
+		if (error.response.status === 500) {
+			errorMsg('Server is down. Please try again later.')
 		}
 		return Promise.reject(error)
 	}

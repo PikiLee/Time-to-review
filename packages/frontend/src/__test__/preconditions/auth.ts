@@ -1,5 +1,5 @@
 import { getAuthEndpoints } from 'shared'
-import type { MockEndPoint } from '../mock-endpoint'
+import type { MockEndPoint } from '../mock-enpoints.type'
 
 const cookie = 'asss'
 
