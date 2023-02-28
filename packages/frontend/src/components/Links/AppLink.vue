@@ -16,7 +16,6 @@ defineProps<{
 <template>
 	<RouterLink
 		font-600
-		text-lg
 		link-decoration-none
 		hover:text-lime-500
 		:to="to"

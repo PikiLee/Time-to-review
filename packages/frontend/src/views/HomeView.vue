@@ -20,6 +20,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { messages } from 'shared'
+import AppLink from '@/components/Links/AppLink.vue'
 
 interface CourseAndProgressesList {
 	courseList: Course[]
@@ -216,11 +217,20 @@ async function handleProgressUpdate(
 						:items="
 							courseAndProgressesList.dueProgressesList[index]
 						"
-						:title="course.name"
 						:badge="course.dueCount"
 						item-key="_id"
 						badgeType="danger"
 					>
+						<template #header>
+							<AppLink
+								text-4xl
+								:to="{
+									name: 'course',
+									params: { id: course._id }
+								}"
+								:text="course.name"
+							/>
+						</template>
 						<template #item="{ item }">
 							<ProgressItem
 								:progress="item"

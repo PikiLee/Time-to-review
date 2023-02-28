@@ -19,12 +19,14 @@ const wrapperClasses = computed(() => {
 	<div :class="wrapperClasses" flex gap-4 items-center justify-around>
 		<AppLink
 			v-if="isLogin"
+			text-lg
 			:text="$t('header.home')"
 			:to="{ name: 'home' }"
 			data-testid="app-header-home"
 		/>
 		<AppLink
 			v-if="isLogin"
+			text-lg
 			:to="{ name: 'courses' }"
 			:text="$t('header.course')"
 			data-testid="app-header-courses"
