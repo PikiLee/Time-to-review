@@ -1,3 +1,4 @@
+import { IS_DEV } from './../app'
 import * as dotenv from 'dotenv'
 dotenv.config()
 
@@ -25,15 +26,17 @@ router.get('/auth/:username', async function (req, res) {
 router.post(
 	'/auth',
 	async function (req, res, next) {
-		try {
-			await verifyTurnstileToken(req.query.token)
-			next()
-		} catch (err) {
-			printDebugInfo(req)
-			console.trace({ err })
-			const error = findError(Number((err as Error).message))
-			res.status(error.code).send(error)
+		if (!IS_DEV) {
+			try {
+				await verifyTurnstileToken(req.query.token)
+			} catch (err) {
+				printDebugInfo(req)
+				console.trace({ err })
+				const error = findError(Number((err as Error).message))
+				res.status(error.code).send(error)
+			}
 		}
+		next()
 	},
 	function (req, res, next) {
 		User.register(
