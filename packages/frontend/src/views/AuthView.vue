@@ -19,26 +19,27 @@ const isRegister = computed(() => route.name === 'register')
 
 // turnsite
 const token = ref('')
-const turnstileTheme = computed(() => {
-	return isDark.value ? 'dark' : 'light'
-})
-onMounted(() => {
-	const onloadTurnstileCallback = function () {
-		window.turnstile.render('#turnstile', {
-			sitekey: import.meta.env.VITE_TURNSTILE_SITEKEY,
-			theme: turnstileTheme.value,
-			callback: function (t: string) {
-				token.value = t
-			}
-		})
-	}
-
-	window.turnstile.ready(onloadTurnstileCallback)
-	watch(isDark, () => {
-		onloadTurnstileCallback()
+if (import.meta.env.PROD) {
+	const turnstileTheme = computed(() => {
+		return isDark.value ? 'dark' : 'light'
 	})
-})
+	onMounted(() => {
+		const onloadTurnstileCallback = function () {
+			window.turnstile.render('#turnstile', {
+				sitekey: import.meta.env.VITE_TURNSTILE_SITEKEY,
+				theme: turnstileTheme.value,
+				callback: function (t: string) {
+					token.value = t
+				}
+			})
+		}
 
+		window.turnstile.ready(onloadTurnstileCallback)
+		watch(isDark, () => {
+			onloadTurnstileCallback()
+		})
+	})
+}
 const ruleFormRef = ref<FormInstance>()
 const form = reactive({
 	username: '',
@@ -156,7 +157,7 @@ async function onSubmit(formEl: FormInstance | undefined) {
 	if (!formEl) return
 	await formEl.validate((valid) => {
 		if (valid) {
-			if (!token.value) {
+			if (import.meta.env.PROD && !token.value) {
 				errorMsg(t('auth.errors.notComplete'))
 				return
 			}
