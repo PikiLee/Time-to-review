@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "vite --port 4173 --host",
 		"build": "run-p type-check build-only",
-		"preview": "vite preview",
+		"preview": "pnpm run build-only && vite preview",
 		"test:unit": "vitest --environment jsdom --root src/",
 		"test:e2e": "cypress run --e2e",
 		"test:e2e:open": "cypress open --e2e",

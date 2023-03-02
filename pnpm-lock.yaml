@@ -46,7 +46,6 @@ importers:
       lodash-es: ^4.17.21
       mongodb-memory-server-core: ^8.11.4
       mongoose: ^6.9.0
-      mongoose-autopopulate: ^0.17.1
       morgan: ^1.10.0
       passport: ^0.6.0
       passport-local: ^1.0.0
@@ -75,7 +74,6 @@ importers:
       express-session: 1.17.3
       lodash-es: 4.17.21
       mongoose: 6.9.0
-      mongoose-autopopulate: 0.17.1_mongoose@6.9.0
       morgan: 1.10.0
       passport: 0.6.0
       passport-local: 1.0.0
@@ -6154,14 +6152,6 @@ packages:
       saslprep: 1.0.3
     transitivePeerDependencies:
       - aws-crt
-
-  /mongoose-autopopulate/0.17.1_mongoose@6.9.0:
-    resolution: {integrity: sha512-a2EzHvvol0L9k4XVR+ekzRVdiW+7mqCUTvhStPh2yr00cMV3/g/Z7o29ilQh2RMBFszRO+97wsy+1S8Z3Zf+sg==}
-    peerDependencies:
-      mongoose: 6.x
-    dependencies:
-      mongoose: 6.9.0
-    dev: false
 
   /mongoose/6.9.0:
     resolution: {integrity: sha512-5tu6+trwjk5TIH6b6iYgAwmzZ0RNOxFoqXQb9h21Oi45DeM1rWM/niHxJ4ROqBISDfQMwRvLSABHTsyn3AzoFQ==}

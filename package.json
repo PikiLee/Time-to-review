@@ -19,7 +19,10 @@
 		"type-check:frontend": "cd ./packages/frontend && pnpm run type-check",
 		"type-check:backend": "cd ./packages/backend && pnpm run type-check",
 		"type-check:shared": "cd ./packages/shared && pnpm run type-check",
+		"preview:frontend": "cd ./packages/frontend && pnpm run preview",
+		"preview:backend": "cd ./packages/backend && pnpm run preview",
 		"run:backend": "cd ./packages/backend && pnpm run run",
+		"preview": "run-p preview:*",
 		"dev": "run-p dev:*",
 		"lint": "run-p lint:*",
 		"type-check": "run-p type-check:*"

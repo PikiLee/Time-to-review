@@ -13,6 +13,7 @@
 		"watch": "tsc -w",
 		"prepack": "pnpm run build",
 		"type-check": "tsc --noEmit",
+		"preview": "cross-env NODE_ENV=development tsx ./src/index.ts",
 		"run": "cross-env NODE_ENV=production tsx ./src/index.ts",
 		"dev": "cross-env NODE_ENV=development tsx watch ./src/index.ts"
 	},
@@ -61,7 +62,6 @@
 		"express-session": "^1.17.3",
 		"lodash-es": "^4.17.21",
 		"mongoose": "^6.9.0",
-		"mongoose-autopopulate": "^0.17.1",
 		"morgan": "^1.10.0",
 		"passport": "^0.6.0",
 		"passport-local": "^1.0.0",
