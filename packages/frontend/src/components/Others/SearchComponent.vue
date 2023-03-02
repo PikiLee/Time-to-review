@@ -155,7 +155,7 @@ useEventListener(document, 'keydown', (e: KeyboardEvent) => {
 							:body-style="
 								index === selectedResultIndex
 									? {
-											background: '#86efac'
+											background: '#84cc16'
 									  }
 									: {}
 							"
