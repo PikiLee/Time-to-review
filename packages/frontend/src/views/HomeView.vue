@@ -21,6 +21,9 @@ import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { messages } from 'shared'
 import AppLink from '@/components/Links/AppLink.vue'
+import BaseDialog from '@/components/Others/BaseDialog.vue'
+import ProgressForm from '@/components/Progress/ProgressForm.vue'
+import DeleteButton from '@/components/Buttons/DeleteButton.vue'
 
 interface CourseAndProgressesList {
 	courseList: Course[]
@@ -191,7 +194,7 @@ async function handleProgressUpdate(
 		</h2>
 		<BaseDialog v-model="progressFormVisible" title="Update Progress">
 			<ProgressForm
-				v-if="activeCourse"
+				v-if="activeCourse && activeProgress"
 				:progress="activeProgress"
 				:intervals="activeCourse.intervals"
 				@update="handleProgressUpdate"

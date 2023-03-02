@@ -23,6 +23,8 @@ import { handleSort } from '@/composables/useSort'
 import DeleteButton from '@/components/Buttons/DeleteButton.vue'
 import { useI18n } from 'vue-i18n'
 import { messages } from 'shared'
+import ProgressForm from '@/components/Progress/ProgressForm.vue'
+import CreateForm from '@/components/CreateForm.vue'
 
 const { t } = useI18n({
 	messages: {
@@ -216,7 +218,7 @@ async function handleProgressSort(evt: SortableEvent) {
 
 	<BaseDialog v-model="progressFormVisible" :title="$t('progress.update')">
 		<ProgressForm
-			v-if="courseAndProgresses"
+			v-if="courseAndProgresses && activeProgress"
 			:progress="activeProgress"
 			:intervals="courseAndProgresses.course.intervals"
 			@update="
