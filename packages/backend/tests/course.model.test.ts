@@ -136,7 +136,7 @@ describe('coures', () => {
 				owner: context.userId,
 				status: CourseStatus['In Progress'],
 				archived: false,
-				order: 8
+				order: 9
 			}
 		]
 
@@ -215,6 +215,32 @@ describe('coures', () => {
 			expect(res.body[i].name).toBe(context.sampleCourses[i].name)
 			courseZodSchema.parse(res.body[i])
 		}
+	})
+
+	test<Context>('search', async (context) => {
+		const res = await client.get(`${COURSE_URL}`).query({
+			search: 'sample course 9 *'
+		})
+
+		console.log({ body: res.body })
+		expect(res.status).toBe(200)
+		expect(res.body).toHaveLength(1)
+
+		expect(res.body[0].name).toBe(context.sampleCourses[9].name)
+		courseZodSchema.parse(res.body[0])
+	})
+
+	test<Context>('search case insensitive', async (context) => {
+		const res = await client.get(`${COURSE_URL}`).query({
+			search: 'SAMple course 9 *'
+		})
+
+		console.log({ body: res.body })
+		expect(res.status).toBe(200)
+		expect(res.body).toHaveLength(1)
+
+		expect(res.body[0].name).toBe(context.sampleCourses[9].name)
+		courseZodSchema.parse(res.body[0])
 	})
 
 	test.each(['5', '0', '7', '.', '*'])(

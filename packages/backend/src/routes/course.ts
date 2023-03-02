@@ -77,7 +77,7 @@ router.get('/courses', async (req, res) => {
 			filter = {
 				owner: toObjectId(req.user._id),
 				name: {
-					$regex: escapeRegExp(req.query.search)
+					$regex: new RegExp(escapeRegExp(req.query.search), 'i')
 				}
 			}
 		} else {
