@@ -120,7 +120,7 @@ router.get('/courses/:courseId/progresses', async (req, res) => {
 				filter = {
 					owner: toObjectId(req.user._id),
 					name: {
-						$regex: escapeRegExp(req.query.search)
+						$regex: new RegExp(escapeRegExp(req.query.search), 'i')
 					}
 				}
 			} else {
@@ -128,7 +128,7 @@ router.get('/courses/:courseId/progresses', async (req, res) => {
 					owner: toObjectId(req.user._id),
 					course: toObjectId(req.params.courseId),
 					name: {
-						$regex: escapeRegExp(req.query.search)
+						$regex: new RegExp(escapeRegExp(req.query.search), 'i')
 					}
 				}
 			}
